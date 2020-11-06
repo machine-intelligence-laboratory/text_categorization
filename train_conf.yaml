@@ -1,0 +1,5 @@
+num_epochs_full: 20
+num_epochs_update: 3
+num_topics: 100
+tau: 0.1
+gamma: 0

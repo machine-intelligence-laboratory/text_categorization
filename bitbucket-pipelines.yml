@@ -1,0 +1,19 @@
+# This is a sample build configuration for Python.
+# Check our guides at https://confluence.atlassian.com/x/x4UWN for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+
+
+pipelines:
+  pull-requests:
+    '**':
+      - step:
+          name: Lint by Flake8
+          image: python:3.7.3
+          caches:
+            - pip
+          script:
+            - pip install -r test_requirements.txt
+            - flake8 .
+            - pep257 --ignore=D100,D101,D104

@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+  inference:
+    build: .
+    ports:
+      - "50051:50051"
+    volumes:
+      - ${MODEL_PATH}:/model

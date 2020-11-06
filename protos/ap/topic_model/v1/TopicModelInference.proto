@@ -1,0 +1,23 @@
+syntax = "proto3";
+package ap.topic_model.v1;
+
+import "ap/topic_model/v1/TopicModelBase.proto";
+
+
+// инференс сервис
+service TopicModelInferenceService{
+    // получение векторных представлений документов
+    rpc GetDocumentsEmbedding(GetDocumentsEmbeddingRequest) returns (GetDocumentsEmbeddingResponse) {}
+}
+
+message GetDocumentsEmbeddingRequest {
+    DocumentPack Pack = 1;    
+}
+
+message GetDocumentsEmbeddingResponse {
+    repeated Embedding Embeddings = 1;
+}
+
+
+
+

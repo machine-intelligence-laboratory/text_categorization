@@ -1,0 +1,39 @@
+syntax = "proto3";
+package ap.topic_model.v1;
+// базовые типы данных
+
+// идентификатор документа
+message DocId {	
+	fixed64 Hi = 1;	
+	fixed64 Lo = 2;
+}
+
+// вектор, соответствующий документу в тематической модели
+message Embedding {
+    repeated float Vector = 1; 
+}
+
+// документ 
+message Document {
+    DocId Id = 1; // идентификатор документа 
+    repeated string Tokens = 2; // токены документа
+    string Language = 3; // язык документа. Предполагается подавать код в формате ISO (2 или 3 символа) 
+}
+
+// набор документов 
+message DocumentPack {
+    repeated Document Documents = 1;    
+}
+
+// идентификаторы параллельных документов внутри набора
+message ParallelDocIds {
+    repeated DocId Ids = 1;
+}
+
+
+
+
+
+
+
+

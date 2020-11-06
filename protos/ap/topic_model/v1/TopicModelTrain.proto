@@ -1,0 +1,84 @@
+syntax = "proto3";
+package ap.topic_model.v1;
+
+import "ap/topic_model/v1/TopicModelBase.proto";
+
+// сервис обучения моделей1
+service TopicModelTrainService{
+    // загрузка документов для дообучения модели
+    rpc AddDocumentsToModel(AddDocumentsToModelRequest) returns (AddDocumentsToModelResponse) {}
+    // запуск дообучения
+    rpc StartTrainTopicModel(StartTrainTopicModelRequest) returns (StartTrainTopicModelResponse) {}
+    // статус дообучения
+    rpc TrainTopicModelStatus(TrainTopicModelStatusRequest) returns (TrainTopicModelStatusResponse) {}
+}
+
+message AddDocumentsToModelRequest {
+    DocumentPack Collection = 1;
+    repeated ParallelDocIds ParallelDocuments = 2;
+}
+
+message StartTrainTopicModelRequest {
+    // тип тренировки - полная или обновление последней обученной модели
+    enum TrainType {
+        FULL = 0;
+        UPDATE = 1;
+    }
+
+    TrainType Type  = 1;
+}
+
+message TrainTopicModelStatusRequest {
+}
+
+message AddDocumentsToModelResponse {
+    // статус операции добавления документа 
+    // Предполагается, что статуы будут добавляться по мере уточнения кодов ошибки
+    enum AddDocumentsStatus {  
+        OK = 0;
+        EXCEPTION = 1;
+        NO_TRANSLATION=2;//Попытка добавить новый язык без перевода на существующий
+    }   
+
+    AddDocumentsStatus Status  = 1;
+    string ErrorMessage = 2;
+}
+
+message StartTrainTopicModelResponse {
+    // статус операции дообучения модели 
+    // Предполагается, что статуы будут добавляться по мере уточнения кодов ошибки
+    enum StartTrainTopicModelStatus {
+        OK = 0;
+        EXCEPTION = 1;
+        ALREADY_STARTED = 2;
+    }
+
+    StartTrainTopicModelStatus Status  = 1;
+    string ErrorMessage = 2;
+}
+
+message TrainTopicModelStatusResponse {
+    // статус операции дообучения модели
+    // Предполагается, что статуы будут добавляться по мере уточнения кодов ошибки
+    enum TrainTopicModelStatus {
+        COMPLETE = 0;
+        RUNNING = 1;
+        ABORTED = 2;
+    }
+
+    TrainTopicModelStatus Status  = 1;
+    string ErrorMessage = 2;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

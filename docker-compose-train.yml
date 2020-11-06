@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  train:
+    build: .
+    ports:
+      - "50051:50051"
+    volumes:
+      - ${MODELS_PATH}:/models
+      - ${DATA_PATH}:/data
+    entrypoint: python -m ap.train.server --models=/models --data=/data
+
