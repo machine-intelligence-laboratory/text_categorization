@@ -38,7 +38,6 @@ def models_dir(tmpdir_factory):
 @pytest.fixture(scope="module")
 def data_dir(tmpdir_factory):
     data_dir = tmpdir_factory.mktemp("data")
-
     langs = [
         "ru",
         "en",
@@ -73,6 +72,7 @@ def test_conf():
         "num_topics": 100,
         "tau": 0.1,
         "gamma": 0,
+        "max_dictionary_size": 10,
     }
 
 
@@ -90,6 +90,14 @@ def grpc_stub_cls(grpc_channel):
     return TopicModelTrainServiceStub
 
 
+@pytest.fixture(scope="function")
+def clean_data(data_dir):
+    vw_new = os.path.join(data_dir, "vw_new")
+    for file in os.listdir(vw_new):
+        os.remove(os.path.join(vw_new, file))
+
+
+@pytest.mark.usefixtures("clean_data")
 def test_add_documents(models_dir, data_dir, grpc_stub):
     docs = [
         Document(Id=DocId(Lo=0, Hi=0), Tokens=["a", "b"], Language="en"),
@@ -109,7 +117,67 @@ def test_add_documents(models_dir, data_dir, grpc_stub):
         assert len(res) == 2
 
 
+@pytest.mark.usefixtures("clean_data")
+def test_add_documents_new_lang(models_dir, data_dir, grpc_stub):
+    docs = [
+        Document(Id=DocId(Lo=0, Hi=0), Tokens=["a", "b"], Language="gf"),
+        Document(Id=DocId(Lo=0, Hi=1), Tokens=["c", "D"], Language="en"),
+    ]
+    parallel_docs = ParallelDocIds(Ids=[DocId(Lo=0, Hi=0), DocId(Lo=0, Hi=1)])
+    resp = grpc_stub.AddDocumentsToModel(
+        AddDocumentsToModelRequest(
+            Collection=DocumentPack(Documents=docs), ParallelDocuments=[parallel_docs]
+        )
+    )
+
+    assert resp.Status == AddDocumentsToModelResponse.AddDocumentsStatus.OK
+
+    with open(os.path.join(data_dir, "vw_new", "actual.txt"), "r") as f:
+        res = f.readlines()
+        assert len(res) == 2
+
+
+@pytest.mark.usefixtures("clean_data")
+def test_add_documents_new_lang_no_translation(models_dir, data_dir, grpc_stub):
+    docs = [
+        Document(Id=DocId(Lo=0, Hi=0), Tokens=["a", "b"], Language="rq"),
+        Document(Id=DocId(Lo=0, Hi=1), Tokens=["c", "D"], Language="rq"),
+        Document(Id=DocId(Lo=0, Hi=2), Tokens=["c", "D"], Language="fr"),
+    ]
+    parallel_docs = ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)])
+    resp = grpc_stub.AddDocumentsToModel(
+        AddDocumentsToModelRequest(
+            Collection=DocumentPack(Documents=docs), ParallelDocuments=[parallel_docs]
+        )
+    )
+
+    assert resp.Status == AddDocumentsToModelResponse.AddDocumentsStatus.NO_TRANSLATION
+    assert not os.path.exists(os.path.join(data_dir, "vw_new", "actual.txt"))
+
+
 def test_start_train(data_dir, grpc_stub):
+    docs = [
+        Document(Id=DocId(Lo=0, Hi=0), Tokens=["a", "b"], Language="gf"),
+        Document(Id=DocId(Lo=0, Hi=1), Tokens=["c", "D"], Language="en"),
+        Document(Id=DocId(Lo=1, Hi=0), Tokens=["e", "f"], Language="gf"),
+        Document(Id=DocId(Lo=1, Hi=1), Tokens=["c", "b"], Language="en"),
+        Document(Id=DocId(Lo=2, Hi=0), Tokens=["a", "f"], Language="gf"),
+        Document(Id=DocId(Lo=2, Hi=1), Tokens=["a", "b"], Language="en"),
+    ]
+    parallel_docs = [
+        ParallelDocIds(Ids=[DocId(Lo=0, Hi=0), DocId(Lo=0, Hi=1)]),
+        ParallelDocIds(Ids=[DocId(Lo=1, Hi=0), DocId(Lo=1, Hi=1)]),
+        ParallelDocIds(Ids=[DocId(Lo=2, Hi=0), DocId(Lo=2, Hi=1)]),
+    ]
+
+    resp = grpc_stub.AddDocumentsToModel(
+        AddDocumentsToModelRequest(
+            Collection=DocumentPack(Documents=docs), ParallelDocuments=parallel_docs
+        )
+    )
+
+    assert resp.Status == AddDocumentsToModelResponse.AddDocumentsStatus.OK
+
     resp = grpc_stub.StartTrainTopicModel(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.FULL)
     )
@@ -129,6 +197,9 @@ def test_start_train(data_dir, grpc_stub):
     assert len(os.listdir(os.path.join(data_dir, "batches_new"))) == 0
     assert len(os.listdir(os.path.join(data_dir, "vw"))) > 0
     assert len(os.listdir(os.path.join(data_dir, "batches"))) > 0
+
+    with open(os.path.join(data_dir, "dictionary.txt")) as f:
+        assert len(f.readlines()) == 10
 
     resp = grpc_stub.StartTrainTopicModel(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.UPDATE)

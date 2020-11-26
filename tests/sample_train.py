@@ -2,13 +2,19 @@ from time import sleep
 
 import grpc
 
-from ap.topic_model.v1.TopicModelBase_pb2 import (DocId, Document,
-                                                  DocumentPack, ParallelDocIds)
+from ap.topic_model.v1.TopicModelBase_pb2 import (
+    DocId,
+    Document,
+    DocumentPack,
+    ParallelDocIds,
+)
 from ap.topic_model.v1.TopicModelTrain_pb2 import (
-    AddDocumentsToModelRequest, StartTrainTopicModelRequest,
-    TrainTopicModelStatusRequest, TrainTopicModelStatusResponse)
-from ap.topic_model.v1.TopicModelTrain_pb2_grpc import \
-    TopicModelTrainServiceStub
+    AddDocumentsToModelRequest,
+    StartTrainTopicModelRequest,
+    TrainTopicModelStatusRequest,
+    TrainTopicModelStatusResponse,
+)
+from ap.topic_model.v1.TopicModelTrain_pb2_grpc import TopicModelTrainServiceStub
 
 if __name__ == "__main__":
     # ALL_LANGUAGES = ["ru", "en", 'cs', 'de', 'es', 'fr', 'it', 'ja',

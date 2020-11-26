@@ -1,10 +1,10 @@
 import grpc
 
 from ap.topic_model.v1.TopicModelBase_pb2 import DocId, Document, DocumentPack
-from ap.topic_model.v1.TopicModelInference_pb2 import \
-    GetDocumentsEmbeddingRequest
-from ap.topic_model.v1.TopicModelInference_pb2_grpc import \
-    TopicModelInferenceServiceStub
+from ap.topic_model.v1.TopicModelInference_pb2 import GetDocumentsEmbeddingRequest
+from ap.topic_model.v1.TopicModelInference_pb2_grpc import (
+    TopicModelInferenceServiceStub,
+)
 
 if __name__ == "__main__":
     channel = grpc.insecure_channel("localhost:50051")

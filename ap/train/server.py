@@ -1,6 +1,5 @@
 import concurrent
 import logging
-import os
 import typing
 from concurrent import futures
 
@@ -20,10 +19,9 @@ from ap.topic_model.v1.TopicModelTrain_pb2_grpc import (
     TopicModelTrainServiceServicer,
     add_TopicModelTrainServiceServicer_to_server,
 )
-from ap.train.data_manager import ModelDataManager
+from ap.train.data_manager import ModelDataManager, NoTranslationException
 from ap.train.trainer import ModelTrainer
 from ap.utils.general import docs_from_pack, id_to_str
-from ap.utils.vowpal_wabbit import VowpalWabbit
 
 
 class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
@@ -39,8 +37,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         models_dir - путь к директория сохранения файлов
         data_dir - путь к директории с данными
         """
-        self._vw = VowpalWabbit(use_counters=True)
-        self._data_manager = ModelDataManager(data_dir)
+        self._data_manager = ModelDataManager(data_dir, train_conf)
         self._trainer = ModelTrainer(self._data_manager, train_conf, models_dir)
 
         self._executor = concurrent.futures.ProcessPoolExecutor(max_workers=2)
@@ -61,19 +58,26 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         -------
         Ответ
         """
-        logging.info("AddDocumentsToModel")
+        try:
+            logging.info("AddDocumentsToModel")
 
-        docs = docs_from_pack(request.Collection)
+            docs = docs_from_pack(request.Collection)
 
-        for parallel_docs in request.ParallelDocuments:
-            base_id = id_to_str(parallel_docs.Ids[0])
-            for i in range(1, len(parallel_docs.Ids)):
-                docs[base_id].update(docs[id_to_str(parallel_docs.Ids[i])])
+            for parallel_docs in request.ParallelDocuments:
+                base_id = id_to_str(parallel_docs.Ids[0])
+                for i in range(1, len(parallel_docs.Ids)):
+                    docs[base_id].update(docs[id_to_str(parallel_docs.Ids[i])])
 
-        data_file = self._data_manager.get_current_vw()
-        with open(data_file, "a" if os.path.exists(data_file) else "w") as f:
-            self._vw.save_docs(f, docs)
-
+            self._data_manager.write_new_docs(docs)
+        except NoTranslationException:
+            return AddDocumentsToModelResponse(
+                Status=AddDocumentsToModelResponse.AddDocumentsStatus.NO_TRANSLATION
+            )
+        except Exception as e:
+            logging.error(e)
+            return AddDocumentsToModelResponse(
+                Status=AddDocumentsToModelResponse.AddDocumentsStatus.EXCEPTION
+            )
         return AddDocumentsToModelResponse(
             Status=AddDocumentsToModelResponse.AddDocumentsStatus.OK
         )
