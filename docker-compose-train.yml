@@ -7,5 +7,6 @@ services:
     volumes:
       - ${MODELS_PATH}:/models
       - ${DATA_PATH}:/data
-    entrypoint: python -m ap.train.server --models=/models --data=/data
+      - ${BPE_PATH}:/bpe
+    entrypoint: python -m ap.train.server --models=/models --data=/data --bpe=/bpe
 

@@ -77,10 +77,10 @@ def test_conf():
 
 
 @pytest.fixture(scope="module")
-def grpc_servicer(test_conf, models_dir, data_dir):
+def grpc_servicer(test_conf, models_dir, data_dir, bpe_models):
     from ap.train.server import TopicModelTrainServiceImpl
 
-    return TopicModelTrainServiceImpl(test_conf, models_dir, data_dir)
+    return TopicModelTrainServiceImpl(bpe_models, test_conf, models_dir, data_dir)
 
 
 @pytest.fixture(scope="module")

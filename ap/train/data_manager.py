@@ -7,7 +7,7 @@ import uuid
 import yaml
 
 from ap.utils.general import batch_names, ensure_directory
-from ap.utils.vowpal_wabbit import VowpalWabbit
+from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
 class NoTranslationException(Exception):
@@ -18,7 +18,7 @@ class ModelDataManager:
     MAX_FILE_SIZE = 512 * 1024 ^ 2
     BATCH_SIZE = 10000
 
-    def __init__(self, data_dir, train_conf):
+    def __init__(self, data_dir, train_conf, bpe_models):
         """
         Создает дата менеджер.
 
@@ -26,7 +26,7 @@ class ModelDataManager:
         ----------
         data_dir - директория для хранения данных
         """
-        self._vw = VowpalWabbit(use_counters=True)
+        self._vw = VowpalWabbitBPE(bpe_models)
 
         self._train_conf = train_conf
 
