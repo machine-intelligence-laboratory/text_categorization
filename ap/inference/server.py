@@ -43,9 +43,9 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
 
         for doc in dock_pack.Documents:
             modality = "@" + doc.Language
-            vw_doc = self._vw.convert_doc({modality: " ".join(doc.Tokens)})
-            documents.append((id_to_str(doc.Id), modality, vw_doc[modality]))
-            vocab.update(((modality, token) for token in vw_doc[modality].keys()))
+            vw_doc = self._vw.convert_doc({doc.Language: " ".join(doc.Tokens)})
+            documents.append((id_to_str(doc.Id), modality, vw_doc[doc.Language]))
+            vocab.update(((modality, token) for token in vw_doc[doc.Language].keys()))
 
         batch = artm.messages.Batch()
         batch.id = str(uuid.uuid4())
