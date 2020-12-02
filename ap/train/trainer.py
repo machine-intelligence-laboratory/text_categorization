@@ -48,6 +48,11 @@ class ModelTrainer:
         ):
             logging.info("Start full training")
 
+            background_topic_list = [
+                f"topic_{i}" for i in range(self._conf["num_bg_topics"])
+            ]
+
+            dictionary = self._data_manager.dictionary
             model = artm.ARTM(
                 num_topics=self._conf["num_topics"],
                 theta_columns_naming="title",
@@ -55,14 +60,18 @@ class ModelTrainer:
                 cache_theta=True,
                 show_progress_bars=True,
                 num_processors=8,
-                regularizers=[
-                    artm.DecorrelatorPhiRegularizer(
-                        gamma=self._conf["gamma"], tau=self._conf["tau"]
-                    )
-                ],
-                dictionary=self._data_manager.dictionary,
+                dictionary=dictionary,
             )
-            model.scores.add(artm.PerplexityScore(name="PerplexityScore"))
+            model.regularizers.add(
+                artm.SmoothSparsePhiRegularizer(
+                    name="SmoothPhiRegularizer",
+                    tau=self._conf["tau"],
+                    gamma=self._conf["gamma"],
+                    topic_names=background_topic_list,
+                    dictionary=dictionary,
+                )
+            )
+
             num_epochs = self._conf["num_epochs_full"]
         else:
             last_model = max(current_models)

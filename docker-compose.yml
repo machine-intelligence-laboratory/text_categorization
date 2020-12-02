@@ -6,3 +6,4 @@ services:
       - "50051:50051"
     volumes:
       - ${MODEL_PATH}:/model
+      - ${BPE_PATH}:/bpe

@@ -18,12 +18,13 @@ from ap.topic_model.v1.TopicModelInference_pb2_grpc import (
     TopicModelInferenceServiceServicer,
     add_TopicModelInferenceServiceServicer_to_server,
 )
+from ap.utils.bpe import load_bpe_models
 from ap.utils.general import id_to_str
-from ap.utils.vowpal_wabbit import VowpalWabbit
+from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
 class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
-    def __init__(self, artm_model, work_dir):
+    def __init__(self, artm_model, bpe_models, work_dir):
         """
         Создает инференс сервер.
 
@@ -33,7 +34,7 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
         work_dir - рабочая директория для сохранения временных файлов
         """
         self._artm_model = artm_model
-        self._vw = VowpalWabbit(use_counters=True)
+        self._vw = VowpalWabbitBPE(bpe_models)
         self._work_dir = work_dir
 
     def _create_batches(self, dock_pack, batches_dir):
@@ -42,8 +43,9 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
 
         for doc in dock_pack.Documents:
             modality = "@" + doc.Language
-            documents.append((id_to_str(doc.Id), modality, doc.Tokens))
-            vocab.update(((modality, token) for token in doc.Tokens))
+            vw_doc = self._vw.convert_doc({doc.Language: " ".join(doc.Tokens)})
+            documents.append((id_to_str(doc.Id), modality, vw_doc[doc.Language]))
+            vocab.update(((modality, token) for token in vw_doc[doc.Language].keys()))
 
         batch = artm.messages.Batch()
         batch.id = str(uuid.uuid4())
@@ -124,7 +126,10 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
 @click.option(
     "--model", help="A path to a bigARTM model",
 )
-def serve(model):
+@click.option(
+    "--bpe", help="A path to a directory with BPE models",
+)
+def serve(model, bpe):
     """
     Запуск инференс сервера.
 
@@ -135,7 +140,10 @@ def serve(model):
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_TopicModelInferenceServiceServicer_to_server(
-        TopicModelInferenceServiceImpl(artm.load_artm_model(model), os.getcwd()), server
+        TopicModelInferenceServiceImpl(
+            artm.load_artm_model(model), load_bpe_models(bpe), os.getcwd()
+        ),
+        server,
     )
     server.add_insecure_port("[::]:50051")
     server.start()

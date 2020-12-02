@@ -28,10 +28,10 @@ def grpc_add_to_server():
 
 
 @pytest.fixture(scope="module")
-def grpc_servicer(artm_model):
+def grpc_servicer(artm_model, bpe_models):
     from ap.inference.server import TopicModelInferenceServiceImpl
 
-    return TopicModelInferenceServiceImpl(artm_model, os.getcwd())
+    return TopicModelInferenceServiceImpl(artm_model, bpe_models, os.getcwd())
 
 
 @pytest.fixture(scope="module")

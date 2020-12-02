@@ -21,12 +21,18 @@ from ap.topic_model.v1.TopicModelTrain_pb2_grpc import (
 )
 from ap.train.data_manager import ModelDataManager, NoTranslationException
 from ap.train.trainer import ModelTrainer
+from ap.utils.bpe import load_bpe_models
 from ap.utils.general import docs_from_pack, id_to_str
+from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
 class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
     def __init__(
-        self, train_conf: typing.Dict[str, typing.Any], models_dir: str, data_dir: str
+        self,
+        bpe_models: typing.Dict[str, typing.Any],
+        train_conf: typing.Dict[str, typing.Any],
+        models_dir: str,
+        data_dir: str,
     ):
         """
         Инициализирует сервер.
@@ -37,6 +43,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         models_dir - путь к директория сохранения файлов
         data_dir - путь к директории с данными
         """
+        self._vw = VowpalWabbitBPE(bpe_models)
         self._data_manager = ModelDataManager(data_dir, train_conf)
         self._trainer = ModelTrainer(self._data_manager, train_conf, models_dir)
 
@@ -68,7 +75,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
                 for i in range(1, len(parallel_docs.Ids)):
                     docs[base_id].update(docs[id_to_str(parallel_docs.Ids[i])])
 
-            self._data_manager.write_new_docs(docs)
+            self._data_manager.write_new_docs(self._vw, docs)
         except NoTranslationException:
             return AddDocumentsToModelResponse(
                 Status=AddDocumentsToModelResponse.AddDocumentsStatus.NO_TRANSLATION
@@ -152,9 +159,12 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
     "--models", help="A path to store trained bigARTM models",
 )
 @click.option(
+    "--bpe", help="A path to a directory with BPE models",
+)
+@click.option(
     "--data", help="A path to data directories",
 )
-def serve(models, data):
+def serve(models, bpe, data):
     """
     Запускает сервер.
 
@@ -169,7 +179,8 @@ def serve(models, data):
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_TopicModelTrainServiceServicer_to_server(
-        TopicModelTrainServiceImpl(train_conf, models, data), server
+        TopicModelTrainServiceImpl(load_bpe_models(bpe), train_conf, models, data),
+        server,
     )
     server.add_insecure_port("[::]:50051")
     server.start()

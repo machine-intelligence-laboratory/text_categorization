@@ -7,7 +7,7 @@ import uuid
 import yaml
 
 from ap.utils.general import batch_names, ensure_directory
-from ap.utils.vowpal_wabbit import VowpalWabbit
+from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
 class NoTranslationException(Exception):
@@ -26,8 +26,6 @@ class ModelDataManager:
         ----------
         data_dir - директория для хранения данных
         """
-        self._vw = VowpalWabbit(use_counters=True)
-
         self._train_conf = train_conf
 
         self._data_dir = data_dir
@@ -124,7 +122,7 @@ class ModelDataManager:
 
         return self._current_vw_name
 
-    def write_new_docs(self, docs):
+    def write_new_docs(self, vw_writer, docs):
 
         if not all(
             [
@@ -137,7 +135,7 @@ class ModelDataManager:
         self._update_classes({lang for doc in docs.values() for lang in doc})
         data_file = self.get_current_vw()
         with open(data_file, "a" if os.path.exists(data_file) else "w") as f:
-            self._vw.save_docs(f, docs)
+            vw_writer.save_docs(f, docs)
 
     def _close_current(self):
         shutil.move(

@@ -70,17 +70,18 @@ def test_conf():
         "num_epochs_full": 3,
         "num_epochs_update": 2,
         "num_topics": 100,
-        "tau": 0.1,
+        "num_bg_topics": 100,
+        "tau": 0.2,
         "gamma": 0,
         "max_dictionary_size": 10,
     }
 
 
 @pytest.fixture(scope="module")
-def grpc_servicer(test_conf, models_dir, data_dir):
+def grpc_servicer(test_conf, models_dir, data_dir, bpe_models):
     from ap.train.server import TopicModelTrainServiceImpl
 
-    return TopicModelTrainServiceImpl(test_conf, models_dir, data_dir)
+    return TopicModelTrainServiceImpl(bpe_models, test_conf, models_dir, data_dir)
 
 
 @pytest.fixture(scope="module")
