@@ -23,6 +23,7 @@ from ap.train.data_manager import ModelDataManager, NoTranslationException
 from ap.train.trainer import ModelTrainer
 from ap.utils.bpe import load_bpe_models
 from ap.utils.general import docs_from_pack, id_to_str
+from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
 class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
@@ -42,7 +43,8 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         models_dir - путь к директория сохранения файлов
         data_dir - путь к директории с данными
         """
-        self._data_manager = ModelDataManager(data_dir, train_conf, bpe_models)
+        self._vw = VowpalWabbitBPE(bpe_models)
+        self._data_manager = ModelDataManager(data_dir, train_conf)
         self._trainer = ModelTrainer(self._data_manager, train_conf, models_dir)
 
         self._executor = concurrent.futures.ProcessPoolExecutor(max_workers=2)
@@ -73,7 +75,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
                 for i in range(1, len(parallel_docs.Ids)):
                     docs[base_id].update(docs[id_to_str(parallel_docs.Ids[i])])
 
-            self._data_manager.write_new_docs(docs)
+            self._data_manager.write_new_docs(self._vw, docs)
         except NoTranslationException:
             return AddDocumentsToModelResponse(
                 Status=AddDocumentsToModelResponse.AddDocumentsStatus.NO_TRANSLATION
