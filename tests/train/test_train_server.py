@@ -70,7 +70,8 @@ def test_conf():
         "num_epochs_full": 3,
         "num_epochs_update": 2,
         "num_topics": 100,
-        "tau": 0.1,
+        "num_bg_topics": 100,
+        "tau": 0.2,
         "gamma": 0,
         "max_dictionary_size": 10,
     }

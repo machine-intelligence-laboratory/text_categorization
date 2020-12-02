@@ -1,6 +1,7 @@
 num_epochs_full: 20
 num_epochs_update: 3
-num_topics: 100
-tau: 0.1
+num_topics: 300
+num_bg_topics: 1
+tau: 0.2
 gamma: 0
-max_dictionary_size: 20000
+max_dictionary_size: 5000
