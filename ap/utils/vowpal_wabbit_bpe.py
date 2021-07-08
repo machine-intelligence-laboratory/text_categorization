@@ -1,5 +1,6 @@
 import re
 import typing
+import json
 from collections import Counter
 from string import punctuation
 
@@ -21,7 +22,7 @@ class VowpalWabbitBPE:
         self.punctuation = punctuation + hanzi.punctuation
 
     def save_docs(
-        self, target_file: typing.TextIO, doc: typing.Dict[str, typing.Dict[str, str]]
+        self, target_file: typing.Dict[str, str], doc: typing.Dict[str, typing.Dict[str, str]]
     ):
         """
         Конвертирует документы в BOW и сохраняет их.
@@ -35,7 +36,7 @@ class VowpalWabbitBPE:
 
     def save_bow(
         self,
-        target_file: typing.TextIO,
+        target_file: typing.Dict[str, str],
         sessions_bow_messages: typing.Dict[
             str, typing.Dict[str, typing.Union[str, typing.Counter]]
         ],
@@ -45,7 +46,7 @@ class VowpalWabbitBPE:
 
         Parameters
         ----------
-        target_file путь к файлу
+        target_file словарь с vw
         sessions_bow_messages документы в формате BOW
         """
         for key, modality_bows in sessions_bow_messages.items():
@@ -65,8 +66,7 @@ class VowpalWabbitBPE:
                 else:
                     modality_content = sessions_bow_messages[key][modality]
                 new_message_str_format += " |@{} {}".format(modality, modality_content)
-            target_file.write(new_message_str_format)
-            target_file.write("\n")
+                target_file[str(key).replace(" ", "_")] = new_message_str_format
 
     def convert_to_bow(
         self, data: typing.Dict[str, typing.Dict[str, str]]
@@ -104,10 +104,12 @@ class VowpalWabbitBPE:
         res = {}
 
         for modality, mod_elem in doc.items():
+            print(modality)
             tokens = " ".join(self._token_filtration(mod_elem))
-            tokens = self._bpe_models[modality].encode(
-                tokens, output_type=yttm.OutputType.SUBWORD
-            )
+            if modality != '@UDK' and modality != '@GRNTI':
+                tokens = self._bpe_models[modality].encode(
+                    tokens, output_type=yttm.OutputType.SUBWORD
+                )
             res[modality] = Counter(tokens)
 
         return res

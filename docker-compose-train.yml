@@ -8,5 +8,6 @@ services:
       - ${MODELS_PATH}:/models
       - ${DATA_PATH}:/data
       - ${BPE_PATH}:/bpe
-    entrypoint: python -m ap.train.server --models=/models --data=/data --bpe=/bpe
+      - ${RUBRIC_PATH}:/rubrics
+    entrypoint: python -m ap.train.server --models=/models --data=/data --bpe=/bpe --rubric=/rubrics
 

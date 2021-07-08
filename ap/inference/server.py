@@ -3,11 +3,13 @@ import logging
 import os
 import tempfile
 import uuid
+import json
 from concurrent import futures
 
 import artm
 import click
 import grpc
+import pandas as pd
 
 from ap.topic_model.v1.TopicModelBase_pb2 import Embedding
 from ap.topic_model.v1.TopicModelInference_pb2 import (
@@ -24,7 +26,7 @@ from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
 class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
-    def __init__(self, artm_model, bpe_models, work_dir):
+    def __init__(self, artm_model, bpe_models, work_dir, rubric_dir):
         """
         Создает инференс сервер.
 
@@ -36,16 +38,72 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
         self._artm_model = artm_model
         self._vw = VowpalWabbitBPE(bpe_models)
         self._work_dir = work_dir
+        self._rubric_dir = rubric_dir
 
+    def get_rubric_of_train_docs(self):
+        """
+        Get dict where keys - document ids, value - numer of GRNTI rubric of document.
+
+        Do not conteins rubric 'нет'.
+
+        Returns
+        -------
+        train_grnti: dict
+            dict where keys - document ids, value - numer of GRNTI rubric of document.
+        """
+        with open(os.path.join(self._rubric_dir, 'grnti_codes.json')) as file:
+            articles_grnti_with_no = json.load(file)
+        with open(os.path.join(self._rubric_dir, "elib_train_grnti_codes.json")) as file:
+            elib_grnti_to_fix_with_no = json.load(file)
+        with open(os.path.join(self._rubric_dir, "grnti_to_number.json")) as file:
+            grnti_to_number = json.load(file)
+
+        articles_grnti = {doc_id: rubric
+                          for doc_id, rubric in articles_grnti_with_no.items()
+                          if rubric != 'нет'}
+
+        elib_grnti = {doc_id[:-len('.txt')]: rubric
+                      for doc_id, rubric in elib_grnti_to_fix_with_no.items()
+                      if rubric != 'нет'}
+
+        train_grnti = dict()
+        for doc_id in articles_grnti:
+            rubric = str(grnti_to_number[articles_grnti[doc_id]])
+            train_grnti[doc_id] = rubric
+        for doc_id in elib_grnti:
+            rubric = str(grnti_to_number[elib_grnti[doc_id]])
+            train_grnti[doc_id] = rubric
+        return train_grnti
+    
     def _create_batches(self, dock_pack, batches_dir):
+        with open(os.path.join(self._rubric_dir, 'udk_codes.json'), "r") as f:
+            udk_codes = json.loads(f.read())
+            
+        grnti_codes = self.get_rubric_of_train_docs()
+
         documents = []
         vocab = set()
 
         for doc in dock_pack.Documents:
-            modality = "@" + doc.Language
-            vw_doc = self._vw.convert_doc({doc.Language: " ".join(doc.Tokens)})
-            documents.append((id_to_str(doc.Id), modality, vw_doc[doc.Language]))
-            vocab.update(((modality, token) for token in vw_doc[doc.Language].keys()))
+            modality = ["@" + doc.Language]
+            doc_id = id_to_str(doc.Id)
+            
+            doc_vw_dict = {doc.Language: " ".join(doc.Tokens)}
+            if doc_id in udk_codes:
+                modality += ["@UDK"]
+                doc_vw_dict.update({"@UDK": udk_codes[doc_id]})
+            if doc_id in grnti_codes:
+                modality += ["@GRNTI"]
+                if grnti_codes[doc_id] != "нет":
+                    doc_vw_dict.update({"@GRNTI": grnti_codes[doc_id]})
+            
+            vw_doc = self._vw.convert_doc(doc_vw_dict)
+            
+            for modl in modality:
+                key = modl if modl in ["@UDK", "@GRNTI"] else modl[1:]
+                documents.append((id_to_str(doc.Id), key, vw_doc[key]))
+                vocab.update(((key, token) for token in vw_doc[key].keys()))
+
 
         batch = artm.messages.Batch()
         batch.id = str(uuid.uuid4())
@@ -114,11 +172,18 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
             "Embeddings calculated, spent %.2f seconds",
             (datetime.datetime.now() - processing_start).total_seconds(),
         )
+        
+        emb_doc = list()
+        for doc in request.Pack.Documents:
+            emb = embeddings[f"{doc.Id.Hi}_{doc.Id.Lo}"]
+            if isinstance(emb, pd.DataFrame):
+                emb_doc += [Embedding(Vector=embeddings[f"{doc.Id.Hi}_{doc.Id.Lo}"].iloc[:, 0].tolist())]
+            else:
+                emb_doc += [Embedding(Vector=embeddings[f"{doc.Id.Hi}_{doc.Id.Lo}"].tolist())]
+
+
         return GetDocumentsEmbeddingResponse(
-            Embeddings=[
-                Embedding(Vector=embeddings[f"{doc.Id.Hi}_{doc.Id.Lo}"].tolist())
-                for doc in request.Pack.Documents
-            ]
+            Embeddings=emb_doc
         )
 
 
@@ -129,7 +194,10 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
 @click.option(
     "--bpe", help="A path to a directory with BPE models",
 )
-def serve(model, bpe):
+@click.option(
+    "--rubric", help="A path to a directory with Rubric jsons",
+)
+def serve(model, bpe, rubric):
     """
     Запуск инференс сервера.
 
@@ -141,7 +209,7 @@ def serve(model, bpe):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_TopicModelInferenceServiceServicer_to_server(
         TopicModelInferenceServiceImpl(
-            artm.load_artm_model(model), load_bpe_models(bpe), os.getcwd()
+            artm.load_artm_model(model), load_bpe_models(bpe), os.getcwd(), rubric
         ),
         server,
     )

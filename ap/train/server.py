@@ -33,6 +33,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         train_conf: typing.Dict[str, typing.Any],
         models_dir: str,
         data_dir: str,
+        rubric_dir: str,
     ):
         """
         Инициализирует сервер.
@@ -44,7 +45,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         data_dir - путь к директории с данными
         """
         self._vw = VowpalWabbitBPE(bpe_models)
-        self._data_manager = ModelDataManager(data_dir, train_conf)
+        self._data_manager = ModelDataManager(data_dir, train_conf, rubric_dir)
         self._trainer = ModelTrainer(self._data_manager, train_conf, models_dir)
 
         self._executor = concurrent.futures.ProcessPoolExecutor(max_workers=2)
@@ -164,7 +165,10 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
 @click.option(
     "--data", help="A path to data directories",
 )
-def serve(models, bpe, data):
+@click.option(
+    "--rubric", help="A path to data directories",
+)
+def serve(models, bpe, data, rubric):
     """
     Запускает сервер.
 
@@ -179,7 +183,7 @@ def serve(models, bpe, data):
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_TopicModelTrainServiceServicer_to_server(
-        TopicModelTrainServiceImpl(load_bpe_models(bpe), train_conf, models, data),
+        TopicModelTrainServiceImpl(load_bpe_models(bpe), train_conf, models, data, rubric),
         server,
     )
     server.add_insecure_port("[::]:50051")
