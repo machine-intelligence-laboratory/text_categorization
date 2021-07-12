@@ -7,4 +7,4 @@ services:
     volumes:
       - ${MODEL_PATH}/:/model
       - ${BPE_PATH}/:/bpe
-      - ${RUBRIC_PATH}/:/rubric
+      - ${RUBRIC_PATH}/:/rubrics
