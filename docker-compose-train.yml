@@ -5,9 +5,9 @@ services:
     ports:
       - "50051:50051"
     volumes:
-      - ${MODELS_PATH}:/models
-      - ${DATA_PATH}:/data
-      - ${BPE_PATH}:/bpe
-      - ${RUBRIC_PATH}:/rubrics
+      - ${MODELS_PATH}/:/models
+      - ${DATA_PATH}/:/data
+      - ${BPE_PATH}/:/bpe
+      - ${RUBRIC_PATH}/:/rubrics
     entrypoint: python -m ap.train.server --models=/models --data=/data --bpe=/bpe --rubric=/rubrics
 

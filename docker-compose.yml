@@ -1,10 +1,10 @@
-version: "3.8"
+version: "3.7"
 services:
   inference:
     build: .
     ports:
       - "50051:50051"
     volumes:
-      - ${MODEL_PATH}:/model
-      - ${BPE_PATH}:/bpe
-      - ${RUBRIC_PATH}:/rubric
+      - ${MODEL_PATH}/:/model
+      - ${BPE_PATH}/:/bpe
+      - ${RUBRIC_PATH}/:/rubric
