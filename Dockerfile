@@ -12,4 +12,4 @@ RUN ./generate.sh
 COPY ap ./ap
 
 
-ENTRYPOINT python -m ap.inference.server --model=/model --bpe=/bpe
+ENTRYPOINT python -m ap.inference.server --model=/model --bpe=/bpe --rubric=/rubric
