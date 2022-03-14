@@ -1,0 +1,325 @@
+import json
+import itertools
+import numpy as np
+from pathlib import Path
+from tqdm import tqdm
+from collections import Counter
+import joblib
+import artm
+from topicnet.cooking_machine import rel_toolbox_lite
+import experiment_config
+import typing
+
+
+def create_init_model() -> artm.artm_model.ARTM:
+    """
+    Creating an initial topic model.
+
+    Returns
+    -------
+    model: artm.ARTM
+        initial artm topic model with parameters from experiment_config
+    """
+    dictionary = artm.Dictionary()
+    dictionary.load_text(experiment_config.dictionary_path)
+
+    background_topic_list = [f'topic_{i}' for i in range(experiment_config.num_not_sp)]
+    subject_topic_list = [
+        f'topic_{i}' for i in range(experiment_config.num_not_sp,
+                                    experiment_config.NUM_TOPICS-experiment_config.num_not_sp)
+    ]
+
+    model = artm.ARTM(num_topics=experiment_config.NUM_TOPICS,
+                      theta_columns_naming='title',
+                      class_ids=experiment_config.modalities_with_weights,
+                      show_progress_bars=True,
+                      dictionary=dictionary)
+
+    model.scores.add(artm.SparsityThetaScore(name='SparsityThetaScore',
+                                             topic_names=subject_topic_list))
+    for lang in model.class_ids:
+        model.scores.add(artm.SparsityPhiScore(name=f'SparsityPhiScore_{lang}',
+                                               class_id=lang,
+                                               topic_names=subject_topic_list))
+        model.scores.add(artm.PerplexityScore(name=f'PerlexityScore_{lang}',
+                                              class_ids=lang,
+                                              dictionary=dictionary))
+
+    # SmoothTheta
+    model.regularizers.add(
+        artm.SmoothSparseThetaRegularizer(
+            name='SmoothThetaRegularizer',
+            tau=experiment_config.tau_SmoothTheta,
+            topic_names=background_topic_list)
+    )
+    rel_toolbox_lite.handle_regularizer(
+        use_relative_coefficients=True,
+        model=model,
+        regularizer=model.regularizers['SmoothThetaRegularizer'],
+        data_stats=rel_toolbox_lite.count_vocab_size(
+            dictionary=dictionary,
+            modalities={f'@{lang}': 1 for lang in experiment_config.LANGUAGES_ALL})
+    )
+
+    # SparseTheta
+    model.regularizers.add(
+        artm.SmoothSparseThetaRegularizer(
+            name='SparseThetaRegularizer',
+            tau=experiment_config.tau_SparseTheta,
+            topic_names=subject_topic_list)
+    )
+    rel_toolbox_lite.handle_regularizer(
+        use_relative_coefficients=True,
+        model=model,
+        regularizer=model.regularizers['SparseThetaRegularizer'],
+        data_stats=rel_toolbox_lite.count_vocab_size(
+            dictionary=dictionary,
+            modalities={f'@{lang}': 1 for lang in experiment_config.LANGUAGES_ALL})
+    )
+
+    # DecorrelatorPhi
+    model.regularizers.add(
+        artm.DecorrelatorPhiRegularizer(
+            name='DecorrelatorPhiRegularizer',
+            tau=experiment_config.tau_DecorrelatorPhi,
+            gamma=0, topic_names=subject_topic_list)
+    )
+    rel_toolbox_lite.handle_regularizer(
+        use_relative_coefficients=True,
+        model=model, regularizer=model.regularizers['DecorrelatorPhiRegularizer'],
+        data_stats=rel_toolbox_lite.count_vocab_size(
+            dictionary=dictionary,
+            modalities={f'@{lang}': 1 for lang in experiment_config.LANGUAGES_ALL})
+    )
+    return model
+
+
+def get_balanced_doc_ids(
+    train_dict: typing.Dict[str, str],
+    train_grnti: typing.Dict[str, str],
+    docs_of_rubrics: typing.Dict[str, list],
+) -> typing.Tuple[list, typing.Dict[str, str]]:
+    """
+    Create train data balanced by rubrics.
+
+    Returns balanced_doc_ids - list of document ids, balanced by rubric. Documents of
+    all rubrics occures in balanced_doc_ids the same number of times,
+    equal to average_rubric_size.
+    Returns train_dict - dict where key - document id, value - document in
+    vowpal wabbit format. Function change train_dict, multiplying token counters
+    by number of occurrences of document id in balanced_doc_ids.
+
+    Returns
+    -------
+    balanced_doc_ids: list
+        list of document ids, balanced by rubric
+    train_dict: dict
+        dict where key - document id, value - document in vowpal wabbit format
+    """
+    average_rubric_size = int(len(train_grnti) / len(set(train_grnti.values())))
+    balanced_doc_ids = []
+    for rubric in set(train_grnti.values()):
+        doc_ids_rubric = np.random.choice(docs_of_rubrics[rubric], average_rubric_size)
+        balanced_doc_ids.extend(doc_ids_rubric)
+
+        doc_ids_count = Counter(doc_ids_rubric)
+        for doc_id, count in doc_ids_count.items():
+            if count > 1:
+                new_line_dict = dict()
+                for line_lang in train_dict[doc_id].split(' |@')[1:]:
+                    lang = line_lang.split()[0]
+                    line_lang_dict = {
+                        token_with_count.split(':')[0]: count *
+                        int(token_with_count.split(':')[1])
+                        for token_with_count in line_lang.split()[1:]
+                    }
+                    new_line_lang = ' '.join([lang] +
+                                             [':'.join([token, str(count)])
+                                              for token, count in line_lang_dict.items()])
+                    new_line_dict[lang] = new_line_lang
+                new_line = ' |@'.join([doc_id] + list(new_line_dict.values()))
+                train_dict[doc_id] = new_line
+    return balanced_doc_ids, train_dict
+
+
+def get_balanced_doc_ids_with_augmentation(
+    train_dict: typing.Dict[str, str],
+    train_grnti: typing.Dict[str, str],
+    docs_of_rubrics: typing.Dict[str, list],
+) -> typing.Tuple[list, typing.Dict[str, str]]:
+    """
+    Create train data balanced by rubrics with augmentation.
+
+    If the rubric size is larger than the average rubric size, a sample is taken
+    equal to the average rubric size.
+    If the size of the heading is less than the average rubric size,
+    all possible documents of rubric are taken; artificial documents are also generated by
+    combining the two documents in a ratio of 1 to experiment_config.aug_proportion.
+
+    Returns
+    -------
+    balanced_doc_ids: list
+        list of document ids, balanced by rubric
+    train_dict: dict
+        dict where key - document id, value - document in vowpal wabbit format
+    """
+    average_rubric_size = int(len(train_grnti) / len(set(train_grnti.values())))
+    balanced_doc_ids = []
+    for rubric in set(train_grnti.values()):
+        if len(docs_of_rubrics[rubric]) >= average_rubric_size:
+            doc_ids_rubric = np.random.choice(docs_of_rubrics[rubric], average_rubric_size)
+            balanced_doc_ids.extend(doc_ids_rubric)
+        else:
+            # все возможные уникальные пары айди
+            doc_id_pair_list = list(itertools.combinations(docs_of_rubrics[rubric], 2))
+            doc_id_pair_list_indexies = list(
+                np.random.choice(len(doc_id_pair_list),
+                                 average_rubric_size - len(docs_of_rubrics[rubric]))
+            )
+            doc_id_pair_list = [doc_id_pair_list[i] for i in doc_id_pair_list_indexies]
+            doc_id_unique_list = []
+
+            # для каждой пары - новый уникальный айди,
+            # новая статья как сумма старых и запись в train_dict
+            for doc_id_pair in doc_id_pair_list:
+                doc_id_unique = '_'.join([doc_id_pair[0], doc_id_pair[1]])
+                doc_id_unique_list.append(doc_id_unique)
+                line_1 = train_dict[doc_id_pair[0]]
+                line_2 = train_dict[doc_id_pair[1]]
+                line_unique_dict = dict()
+                for line_lang in line_1.split(' |@')[1:-1]:
+                    lang = line_lang.split()[0]
+                    line_lang_dict = {
+                        token_and_count.split(':')[0]: token_and_count.split(':')[1]
+                        for token_and_count in line_lang.split()[1:]
+                    }
+                    new_line = ' '.join([lang] + [':'.join([token, count])
+                                                  for token, count in line_lang_dict.items()])
+                    line_unique_dict[lang] = new_line
+                for line_lang in line_2.split(' |@')[1:-1]:
+                    lang = line_lang.split()[0]
+                    if lang not in line_unique_dict:
+                        line_lang_dict = {
+                            token_and_count.split(':')[0]: token_and_count.split(':')[1]
+                            for token_and_count in line_lang.split()[1:]
+                        }
+                        new_line = ' '.join([lang] + [':'.join([token, count])
+                                                      for token, count in line_lang_dict.items()])
+                        line_unique_dict[lang] = new_line
+                    else:
+                        line_lang_dict = {token_and_count.split(':')[0]: str(
+                            int(experiment_config.aug_proportion *
+                                int(token_and_count.split(':')[1])))
+                                          for token_and_count in line_lang.split()[1:]}
+                        new_line = ' '.join([':'.join([token, count])
+                                             for token, count in line_lang_dict.items()])
+                        line_unique_dict[lang] += ' ' + ' '.join(new_line.split())
+                grnti_rubric = line_1.split(' |@')[-1].split()[1].split(':')[0]
+                line_unique_dict['GRNTI'] = 'GRNTI ' + f'{grnti_rubric}:10'
+                line_unique = ' |@'.join([doc_id_unique] + list(line_unique_dict.values()))
+                train_dict[doc_id_unique] = line_unique
+            doc_ids_rubric = docs_of_rubrics[rubric] + list(np.random.choice(
+                doc_id_unique_list, average_rubric_size - len(docs_of_rubrics[rubric])))
+            balanced_doc_ids.extend(doc_ids_rubric)
+    return balanced_doc_ids, train_dict
+
+
+def get_rubric_of_train_docs() -> typing.Dict[str, str]:
+    """
+    Get dict where keys - document ids, value - numer of GRNTI rubric of document.
+
+    Do not conteins rubric 'нет'.
+
+    Returns
+    -------
+    train_grnti: dict
+        dict where keys - document ids, value - numer of GRNTI rubric of document.
+    """
+    with open(experiment_config.path_articles_rubrics_train_grnti) as file:
+        articles_grnti_with_no = json.load(file)
+    with open(experiment_config.path_elib_train_rubrics_grnti) as file:
+        elib_grnti_to_fix_with_no = json.load(file)
+    with open(experiment_config.path_grnti_mapping) as file:
+        grnti_to_number = json.load(file)
+
+    articles_grnti = {doc_id: rubric
+                      for doc_id, rubric in articles_grnti_with_no.items()
+                      if rubric != 'нет'}
+
+    elib_grnti = {doc_id[:-len('.txt')]: rubric
+                  for doc_id, rubric in elib_grnti_to_fix_with_no.items()
+                  if rubric != 'нет'}
+
+    train_grnti = dict()
+    for doc_id in articles_grnti:
+        rubric = str(grnti_to_number[articles_grnti[doc_id]])
+        train_grnti[doc_id] = rubric
+    for doc_id in elib_grnti:
+        rubric = str(grnti_to_number[elib_grnti[doc_id]])
+        train_grnti[doc_id] = rubric
+    return train_grnti
+
+
+def fit_topic_model():
+    """
+    The function fits topic model according to the experiment_config file.
+
+    experiment_config file should be plased in the same folder with this module.
+
+    Returns
+    -------
+    """
+    path_experiment = Path(experiment_config.path_experiment)
+    path_experiment.mkdir(parents=True, exist_ok=True)
+    path_to_dump_model = path_experiment.joinpath('topic_model')
+    path_train_data = path_experiment.joinpath('train_data')
+    path_to_batches = path_train_data.joinpath('batches_balanced')
+    path_to_batches.mkdir(parents=True, exist_ok=True)
+    path_balanced_train = path_train_data.joinpath('train_balanced.txt')
+
+    train_grnti = get_rubric_of_train_docs()
+    train_dict = joblib.load(experiment_config.train_dict_path)
+
+    docs_of_rubrics = {rubric: [] for rubric in set(train_grnti.values())}
+    for doc_id, rubric in train_grnti.items():
+        if doc_id in train_dict:
+            docs_of_rubrics[rubric].append(doc_id)
+    del train_dict
+
+    model = create_init_model()
+    path_batches_wiki = experiment_config.path_wiki_train_batches
+    for iteration in tqdm(range(1, experiment_config.num_collection_passes+1)):
+        train_dict = joblib.load(experiment_config.train_dict_path)
+
+        # генерирую сбалансированные данные
+        if experiment_config.need_augmentation:
+            balanced_doc_ids, train_dict = get_balanced_doc_ids_with_augmentation(
+                train_dict, train_grnti, docs_of_rubrics
+            )
+        else:
+            balanced_doc_ids, train_dict = get_balanced_doc_ids(
+                train_dict, train_grnti, docs_of_rubrics
+            )
+        with open(path_balanced_train, 'w') as file:
+            file.writelines([train_dict[doc_id].strip() + '\n'
+                             for doc_id in balanced_doc_ids])
+        del train_dict
+
+        # строю батчи по сбалансированным данным
+        batches_list = list(path_to_batches.iterdir())
+        if batches_list:
+            for batch in batches_list:
+                batch.unlink()
+        _ = artm.BatchVectorizer(
+            data_path=str(path_balanced_train),
+            data_format="vowpal_wabbit",
+            target_folder=str(path_to_batches),
+        )
+        bv = artm.BatchVectorizer(data_path=[path_to_batches, path_batches_wiki],
+                                  data_weight=[1, 1])
+        model.fit_offline(bv, num_collection_passes=1)
+    model.dump_artm_model(str(path_to_dump_model))
+
+
+if __name__ == "__main__":
+    fit_topic_model()
