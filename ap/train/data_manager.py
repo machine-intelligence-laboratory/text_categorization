@@ -1,17 +1,17 @@
+import json
 import logging
 import os
 import shutil
 import tempfile
 import uuid
 
-import yaml
-import joblib
-import json
-import numpy as np
 from collections import Counter
 
+import joblib
+import numpy as np
+import yaml
+
 from ap.utils.general import batch_names, ensure_directory
-from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
 class NoTranslationException(Exception):
@@ -37,15 +37,15 @@ class ModelDataManager:
         self._new_batches_dir = ensure_directory(os.path.join(data_dir, "batches_balanced"))
 
         self._current_vw_name = os.path.join(data_dir, "train_balanced.txt")
-        
+
         self._class_ids_path = os.path.join(data_dir, "classes.yaml")
-        with open(self._class_ids_path, "r") as f:
-            self._class_ids = yaml.safe_load(f)
-            
+        with open(self._class_ids_path, "r") as file:
+            self._class_ids = yaml.safe_load(file)
+
         self._new_class_ids_path = os.path.join(data_dir, "classes_new.yaml")
         if os.path.exists(self._new_class_ids_path):
-            with open(self._new_class_ids_path, "r") as f:
-                self._new_class_ids = yaml.safe_load(f)
+            with open(self._new_class_ids_path, "r") as file:
+                self._new_class_ids = yaml.safe_load(file)
         else:
             self._new_class_ids = {clsid: val for clsid, val in self._class_ids.items()}
 
@@ -64,18 +64,18 @@ class ModelDataManager:
         import artm
 
         logging.info("Preparing batches")
-            
+
         train_grnti = self.get_rubric_of_train_docs()
         docs_of_rubrics = {rubric: [] for rubric in set(train_grnti.values())}
-        
+
         for doc_id, rubric in train_grnti.items():
             if doc_id in self._vw_dict:
                 docs_of_rubrics[rubric].append(doc_id)
-                
-        balanced_doc_ids, train_dict = self.get_balanced_doc_ids(
+
+        balanced_doc_ids, _ = self.get_balanced_doc_ids(
                 self._vw_dict, train_grnti, docs_of_rubrics
             )
-        
+
         with open(self._current_vw_name, 'w') as file:
             file.writelines([self._vw_dict[doc_id].strip() + '\n'
                              for doc_id in balanced_doc_ids])
@@ -85,20 +85,21 @@ class ModelDataManager:
             data_format="vowpal_wabbit",
             target_folder=str(self._new_batches_dir),
         )
-        
+
         logging.info("Creating batch vectorizer")
-        return artm.BatchVectorizer(data_path=[self._new_batches_dir, self._batches_dir], data_weight=[1, 1])
+        return artm.BatchVectorizer(data_path=[self._new_batches_dir, self._batches_dir],
+                                    data_weight=[1, 1])
 
     def get_rubric_of_train_docs(self):
         """
-        Get dict where keys - document ids, value - numer of GRNTI rubric of document.
+        Get dict where keys - document ids, value - number of GRNTI rubric of document.
 
         Do not conteins rubric 'нет'.
 
         Returns
         -------
         train_grnti: dict
-            dict where keys - document ids, value - numer of GRNTI rubric of document.
+            dict where keys - document ids, value - number of GRNTI rubric of document.
         """
         with open(os.path.join(self._rubric_dir, 'grnti_codes.json')) as file:
             articles_grnti_with_no = json.load(file)
@@ -123,7 +124,7 @@ class ModelDataManager:
             rubric = str(grnti_to_number[elib_grnti[doc_id]])
             train_grnti[doc_id] = rubric
         return train_grnti
-    
+
     def get_balanced_doc_ids(
         self, train_dict, train_grnti, docs_of_rubrics,
     ):
@@ -168,7 +169,7 @@ class ModelDataManager:
                     new_line = ' |@'.join([doc_id] + list(new_line_dict.values()))
                     train_dict[doc_id] = new_line
         return balanced_doc_ids, train_dict
-    
+
     def _merge_batches(self):
         logging.info("Merging batches")
         old_batches = os.listdir(self._batches_dir)
@@ -254,8 +255,8 @@ class ModelDataManager:
         for cls in new_classes:
             self._new_class_ids[f"@{cls}"] = 1
 
-        with open(self._new_class_ids_path, "w") as f:
-            yaml.dump(self._new_class_ids, f)
+        with open(self._new_class_ids_path, "w") as file:
+            yaml.dump(self._new_class_ids, file)
 
     def _update_dictionary(self, new_dictionary):
         with tempfile.TemporaryDirectory(dir=self._data_dir) as tmp_dir:
@@ -278,15 +279,15 @@ class ModelDataManager:
 
             res = []
             for cls_id in self._new_class_ids:
-                with open(os.path.join(new_dict_dir, f"{cls_id[1:]}.txt")) as f:
-                    res.extend(f.readlines()[2:] if len(res) > 0 else f.readlines())
+                with open(os.path.join(new_dict_dir, f"{cls_id[1:]}.txt")) as file:
+                    res.extend(file.readlines()[2:] if len(res) > 0 else file.readlines())
 
-            with open(os.path.join(self._data_dir, "dictionary.txt"), "w") as f:
-                f.write("".join(res))
+            with open(os.path.join(self._data_dir, "dictionary.txt"), "w") as file:
+                file.write("".join(res))
 
             self._class_ids = {clsid: val for clsid, val in self._new_class_ids.items()}
 
-    def _decompose_dicts(self, dir, cls_ids, dictionary, max_dictionary_size=None):
+    def _decompose_dicts(self, directory, cls_ids, dictionary, max_dictionary_size=None):
         for cls_id in cls_ids:
             filtered = dictionary
             inplace = False
@@ -301,4 +302,4 @@ class ModelDataManager:
                     inplace = True
             if max_dictionary_size is not None:
                 filtered.filter(max_dictionary_size=max_dictionary_size)
-            filtered.save_text(os.path.join(dir, f"{cls_id[1:]}.txt"))
+            filtered.save_text(os.path.join(directory, f"{cls_id[1:]}.txt"))
