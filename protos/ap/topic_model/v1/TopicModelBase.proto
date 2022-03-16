@@ -13,11 +13,15 @@ message Embedding {
     repeated float Vector = 1; 
 }
 
+message Modality {
+  string Key = 1;
+  string Value = 2;
+}
 // документ 
 message Document {
     DocId Id = 1; // идентификатор документа 
     repeated string Tokens = 2; // токены документа
-    string Language = 3; // язык документа. Предполагается подавать код в формате ISO (2 или 3 символа) 
+    repeated Modality modalities = 3; // модальности документа, язык и другие. Предполагается подавать код в формате ISO (2 или 3 символа)
 }
 
 // набор документов 
