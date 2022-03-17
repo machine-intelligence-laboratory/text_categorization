@@ -13,10 +13,12 @@ message Embedding {
     repeated float Vector = 1; 
 }
 
+// модальность документа - язык, код грнти и т.п.
 message Modality {
   string Key = 1;
   string Value = 2;
 }
+
 // документ 
 message Document {
     DocId Id = 1; // идентификатор документа 
