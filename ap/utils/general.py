@@ -76,7 +76,7 @@ def batch_names(starts_from, count) -> typing.Generator[str, None, None]:
 
     for x in range(starts_from_int + 1, starts_from_int + 1 + count):
         str_name = []
-        for i in range(len(starts_from)):
+        for _ in range(len(starts_from)):
             str_name.append(chr(x % letters + orda))
             x = int(x / letters)
 

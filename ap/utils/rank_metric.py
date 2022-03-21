@@ -1,13 +1,15 @@
+import json
 import os
+
+from itertools import combinations_with_replacement
 from pathlib import Path
 
 import artm
+import joblib
 import numpy as np
 import pandas as pd
-import json
+
 from sklearn.metrics.pairwise import cosine_similarity
-import joblib
-from itertools import combinations_with_replacement
 from tqdm import tqdm
 
 
@@ -136,7 +138,7 @@ class RankingByModel:
         a_train = joblib.load(path_train_lang.joinpath(f'{lang_original}', 'centroid.joblib'))
         a_z_train = joblib.load(path_train_lang.joinpath(f'{lang_source}', 'centroid.joblib'))
 
-        for search_num in range(len(search_indices)):
+        for search_num, doc_id in enumerate(search_indices):
             doc_id = search_indices[search_num]
             top_10_percent, bottom_90_percent = subsamples[doc_id]
             subsample_for_doc_id = pd.Index(top_10_percent + bottom_90_percent)

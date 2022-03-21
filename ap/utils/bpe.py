@@ -1,7 +1,5 @@
 import os
-import shutil
 
-import yaml
 import youtokentome as yttm
 
 

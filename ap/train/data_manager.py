@@ -7,6 +7,7 @@ import uuid
 
 from collections import Counter
 
+import artm
 import joblib
 import numpy as np
 import yaml
@@ -61,7 +62,6 @@ class ModelDataManager:
         -------
         artm.BatchVectorizer
         """
-        import artm
 
         logging.info("Preparing batches")
 
@@ -245,7 +245,6 @@ class ModelDataManager:
         -------
         artm.Dictionary
         """
-        import artm
 
         dictionary = artm.Dictionary("main_dict")
         dictionary.load_text(os.path.join(self._data_dir, "dictionary.txt"))

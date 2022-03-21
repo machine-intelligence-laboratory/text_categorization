@@ -8,7 +8,7 @@ def show_cos_distribution(cos_distribution, path_save_figs, rubrics, lang, n_bin
     """Function to visualize cos distribution."""
     path_save_figs = Path(path_save_figs)
     for rubric in sorted(cos_distribution['in_class'].keys()):
-        fig, axs = plt.subplots(1, 2, figsize=(15, 5))
+        _, axs = plt.subplots(1, 2, figsize=(15, 5))
 
         axs[0].hist(cos_distribution['not_in_class'][rubric], label=f'rubric_{rubric}_not_in_class',
                     density=True, alpha=0.7, bins=n_bins)
@@ -40,7 +40,7 @@ def show_analogy_distribution(model_name, pair_analogy, path_save_figs, lang, n_
         if (current_lang == lang) or \
                 (lang == 'ru' and current_lang == 'en') or (lang == 'en' and current_lang == 'ru'):
             continue
-        fig, axs = plt.subplots(1, 2, figsize=(15, 5))
+        _, axs = plt.subplots(1, 2, figsize=(15, 5))
         axs[0].hist(
             pair_analogy[f'{model_name}_{current_lang}_{lang}']['not_relevant'],
             label=f'{current_lang}_{lang}_not_relevant', density=True, alpha=0.7, bins=n_bins

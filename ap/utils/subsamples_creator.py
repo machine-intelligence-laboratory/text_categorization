@@ -1,5 +1,6 @@
 import random
 import json
+
 from pathlib import Path
 from itertools import product
 

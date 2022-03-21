@@ -1,5 +1,6 @@
 import re
 import typing
+
 from collections import Counter
 from string import punctuation
 
@@ -48,7 +49,7 @@ class VowpalWabbit:
         """
         for key, modality_bows in sessions_bow_messages.items():
             new_message_str_format = str(key).replace(" ", "_")
-            for modality, bow in modality_bows.items():
+            for modality, _ in modality_bows.items():
                 if modality == "plain_text":
                     continue
                 if self._use_counters:

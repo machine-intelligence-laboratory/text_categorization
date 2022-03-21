@@ -1,14 +1,16 @@
-import joblib
 import json
-from sklearn.metrics.pairwise import cosine_similarity
-import pandas as pd
-from tqdm import tqdm
-import numpy as np
 import os
 
-from pathlib import Path
-import artm
 from itertools import product
+from pathlib import Path
+
+import artm
+import joblib
+import pandas as pd
+import numpy as np
+
+from sklearn.metrics.pairwise import cosine_similarity
+from tqdm import tqdm
 
 import config
 
@@ -74,7 +76,7 @@ def _check_analogy_quality(vec_first, vec_second, relevant=True):
 
     docs = list(set(vec_first.index.values).intersection(set(vec_second.index.values)))
 
-    if len(docs):
+    if docs:
         all_cos = list()
         for doc in docs:
             b = vec_first.loc[doc].values
@@ -90,12 +92,12 @@ def _check_analogy_quality(vec_first, vec_second, relevant=True):
 
 
 def _check_cluster_similarity_quality(class_json_path, vec, in_class=True):
-    with open(class_json_path, 'r') as f:
-        classes = json.loads(f.read())
+    with open(class_json_path, 'r') as file:
+        classes = json.loads(file.read())
     doc_classes = dict()
 
     class_cos = dict()
-    docs = set(list(classes.keys())).intersection(vec.index.values)
+    docs = set(list(classes)).intersection(vec.index.values)
 
     for doc in docs:
         if classes[doc] in doc_classes:
@@ -103,7 +105,7 @@ def _check_cluster_similarity_quality(class_json_path, vec, in_class=True):
         else:
             doc_classes[classes[doc]] = [doc]
 
-    for cl in doc_classes.keys():
+    for cl in doc_classes:
         center = vec.loc[doc_classes[cl]].values.mean(axis=0)
         if in_class:
             class_cos[cl] = cosine_similarity(
@@ -118,13 +120,13 @@ def _check_cluster_similarity_quality(class_json_path, vec, in_class=True):
 
 
 def _check_cluster_intersection_quality(class_json_path, vec):
-    with open(class_json_path, 'r') as f:
-        classes = json.loads(f.read())
+    with open(class_json_path, 'r') as file:
+        classes = json.loads(file.read())
     doc_classes = dict()
 
     mean_intersection = dict()
 
-    docs = set(list(classes.keys())).intersection(vec.index.values)
+    docs = set(list(classes)).intersection(vec.index.values)
 
     for doc in docs:
         if classes[doc] in doc_classes:
@@ -132,7 +134,7 @@ def _check_cluster_intersection_quality(class_json_path, vec):
         else:
             doc_classes[classes[doc]] = [doc]
 
-    for cl in doc_classes.keys():
+    for cl in doc_classes:
         cl_len = len(doc_classes[cl])
 
         center = vec.loc[doc_classes[cl]].values.mean(axis=0)

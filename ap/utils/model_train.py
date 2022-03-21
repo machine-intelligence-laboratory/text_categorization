@@ -1,14 +1,18 @@
 import json
 import itertools
-import numpy as np
-from pathlib import Path
-from tqdm import tqdm
-from collections import Counter
-import joblib
-import artm
-from topicnet.cooking_machine import rel_toolbox_lite
-import experiment_config
 import typing
+
+from collections import Counter
+from pathlib import Path
+
+import artm
+import joblib
+import numpy as np
+
+from topicnet.cooking_machine import rel_toolbox_lite
+from tqdm import tqdm
+
+import experiment_config
 
 
 def create_init_model() -> artm.artm_model.ARTM:
@@ -288,7 +292,7 @@ def fit_topic_model():
 
     model = create_init_model()
     path_batches_wiki = experiment_config.path_wiki_train_batches
-    for iteration in tqdm(range(1, experiment_config.num_collection_passes+1)):
+    for _ in tqdm(range(1, experiment_config.num_collection_passes+1)):
         train_dict = joblib.load(experiment_config.train_dict_path)
 
         # генерирую сбалансированные данные
