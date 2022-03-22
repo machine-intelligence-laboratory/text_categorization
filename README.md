@@ -28,14 +28,14 @@ python -m ap.inference.server --model={path_to_model}
 python -m ap.train.server --models={path_to_models} --data={path_to_data}
 ```
 где `path_to_models` - путь к каталогу для хранения обученных моделей, `path_to_data` - путь к каталогу с данными.
-​
+
 ## Запуск в docker-контейнере
 Для запуска сервиса получения векторных представлений в docker-контейнере, выполните команду
 ```bash
 docker-compose -f docker-compose.yml build && docker-compose -f docker-compose.yml up
 ```
 Путь к каталогу с обученной моделью должен быть задан в переменной окружения с названием `MODEL_PATH`.
-​
+
 Для запуска сервиса обучения моделей запустите
 ```bash
 docker-compose -f docker-compose-train.yml build && docker-compose -f docker-compose-train.yml up
@@ -52,18 +52,18 @@ docker-compose -f docker-compose-train.yml build && docker-compose -f docker-com
 * `batches_new` - новые батчи, созданные из документов в папке `vw_new` во время вызова `TrainModel`
 #Подготовка образа виртуальной машины для запуска сервисов
 Для запуска сервиса в составе стандартной виртуальной машины подготовлены скрипты `inference.sh` и `train.sh`. 
-​
+
 Скрипты рассчитаны на образ виртуальной машины с ОС Ubuntu и установленными Docker и Docker Compose.
-​
+
 Так же необходимо поставить Git и клонировать репозиторий с ПО:
 ```bash 
 git clone git@github.com:machine-intelligence-laboratory/text_categorization.git
 ```
  
 Имя пользователя, под которым запускаются сервисы, должно быть `antiplagiat`.
-​
+
 Внутри домашней директории пользователя `/home/antiplagiat` для запуска сервиса получения векторных представлений должна быть создана папка `/home/antiplagiat/models/{MODEL_NAME}`. Название модели может меняться в зависимости от поставленной модели. Соответственным образом необходимо менять значение переменной `MODEL_PATH` в скрипте запуска после установки сервиса.
-​
+
 Внутри домашней директории пользователя `/home/antiplagiat` для запуска сервиса обучения должны быть папки `data` и `models`. В папку `data` необходимо распаковать архив с переданными изначальными данными для обучения модели:
 ```bash
 tar -C /home/antiplagiat/data -xvzf data.tar.gz 
