@@ -6,8 +6,8 @@ from pathlib import Path
 
 import artm
 import joblib
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from sklearn.metrics.pairwise import cosine_similarity
 from tqdm import tqdm
@@ -38,8 +38,8 @@ def generate_theta(path_models, save_path):
         for lang in config.LANGUAGES_MAIN:
             test_path = '/data/datasets/Antiplagiat/texts_vw/test_BPE/' \
                         f'test_test/test_{lang}_120k_rank_batches'
-            bv = artm.BatchVectorizer(data_path=test_path, data_format="batches",)
-            vec = model_artm.transform(batch_vectorizer=bv).T
+            batch_vectorizer = artm.BatchVectorizer(data_path=test_path, data_format="batches",)
+            vec = model_artm.transform(batch_vectorizer=batch_vectorizer).T
             joblib.dump(vec, save_path_theta.joinpath(f'theta.{lang}'))
 
 
@@ -66,8 +66,7 @@ def _check_rank_quality(vec_first, vec_second):
         mean_cos = np.mean(all_cos)
 
         return mean_cos
-    else:
-        return 0
+    return 0
 
 
 def _check_analogy_quality(vec_first, vec_second, relevant=True):
@@ -87,8 +86,7 @@ def _check_analogy_quality(vec_first, vec_second, relevant=True):
                 b_z = vec_second.loc[~vec_second.index.isin([doc])].values
                 all_cos += [cosine_similarity(b_z, [a_z - a + b]).mean()]
         return all_cos
-    else:
-        return list()
+    return list()
 
 
 def _check_cluster_similarity_quality(class_json_path, vec, in_class=True):
@@ -105,15 +103,15 @@ def _check_cluster_similarity_quality(class_json_path, vec, in_class=True):
         else:
             doc_classes[classes[doc]] = [doc]
 
-    for cl in doc_classes:
-        center = vec.loc[doc_classes[cl]].values.mean(axis=0)
+    for rubric, doc_list in doc_classes.items():
+        center = vec.loc[doc_list].values.mean(axis=0)
         if in_class:
-            class_cos[cl] = cosine_similarity(
-                [center], vec.loc[doc_classes[cl]].values
+            class_cos[rubric] = cosine_similarity(
+                [center], vec.loc[doc_list].values
             )[0]
         else:
-            class_cos[cl] = cosine_similarity(
-                [center], vec.loc[~vec.index.isin(doc_classes[cl])].values
+            class_cos[rubric] = cosine_similarity(
+                [center], vec.loc[~vec.index.isin(doc_list)].values
             )[0]
 
     return class_cos
@@ -134,17 +132,15 @@ def _check_cluster_intersection_quality(class_json_path, vec):
         else:
             doc_classes[classes[doc]] = [doc]
 
-    for cl in doc_classes:
-        cl_len = len(doc_classes[cl])
-
-        center = vec.loc[doc_classes[cl]].values.mean(axis=0)
-        mean_cos = cosine_similarity([center], vec.loc[doc_classes[cl]].values)[0].mean()
+    for rubric, doc_list in doc_classes.items():
+        center = vec.loc[doc_list].values.mean(axis=0)
+        mean_cos = cosine_similarity([center], vec.loc[doc_list].values)[0].mean()
 
         cos_values = cosine_similarity(
-            [center], vec.loc[~vec.index.isin(doc_classes[cl])].values
+            [center], vec.loc[~vec.index.isin(doc_list)].values
         )[0]
         elements = cos_values[np.where(cos_values >= mean_cos)].shape[0]
-        mean_intersection[cl] = [elements/cl_len]
+        mean_intersection[rubric] = [elements/len(doc_list)]
 
     return mean_intersection
 
@@ -181,7 +177,7 @@ def get_topic_profile(path_models, save_path):
         mean_rank += [qual_df_rank.mean()]
 
     return pd.concat(mean_rank, axis=1).rename(
-        columns={i: col for i, col in enumerate(os.listdir(path_models))}).T
+        columns=dict(enumerate(os.listdir(path_models)))).T
 
 
 def get_mean_classes_intersection(path_models, save_path, path_categories):
@@ -214,7 +210,7 @@ def get_mean_classes_intersection(path_models, save_path, path_categories):
                 )
             ]
     return pd.concat(mean_intersect, axis=0).rename(
-        columns={i: col for i, col in enumerate(os.listdir(path_models))})
+        columns=dict(enumerate(os.listdir(path_models))))
 
 
 def get_analogy_distribution(path_models, save_path):

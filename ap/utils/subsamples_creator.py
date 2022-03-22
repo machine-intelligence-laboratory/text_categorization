@@ -6,6 +6,26 @@ from itertools import product
 
 
 class MakeSubsamples:
+    """
+    Class for saving subsamples of document indices.
+
+    Parameters
+    ----------
+
+    languages: list
+        list of str of languages to use in subsamples
+    path_to_save_subsamples: str
+        path to file in json format to save subsamples
+    path_to_data: str
+        path to data for which subsamples will be created
+        expected data in txt format
+    path_rubrics: str
+        path to json file with rubrics of documents
+    mode: 'test' or 'wiki'
+        kind of data for which subsamples will be created
+    subsample_size: int
+        The size of the subsample. The default is 1000.
+    """
     def __init__(
         self,
         languages: list,
@@ -15,26 +35,6 @@ class MakeSubsamples:
         mode: str,
         subsample_size: int = 1000
     ):
-        """
-        Class for saving subsamples of document indices.
-
-        Parameters
-        ----------
-
-        languages: list
-            list of str of languages to use in subsamples
-        path_to_save_subsamples: str
-            path to file in json format to save subsamples
-        path_to_data: str
-            path to data for which subsamples will be created
-            expected data in txt format
-        path_rubrics: str
-            path to json file with rubrics of documents
-        mode: 'test' or 'wiki'
-            kind of data for which subsamples will be created
-        subsample_size: int
-            The size of the subsample. The default is 1000.
-        """
         with open(path_rubrics) as file:
             self._rubrics = json.load(file)
 

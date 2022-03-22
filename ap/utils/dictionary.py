@@ -10,7 +10,7 @@ def get_num_entries(dictionary: artm.Dictionary) -> int:
 
     Parameters
     ----------
-    d словарь
+    dictionary словарь
 
     Returns
     -------

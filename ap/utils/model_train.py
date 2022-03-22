@@ -4,6 +4,7 @@ import typing
 
 from collections import Counter
 from pathlib import Path
+from typing import List, Any, Union, Tuple
 
 import artm
 import joblib
@@ -232,7 +233,7 @@ def get_rubric_of_train_docs() -> typing.Dict[str, str]:
     """
     Get dict where keys - document ids, value - numer of GRNTI rubric of document.
 
-    Do not conteins rubric 'нет'.
+    Do not contents rubric 'нет'.
 
     Returns
     -------
@@ -319,9 +320,11 @@ def fit_topic_model():
             data_format="vowpal_wabbit",
             target_folder=str(path_to_batches),
         )
-        bv = artm.BatchVectorizer(data_path=[path_to_batches, path_batches_wiki],
-                                  data_weight=[1, 1])
-        model.fit_offline(bv, num_collection_passes=1)
+        batch_vectorizer = artm.BatchVectorizer(
+            data_path=[path_to_batches, path_batches_wiki],
+            data_weight=[1, 1]
+        )
+        model.fit_offline(batch_vectorizer, num_collection_passes=1)
     model.dump_artm_model(str(path_to_dump_model))
 
 
