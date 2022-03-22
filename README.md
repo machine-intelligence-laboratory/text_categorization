@@ -22,7 +22,7 @@ python -m pytest ./tests
 python -m ap.inference.server --model={path_to_model}
 ```
 где `path_to_model` - путь к каталогу с обученной моделью bigARTM.
-​
+
 Для локального запуска сервиса обучения моделей запустите
 ```bash
 python -m ap.train.server --models={path_to_models} --data={path_to_data}
