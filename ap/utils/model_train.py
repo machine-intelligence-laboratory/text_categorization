@@ -2,6 +2,7 @@ import json
 import itertools
 import typing
 
+from argparse import ArgumentParser
 from collections import Counter
 from pathlib import Path
 
@@ -9,13 +10,14 @@ import artm
 import joblib
 import numpy as np
 
+from nip import load
 from topicnet.cooking_machine import rel_toolbox_lite
 from tqdm import tqdm
 
-import experiment_config
+# import experiment_config
 
 
-def create_init_model() -> artm.artm_model.ARTM:
+def _create_init_model(experiment_config) -> artm.artm_model.ARTM:
     """
     Creating an initial topic model.
 
@@ -24,18 +26,20 @@ def create_init_model() -> artm.artm_model.ARTM:
     model: artm.ARTM
         initial artm topic model with parameters from experiment_config
     """
-    dictionary = artm.Dictionary()
-    dictionary.load_text(experiment_config.dictionary_path)
+    artm_model_params = experiment_config["artm_model_params"]
 
-    background_topic_list = [f'topic_{i}' for i in range(experiment_config.num_not_sp)]
+    dictionary = artm.Dictionary()
+    dictionary.load_text(experiment_config["dictionary_path"])
+
+    background_topic_list = [f'topic_{i}' for i in range(artm_model_params["num_not_sp"])]
     subject_topic_list = [
-        f'topic_{i}' for i in range(experiment_config.num_not_sp,
-                                    experiment_config.NUM_TOPICS-experiment_config.num_not_sp)
+        f'topic_{i}' for i in range(artm_model_params["num_not_sp"],
+                                    artm_model_params["NUM_TOPICS"]-artm_model_params["num_not_sp"])
     ]
 
-    model = artm.ARTM(num_topics=experiment_config.NUM_TOPICS,
+    model = artm.ARTM(num_topics=artm_model_params["NUM_TOPICS"],
                       theta_columns_naming='title',
-                      class_ids=experiment_config.modalities_with_weights,
+                      class_ids=artm_model_params["modalities_with_weights"],
                       show_progress_bars=True,
                       dictionary=dictionary)
 
@@ -53,7 +57,7 @@ def create_init_model() -> artm.artm_model.ARTM:
     model.regularizers.add(
         artm.SmoothSparseThetaRegularizer(
             name='SmoothThetaRegularizer',
-            tau=experiment_config.tau_SmoothTheta,
+            tau=artm_model_params["tau_SmoothTheta"],
             topic_names=background_topic_list)
     )
     rel_toolbox_lite.handle_regularizer(
@@ -62,14 +66,14 @@ def create_init_model() -> artm.artm_model.ARTM:
         regularizer=model.regularizers['SmoothThetaRegularizer'],
         data_stats=rel_toolbox_lite.count_vocab_size(
             dictionary=dictionary,
-            modalities={f'@{lang}': 1 for lang in experiment_config.LANGUAGES_ALL})
+            modalities={f'@{lang}': 1 for lang in experiment_config["LANGUAGES_ALL"]})
     )
 
     # SparseTheta
     model.regularizers.add(
         artm.SmoothSparseThetaRegularizer(
             name='SparseThetaRegularizer',
-            tau=experiment_config.tau_SparseTheta,
+            tau=artm_model_params["tau_SparseTheta"],
             topic_names=subject_topic_list)
     )
     rel_toolbox_lite.handle_regularizer(
@@ -78,14 +82,14 @@ def create_init_model() -> artm.artm_model.ARTM:
         regularizer=model.regularizers['SparseThetaRegularizer'],
         data_stats=rel_toolbox_lite.count_vocab_size(
             dictionary=dictionary,
-            modalities={f'@{lang}': 1 for lang in experiment_config.LANGUAGES_ALL})
+            modalities={f'@{lang}': 1 for lang in experiment_config["LANGUAGES_ALL"]})
     )
 
     # DecorrelatorPhi
     model.regularizers.add(
         artm.DecorrelatorPhiRegularizer(
             name='DecorrelatorPhiRegularizer',
-            tau=experiment_config.tau_DecorrelatorPhi,
+            tau=artm_model_params["tau_DecorrelatorPhi"],
             gamma=0, topic_names=subject_topic_list)
     )
     rel_toolbox_lite.handle_regularizer(
@@ -93,15 +97,15 @@ def create_init_model() -> artm.artm_model.ARTM:
         model=model, regularizer=model.regularizers['DecorrelatorPhiRegularizer'],
         data_stats=rel_toolbox_lite.count_vocab_size(
             dictionary=dictionary,
-            modalities={f'@{lang}': 1 for lang in experiment_config.LANGUAGES_ALL})
+            modalities={f'@{lang}': 1 for lang in experiment_config["LANGUAGES_ALL"]})
     )
     return model
 
 
-def get_balanced_doc_ids(
-    train_dict: typing.Dict[str, str],
-    train_grnti: typing.Dict[str, str],
-    docs_of_rubrics: typing.Dict[str, list],
+def _get_balanced_doc_ids(
+        train_dict: typing.Dict[str, str],
+        train_grnti: typing.Dict[str, str],
+        docs_of_rubrics: typing.Dict[str, list]
 ) -> typing.Tuple[list, typing.Dict[str, str]]:
     """
     Create train data balanced by rubrics.
@@ -147,10 +151,11 @@ def get_balanced_doc_ids(
     return balanced_doc_ids, train_dict
 
 
-def get_balanced_doc_ids_with_augmentation(
-    train_dict: typing.Dict[str, str],
-    train_grnti: typing.Dict[str, str],
-    docs_of_rubrics: typing.Dict[str, list],
+def _get_balanced_doc_ids_with_augmentation(
+        train_dict: typing.Dict[str, str],
+        train_grnti: typing.Dict[str, str],
+        docs_of_rubrics: typing.Dict[str, list],
+        experiment_config
 ) -> typing.Tuple[list, typing.Dict[str, str]]:
     """
     Create train data balanced by rubrics with augmentation.
@@ -213,7 +218,7 @@ def get_balanced_doc_ids_with_augmentation(
                         line_unique_dict[lang] = new_line
                     else:
                         line_lang_dict = {token_and_count.split(':')[0]: str(
-                            int(experiment_config.aug_proportion *
+                            int(experiment_config["aug_proportion"] *
                                 int(token_and_count.split(':')[1])))
                                           for token_and_count in line_lang.split()[1:]}
                         new_line = ' '.join([':'.join([token, count])
@@ -229,7 +234,7 @@ def get_balanced_doc_ids_with_augmentation(
     return balanced_doc_ids, train_dict
 
 
-def get_rubric_of_train_docs() -> typing.Dict[str, str]:
+def _get_rubric_of_train_docs(experiment_config) -> object:
     """
     Get dict where keys - document ids, value - number of rubric of document.
 
@@ -240,11 +245,12 @@ def get_rubric_of_train_docs() -> typing.Dict[str, str]:
     train_grnti: dict
         dict where keys - document ids, value - number of GRNTI rubric of document.
     """
-    with open(experiment_config.path_articles_rubrics_train_grnti) as file:
+    # TODO: надо ли открывать файлы на каждой итерации или можно подавать открытые?
+    with open(experiment_config["path_articles_rubrics_train_grnti"]) as file:
         articles_grnti_with_no = json.load(file)
-    with open(experiment_config.path_elib_train_rubrics_grnti) as file:
+    with open(experiment_config["path_elib_train_rubrics_grnti"]) as file:
         elib_grnti_to_fix_with_no = json.load(file)
-    with open(experiment_config.path_grnti_mapping) as file:
+    with open(experiment_config["path_grnti_mapping"]) as file:
         grnti_to_number = json.load(file)
 
     articles_grnti = {doc_id: rubric
@@ -266,18 +272,18 @@ def get_rubric_of_train_docs() -> typing.Dict[str, str]:
 
 
 def _train_iteration(
-        model, train_grnti, docs_of_rubrics,
+        model, experiment_config, train_grnti, docs_of_rubrics,
         path_balanced_train, path_to_batches, path_batches_wiki
 ):
-    train_dict = joblib.load(experiment_config.train_dict_path)
+    train_dict = joblib.load(experiment_config["train_dict_path"])
 
     # генерирую сбалансированные данные
-    if experiment_config.need_augmentation:
-        balanced_doc_ids, train_dict = get_balanced_doc_ids_with_augmentation(
+    if experiment_config["need_augmentation"]:
+        balanced_doc_ids, train_dict = _get_balanced_doc_ids_with_augmentation(
             train_dict, train_grnti, docs_of_rubrics
         )
     else:
-        balanced_doc_ids, train_dict = get_balanced_doc_ids(
+        balanced_doc_ids, train_dict = _get_balanced_doc_ids(
             train_dict, train_grnti, docs_of_rubrics
         )
     with open(path_balanced_train, 'w') as file:
@@ -302,25 +308,26 @@ def _train_iteration(
     model.fit_offline(batch_vectorizer, num_collection_passes=1)
 
 
-def fit_topic_model():
+def fit_topic_model(experiment_config):
     """
     The function fits topic model according to the experiment_config file.
 
-    experiment_config file should be placed in the same folder with this module.
+    Parameters
+    ----------
+    experiment_config - yaml config with parameters of a model
 
     Returns
     -------
     """
-    path_experiment = Path(experiment_config.path_experiment)
+    path_experiment = Path(experiment_config["path_experiment"])
     path_experiment.mkdir(parents=True, exist_ok=True)
-    path_to_dump_model = path_experiment.joinpath('topic_model')
     path_train_data = path_experiment.joinpath('train_data')
     path_to_batches = path_train_data.joinpath('batches_balanced')
     path_to_batches.mkdir(parents=True, exist_ok=True)
     path_balanced_train = path_train_data.joinpath('train_balanced.txt')
 
-    train_grnti = get_rubric_of_train_docs()
-    train_dict = joblib.load(experiment_config.train_dict_path)
+    train_grnti = _get_rubric_of_train_docs(experiment_config)
+    train_dict = joblib.load(experiment_config["train_dict_path"])
 
     docs_of_rubrics = {rubric: [] for rubric in set(train_grnti.values())}
     for doc_id, rubric in train_grnti.items():
@@ -328,14 +335,25 @@ def fit_topic_model():
             docs_of_rubrics[rubric].append(doc_id)
     del train_dict
 
-    model = create_init_model()
-    path_batches_wiki = experiment_config.path_wiki_train_batches
-    for iteration in tqdm(range(1, experiment_config.num_collection_passes+1)):
-        _train_iteration(model, train_grnti, docs_of_rubrics,
+    model = _create_init_model(experiment_config)
+    path_batches_wiki = experiment_config["path_wiki_train_batches"]
+    for iteration in tqdm(range(1, experiment_config["num_collection_passes"]+1)):
+        _train_iteration(model, experiment_config, train_grnti, docs_of_rubrics,
                          path_balanced_train, path_to_batches, path_batches_wiki)
         # тут нужно визуализировать iteration
+        # тут нужно визуализировать метрики
+    path_to_dump_model = path_experiment.joinpath('topic_model')
     model.dump_artm_model(str(path_to_dump_model))
 
 
+def _get_args():
+    parser = ArgumentParser()
+    parser.add_argument("-c", "--config", required=True)
+
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    fit_topic_model()
+    args = _get_args()
+    for config in load(args.config, always_iter=True):
+        fit_topic_model(config)

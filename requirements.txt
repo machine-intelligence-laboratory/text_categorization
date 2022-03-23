@@ -1,5 +1,6 @@
 joblib
 matplotlib
+nip-config
 numpy
 topicnet
 tqdm
