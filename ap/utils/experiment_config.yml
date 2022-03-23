@@ -14,7 +14,7 @@ aug_proportion: 0.2
 
 # metrics parameters
 metrics_to_calculate: ['analogy']
-recalculate_train_centroids: False
+recalculate_train_centroids: True
 path_train_thetas: '/data/datasets/Antiplagiat/combined_train/train_by_lang'
 recalculate_test_thetas: True
 
