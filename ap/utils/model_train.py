@@ -272,6 +272,15 @@ def _get_rubric_of_train_docs(experiment_config) -> dict:
     return train_grnti
 
 
+def recursively_unlink(path: Path):
+    for child in path.iterdir():
+        if child.is_file():
+            child.unlink()
+        else:
+            recursively_unlink(child)
+    path.rmdir()
+
+
 def _train_iteration(
         model, experiment_config, train_grnti, docs_of_rubrics,
         path_balanced_train, path_to_batches, path_batches_wiki=None
@@ -296,7 +305,10 @@ def _train_iteration(
     batches_list = list(path_to_batches.iterdir())
     if batches_list:
         for batch in batches_list:
-            batch.unlink()
+            if batch.is_file():
+                batch.unlink()
+            else:
+                recursively_unlink(batch)
     _ = artm.BatchVectorizer(
         data_path=str(path_balanced_train),
         data_format="vowpal_wabbit",
