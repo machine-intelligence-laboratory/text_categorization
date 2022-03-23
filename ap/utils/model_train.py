@@ -337,7 +337,8 @@ def fit_topic_model(experiment_config):
 
     model = _create_init_model(experiment_config)
     path_batches_wiki = experiment_config["path_wiki_train_batches"]
-    for iteration in tqdm(range(1, experiment_config["num_collection_passes"]+1)):
+    num_collection_passes = experiment_config["artm_model_params"]["num_collection_passes"]
+    for iteration in tqdm(range(1, num_collection_passes + 1)):
         _train_iteration(model, experiment_config, train_grnti, docs_of_rubrics,
                          path_balanced_train, path_to_batches, path_batches_wiki)
         # тут нужно визуализировать iteration
