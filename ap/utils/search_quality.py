@@ -53,8 +53,8 @@ def calculate_search_quality(config_experiment):
     path_experiment_result = Path(config_experiment.get('path_results', path_experiment.joinpath('results')))
     # path_experiment_result = Path(config_experiment['path_results'])
 
-    num_bckg_topic = config_experiment["artm_model_params"]["num_bckg_topic"]
-    bcg_topic_list = config_experiment.get('bcg_topic_list', [f'topic_{i}' for i in range(num_bckg_topic)])
+    num_bcg_topic = config_experiment["artm_model_params"]["num_bcg_topic"]
+    bcg_topic_list = config_experiment.get('bcg_topic_list', [f'topic_{i}' for i in range(num_bcg_topic)])
     metrics_to_calculate = config_experiment.get('metrics_to_calculate', 'analogy')
     path_train_centroids = Path(config_experiment['path_train_thetas'])
     recalculate_train_centroids = config_experiment.get('recalculate_train_centroids', False)

@@ -32,11 +32,11 @@ def _create_init_model(experiment_config) -> artm.artm_model.ARTM:
     dictionary = artm.Dictionary()
     dictionary.load_text(experiment_config["dictionary_path"])
 
-    background_topic_list = [f'topic_{i}' for i in range(artm_model_params["num_bckg_topic"])]
+    background_topic_list = [f'topic_{i}' for i in range(artm_model_params["num_bcg_topic"])]
     subject_topic_list = [
         f'topic_{i}' for i in range(
-            artm_model_params["num_bckg_topic"],
-            artm_model_params["NUM_TOPICS"]-artm_model_params["num_bckg_topic"])
+            artm_model_params["num_bcg_topic"],
+            artm_model_params["NUM_TOPICS"]-artm_model_params["num_bcg_topic"])
     ]
 
     model = artm.ARTM(num_topics=artm_model_params["NUM_TOPICS"],
@@ -340,6 +340,7 @@ def fit_topic_model(experiment_config):
     """
     path_experiment = Path(experiment_config["path_experiment"])
     path_experiment.mkdir(parents=True, exist_ok=True)
+    path_to_dump_model = path_experiment.joinpath('topic_model')
     path_train_data = path_experiment.joinpath('train_data')
     path_to_batches = path_train_data.joinpath('batches_balanced')
     path_to_batches.mkdir(parents=True, exist_ok=True)
@@ -360,11 +361,12 @@ def fit_topic_model(experiment_config):
     for iteration in tqdm(range(num_collection_passes)):
         _train_iteration(model, experiment_config, train_grnti, docs_of_rubrics,
                          path_balanced_train, path_to_batches, path_batches_wiki)
+        if path_to_dump_model.exists():
+            _recursively_unlink(path_to_dump_model)
+        model.dump_artm_model(str(path_to_dump_model))
         search_metrics = calculate_search_quality(experiment_config)
         # тут нужно визуализировать итерацию iteration
         # тут нужно визуализировать метрики search_metrics
-    path_to_dump_model = path_experiment.joinpath('topic_model')
-    model.dump_artm_model(str(path_to_dump_model))
 
 
 def _get_args():

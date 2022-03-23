@@ -21,7 +21,7 @@ recalculate_test_thetas: True
 artm_model_params:
     num_collection_passes: 25
     NUM_TOPICS: 125
-    num_bckg_topic: 1
+    num_bcg_topic: 1
     tau_DecorrelatorPhi: 0.05
     tau_SmoothTheta: 0.025
     tau_SparseTheta: -0.1

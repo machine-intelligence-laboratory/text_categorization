@@ -296,7 +296,7 @@ def quality_of_models(path_train_lang, bcg_topic_list,
     path_train_lang: str
         path to train thetas by languages
     bcg_topic_list: list of str
-        backgroung topics of a topic model
+        backgroud topics of a topic model
         for example init as:
         bcg_topic_list = ['topic_0']
     metrics_to_calculate: list of str ('analogy', 'eucl')
