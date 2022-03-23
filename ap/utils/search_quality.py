@@ -46,11 +46,16 @@ def dump_train_centroids(model_path, bcg_topic_list, path_train_centroids):
 
 
 def calculate_search_quality(config_experiment):
-    path_model = Path(config_experiment['path_model'])
+    path_experiment = Path(config_experiment["path_experiment"])
+    path_model = Path(config_experiment.get('path_model', path_experiment.joinpath('topic_model')))
+    # path_model = Path(config_experiment['path_model'])
     model_name = str(path_model.name)
-    path_experiment_result = Path(config_experiment['path_results'])
+    path_experiment_result = Path(config_experiment.get('path_results', path_experiment.joinpath('results')))
+    # path_experiment_result = Path(config_experiment['path_results'])
 
-    bcg_topic_list = config_experiment.get('bcg_topic_list', ['topic_0'])
+    # TODO: num_not_sp -> num_bckg_topic
+    num_not_sp = config_experiment["artm_model_params"]["num_not_sp"]
+    bcg_topic_list = config_experiment.get('bcg_topic_list', [f'topic_{i}' for i in range(num_not_sp)])
     metrics_to_calculate = config_experiment.get('metrics_to_calculate', 'analogy')
     path_train_centroids = Path(config_experiment['path_train_thetas'])
     recalculate_train_centroids = config_experiment.get('recalculate_train_centroids', False)
