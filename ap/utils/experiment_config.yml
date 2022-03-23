@@ -1,4 +1,3 @@
-# data paths
 path_experiment: '/home/potapova/Projects/antiplagiat_categorization/best_model'
 dictionary_path: '/data/datasets/Antiplagiat/dictionaties/dictionary_train_BPE_wiki_100_120k_11k.txt'
 path_wiki_train_batches: '/data/datasets/Antiplagiat//wiki_100/batches_train'
