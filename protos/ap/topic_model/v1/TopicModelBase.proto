@@ -23,7 +23,7 @@ message Modality {
 message Document {
     DocId Id = 1; // идентификатор документа 
     repeated string Tokens = 2; // токены документа
-    repeated Modality modalities = 3; // модальности документа, язык и другие. Предполагается подавать код в формате ISO (2 или 3 символа)
+    repeated Modality Modalities = 3; // модальности документа, язык и другие. Предполагается подавать код в формате ISO (2 или 3 символа)
 }
 
 // набор документов 

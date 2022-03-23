@@ -6,6 +6,7 @@ from concurrent import futures
 import click
 import grpc
 import yaml
+from prometheus_client import start_http_server, Gauge
 
 from ap.topic_model.v1.TopicModelTrain_pb2 import (
     AddDocumentsToModelRequest,
@@ -51,6 +52,8 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         self._executor = concurrent.futures.ProcessPoolExecutor(max_workers=2)
         self._training_future = None
 
+        self._docs = Gauge('added_docs', 'Number of added documents')
+
     def AddDocumentsToModel(
         self, request: AddDocumentsToModelRequest, context
     ) -> AddDocumentsToModelResponse:
@@ -77,6 +80,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
                     docs[base_id].update(docs[id_to_str(parallel_docs.Ids[i])])
 
             self._data_manager.write_new_docs(self._vw, docs)
+            self._docs.inc(len(docs))
         except NoTranslationException:
             return AddDocumentsToModelResponse(
                 Status=AddDocumentsToModelResponse.AddDocumentsStatus.NO_TRANSLATION
@@ -188,6 +192,7 @@ def serve(models, bpe, data, rubric):
     )
     server.add_insecure_port("[::]:50051")
     server.start()
+    start_http_server(8000)
     logging.info("Server started")
     server.wait_for_termination()
 

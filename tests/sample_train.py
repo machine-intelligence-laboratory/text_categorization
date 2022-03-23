@@ -6,7 +6,7 @@ from ap.topic_model.v1.TopicModelBase_pb2 import (
     DocId,
     Document,
     DocumentPack,
-    ParallelDocIds,
+    ParallelDocIds, Modality,
 )
 from ap.topic_model.v1.TopicModelTrain_pb2 import (
     AddDocumentsToModelRequest,
@@ -32,7 +32,7 @@ if __name__ == "__main__":
                 "sobr",
                 "seguida",
             ],
-            Language="es",
+            Modalities=[Modality(Key="lang", Value='es')],
         ),
         Document(
             Id=DocId(Lo=0, Hi=1),
@@ -46,7 +46,7 @@ if __name__ == "__main__":
                 "coherente",
                 "ook",
             ],
-            Language="nl",
+            Modalities=[Modality(Key="lang", Value='nl')],
         ),
     ]
     parallel_docs = [

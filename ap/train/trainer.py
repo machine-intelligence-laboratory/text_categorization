@@ -3,6 +3,8 @@ import logging
 import os
 import typing
 
+from prometheus_client import Gauge
+
 from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
 from ap.utils.general import ensure_directory
@@ -27,6 +29,8 @@ class ModelTrainer:
         self._conf = conf
         self._models_dir = ensure_directory(models_dir)
         self._data_manager = data_manager
+        self._iteration = Gauge('training_iteration', 'Current training iteration')
+
 
     def train_model(self, train_type: StartTrainTopicModelRequest.TrainType):
         """
