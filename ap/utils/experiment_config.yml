@@ -10,6 +10,12 @@ need_augmentation: False
 aug_proportion: 0.2
 num_rubric: 69
 
+# metrics_params
+metrics_to_calculate: ['analogy']
+path_train_centroids: '/data/datasets/Antiplagiat/combined_train/train_by_lang'
+recalculate_train_centroids: False
+recalculate_test_thetas: True
+
 artm_model_params:
     num_collection_passes: 25
     NUM_TOPICS: 125
