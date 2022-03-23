@@ -34,8 +34,9 @@ def _create_init_model(experiment_config) -> artm.artm_model.ARTM:
 
     background_topic_list = [f'topic_{i}' for i in range(artm_model_params["num_bckg_topic"])]
     subject_topic_list = [
-        f'topic_{i}' for i in range(artm_model_params["num_bckg_topic"],
-                                    artm_model_params["NUM_TOPICS"]-artm_model_params["num_bckg_topic"])
+        f'topic_{i}' for i in range(
+            artm_model_params["num_bckg_topic"],
+            artm_model_params["NUM_TOPICS"]-artm_model_params["num_bckg_topic"])
     ]
 
     model = artm.ARTM(num_topics=artm_model_params["NUM_TOPICS"],
@@ -272,19 +273,19 @@ def _get_rubric_of_train_docs(experiment_config) -> dict:
     return train_grnti
 
 
-def recursively_unlink(path: Path):
+def _recursively_unlink(path: Path):
     for child in path.iterdir():
         if child.is_file():
             child.unlink()
         else:
-            recursively_unlink(child)
+            _recursively_unlink(child)
     path.rmdir()
 
 
 def _train_iteration(
         model, experiment_config, train_grnti, docs_of_rubrics,
         path_balanced_train, path_to_batches, path_batches_wiki=None
-):
+) -> typing.Dict[str, float]:
     train_dict = joblib.load(experiment_config["train_dict_path"])
 
     # генерирую сбалансированные данные
@@ -308,7 +309,7 @@ def _train_iteration(
             if batch.is_file():
                 batch.unlink()
             else:
-                recursively_unlink(batch)
+                _recursively_unlink(batch)
     _ = artm.BatchVectorizer(
         data_path=str(path_balanced_train),
         data_format="vowpal_wabbit",
