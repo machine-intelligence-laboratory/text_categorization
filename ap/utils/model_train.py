@@ -4,7 +4,6 @@ import typing
 
 from collections import Counter
 from pathlib import Path
-from typing import List, Any, Union, Tuple
 
 import artm
 import joblib
@@ -108,10 +107,11 @@ def get_balanced_doc_ids(
     Create train data balanced by rubrics.
 
     Returns balanced_doc_ids - list of document ids, balanced by rubric. Documents of
-    all rubrics occures in balanced_doc_ids the same number of times,
+    all rubrics occurs in balanced_doc_ids the same number of times,
     equal to average_rubric_size.
+
     Returns train_dict - dict where key - document id, value - document in
-    vowpal wabbit format. Function change train_dict, multiplying token counters
+    Vowpal Wabbit format. Function change train_dict, multiplying token counters
     by number of occurrences of document id in balanced_doc_ids.
 
     Returns
@@ -231,14 +231,14 @@ def get_balanced_doc_ids_with_augmentation(
 
 def get_rubric_of_train_docs() -> typing.Dict[str, str]:
     """
-    Get dict where keys - document ids, value - numer of GRNTI rubric of document.
+    Get dict where keys - document ids, value - number of rubric of document.
 
     Do not contents rubric 'нет'.
 
     Returns
     -------
     train_grnti: dict
-        dict where keys - document ids, value - numer of GRNTI rubric of document.
+        dict where keys - document ids, value - number of GRNTI rubric of document.
     """
     with open(experiment_config.path_articles_rubrics_train_grnti) as file:
         articles_grnti_with_no = json.load(file)
@@ -265,11 +265,48 @@ def get_rubric_of_train_docs() -> typing.Dict[str, str]:
     return train_grnti
 
 
+def _train_iteration(
+        model, train_grnti, docs_of_rubrics,
+        path_balanced_train, path_to_batches, path_batches_wiki
+):
+    train_dict = joblib.load(experiment_config.train_dict_path)
+
+    # генерирую сбалансированные данные
+    if experiment_config.need_augmentation:
+        balanced_doc_ids, train_dict = get_balanced_doc_ids_with_augmentation(
+            train_dict, train_grnti, docs_of_rubrics
+        )
+    else:
+        balanced_doc_ids, train_dict = get_balanced_doc_ids(
+            train_dict, train_grnti, docs_of_rubrics
+        )
+    with open(path_balanced_train, 'w') as file:
+        file.writelines([train_dict[doc_id].strip() + '\n'
+                         for doc_id in balanced_doc_ids])
+    del train_dict
+
+    # строю батчи по сбалансированным данным
+    batches_list = list(path_to_batches.iterdir())
+    if batches_list:
+        for batch in batches_list:
+            batch.unlink()
+    _ = artm.BatchVectorizer(
+        data_path=str(path_balanced_train),
+        data_format="vowpal_wabbit",
+        target_folder=str(path_to_batches),
+    )
+    batch_vectorizer = artm.BatchVectorizer(
+        data_path=[path_to_batches, path_batches_wiki],
+        data_weight=[1, 1]
+    )
+    model.fit_offline(batch_vectorizer, num_collection_passes=1)
+
+
 def fit_topic_model():
     """
     The function fits topic model according to the experiment_config file.
 
-    experiment_config file should be plased in the same folder with this module.
+    experiment_config file should be placed in the same folder with this module.
 
     Returns
     -------
@@ -293,38 +330,10 @@ def fit_topic_model():
 
     model = create_init_model()
     path_batches_wiki = experiment_config.path_wiki_train_batches
-    for _ in tqdm(range(1, experiment_config.num_collection_passes+1)):
-        train_dict = joblib.load(experiment_config.train_dict_path)
-
-        # генерирую сбалансированные данные
-        if experiment_config.need_augmentation:
-            balanced_doc_ids, train_dict = get_balanced_doc_ids_with_augmentation(
-                train_dict, train_grnti, docs_of_rubrics
-            )
-        else:
-            balanced_doc_ids, train_dict = get_balanced_doc_ids(
-                train_dict, train_grnti, docs_of_rubrics
-            )
-        with open(path_balanced_train, 'w') as file:
-            file.writelines([train_dict[doc_id].strip() + '\n'
-                             for doc_id in balanced_doc_ids])
-        del train_dict
-
-        # строю батчи по сбалансированным данным
-        batches_list = list(path_to_batches.iterdir())
-        if batches_list:
-            for batch in batches_list:
-                batch.unlink()
-        _ = artm.BatchVectorizer(
-            data_path=str(path_balanced_train),
-            data_format="vowpal_wabbit",
-            target_folder=str(path_to_batches),
-        )
-        batch_vectorizer = artm.BatchVectorizer(
-            data_path=[path_to_batches, path_batches_wiki],
-            data_weight=[1, 1]
-        )
-        model.fit_offline(batch_vectorizer, num_collection_passes=1)
+    for iteration in tqdm(range(1, experiment_config.num_collection_passes+1)):
+        _train_iteration(model, train_grnti, docs_of_rubrics,
+                         path_balanced_train, path_to_batches, path_batches_wiki)
+        # тут нужно визуализировать iteration
     model.dump_artm_model(str(path_to_dump_model))
 
 

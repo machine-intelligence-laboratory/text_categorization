@@ -51,7 +51,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         self._executor = concurrent.futures.ProcessPoolExecutor(max_workers=2)
         self._training_future = None
 
-    def add_documents_to_model(
+    def AddDocumentsToModel(
         self, request: AddDocumentsToModelRequest, context
     ) -> AddDocumentsToModelResponse:
         """
@@ -90,7 +90,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
             Status=AddDocumentsToModelResponse.AddDocumentsStatus.OK
         )
 
-    def start_train_topic_model(
+    def StartTrainTopicModel(
         self, request: StartTrainTopicModelRequest, context
     ) -> StartTrainTopicModelResponse:
         """
