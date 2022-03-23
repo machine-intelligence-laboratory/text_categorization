@@ -39,7 +39,7 @@ def _create_init_model(experiment_config) -> artm.artm_model.ARTM:
 
     model = artm.ARTM(num_topics=artm_model_params["NUM_TOPICS"],
                       theta_columns_naming='title',
-                      class_ids=artm_model_params["modalities_with_weights"],
+                      class_ids={f'@{lang}': 1 for lang in experiment_config["LANGUAGES_ALL"]},
                       show_progress_bars=True,
                       dictionary=dictionary)
 
