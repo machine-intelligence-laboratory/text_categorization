@@ -43,9 +43,9 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
 
     def get_rubric_of_train_docs(self):
         """
-        Get dict where keys - document ids, value - numer of GRNTI rubric of document.
+        Get dict where keys - document ids, value - number of GRNTI rubric of document.
 
-        Do not conteins rubric 'нет'.
+        Do not contains rubric 'нет'.
 
         Returns
         -------

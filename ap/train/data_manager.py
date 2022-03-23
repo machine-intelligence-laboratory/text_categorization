@@ -94,7 +94,7 @@ class ModelDataManager:
         """
         Get dict where keys - document ids, value - number of GRNTI rubric of document.
 
-        Do not conteins rubric 'нет'.
+        Do not contains rubric 'нет'.
 
         Returns
         -------

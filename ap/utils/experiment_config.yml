@@ -1,14 +1,16 @@
 path_experiment: '/home/potapova/Projects/antiplagiat_categorization/best_model'
 dictionary_path: '/data/datasets/Antiplagiat/dictionaties/dictionary_train_BPE_wiki_100_120k_11k.txt'
-path_wiki_train_batches: '/data/datasets/Antiplagiat//wiki_100/batches_train'
+path_wiki_train_batches: '/data/datasets/Antiplagiat/wiki_100/batches_train'
+train_dict_path: '/home/potapova/Projects/antiplagiat_categorization/train_with_combined_grnti_69_rubric_dict.joblib'
+
+# rubrics
+num_rubric: 69
 path_articles_rubrics_train_grnti: '/data/datasets/Antiplagiat/grnti_codes.json'
 path_elib_train_rubrics_grnti: '/data/datasets/Antiplagiat/articles_train_val2/data_train/elib_train_grnti_codes.json'
 path_grnti_mapping: '/data/datasets/Antiplagiat/grnti_to_number.json'
-train_dict_path: '/home/potapova/Projects/antiplagiat_categorization/train_with_combined_grnti_69_rubric_dict.joblib'
 
 need_augmentation: False
 aug_proportion: 0.2
-num_rubric: 69
 
 # metrics parameters
 metrics_to_calculate: ['analogy']
@@ -19,7 +21,7 @@ recalculate_test_thetas: True
 artm_model_params:
     num_collection_passes: 25
     NUM_TOPICS: 125
-    num_not_sp: 1
+    num_bckg_topic: 1
     tau_DecorrelatorPhi: 0.05
     tau_SmoothTheta: 0.025
     tau_SparseTheta: -0.1
