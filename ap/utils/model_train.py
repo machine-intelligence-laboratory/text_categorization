@@ -182,11 +182,11 @@ def _get_balanced_doc_ids_with_augmentation(
         else:
             # все возможные уникальные пары айди
             doc_id_pair_list = list(itertools.combinations(docs_of_rubrics[rubric], 2))
-            doc_id_pair_list_indexies = list(
+            doc_id_pair_list_indexes = list(
                 np.random.choice(len(doc_id_pair_list),
                                  average_rubric_size - len(docs_of_rubrics[rubric]))
             )
-            doc_id_pair_list = [doc_id_pair_list[i] for i in doc_id_pair_list_indexies]
+            doc_id_pair_list = [doc_id_pair_list[i] for i in doc_id_pair_list_indexes]
             doc_id_unique_list = []
 
             # для каждой пары - новый уникальный айди,
@@ -280,7 +280,7 @@ def _train_iteration(
     # генерирую сбалансированные данные
     if experiment_config["need_augmentation"]:
         balanced_doc_ids, train_dict = _get_balanced_doc_ids_with_augmentation(
-            train_dict, train_grnti, docs_of_rubrics
+            train_dict, train_grnti, docs_of_rubrics, experiment_config
         )
     else:
         balanced_doc_ids, train_dict = _get_balanced_doc_ids(
