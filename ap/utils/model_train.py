@@ -235,7 +235,7 @@ def _get_balanced_doc_ids_with_augmentation(
     return balanced_doc_ids, train_dict
 
 
-def _get_rubric_of_train_docs(experiment_config) -> object:
+def _get_rubric_of_train_docs(experiment_config) -> dict:
     """
     Get dict where keys - document ids, value - number of rubric of document.
 
@@ -343,7 +343,7 @@ def fit_topic_model(experiment_config):
         _train_iteration(model, experiment_config, train_grnti, docs_of_rubrics,
                          path_balanced_train, path_to_batches, path_batches_wiki)
         search_metrics = calculate_search_quality(experiment_config)
-        # тут нужно визуализировать iteration
+        # тут нужно визуализировать итерацию iteration
         # тут нужно визуализировать метрики search_metrics
     path_to_dump_model = path_experiment.joinpath('topic_model')
     model.dump_artm_model(str(path_to_dump_model))
