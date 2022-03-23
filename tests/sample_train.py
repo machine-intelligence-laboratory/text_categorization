@@ -17,12 +17,6 @@ from ap.topic_model.v1.TopicModelTrain_pb2 import (
 from ap.topic_model.v1.TopicModelTrain_pb2_grpc import TopicModelTrainServiceStub
 
 if __name__ == "__main__":
-    # ALL_LANGUAGES = ["ru", "en", 'cs', 'de', 'es', 'fr', 'it', 'ja',
-    #                  'kk', 'ky', 'nl', 'pl', 'pt', 'tr', 'zh']
-    # num_languages = len(ALL_LANGUAGES)
-    # class_ids = {'@' + language: 1 for language in ALL_LANGUAGES[:num_languages]}
-    # with open("./train_conf.yaml", "w") as f:
-    #     yaml.dump({"num_epochs": 20, "tau": 0.25, "gamma": 0}, f, indent=3)
 
     channel = grpc.insecure_channel("localhost:50051")
     grpc_stub = TopicModelTrainServiceStub(channel)
@@ -59,7 +53,7 @@ if __name__ == "__main__":
         ParallelDocIds(Ids=[DocId(Lo=0, Hi=1)]),
         ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)]),
     ]
-    resp = grpc_stub.AddDocumentsToModel(
+    resp = grpc_stub.add_documents_to_model(
         AddDocumentsToModelRequest(
             Collection=DocumentPack(Documents=docs), ParallelDocuments=parallel_docs
         )
@@ -67,7 +61,7 @@ if __name__ == "__main__":
 
     print(resp)
 
-    resp = grpc_stub.StartTrainTopicModel(
+    resp = grpc_stub.start_train_topic_model(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.FULL)
     )
 
@@ -79,7 +73,7 @@ if __name__ == "__main__":
 
     print(resp)
 
-    resp = grpc_stub.StartTrainTopicModel(
+    resp = grpc_stub.start_train_topic_model(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.UPDATE)
     )
 

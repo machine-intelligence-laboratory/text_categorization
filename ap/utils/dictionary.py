@@ -4,20 +4,20 @@ import typing
 import artm
 
 
-def get_num_entries(d: artm.Dictionary) -> int:
+def get_num_entries(dictionary: artm.Dictionary) -> int:
     """
     Возвращает размер словаря.
 
     Parameters
     ----------
-    d словарь
+    dictionary словарь
 
     Returns
     -------
     количество токенов в словаре
     """
     return next(
-        x for x in d._master.get_info().dictionary if x.name == d.name
+        x for x in dictionary._master.get_info().dictionary if x.name == dictionary.name
     ).num_entries
 
 
@@ -56,8 +56,8 @@ def limit_classwise(
 
     res = []
     for cls_id in cls_ids:
-        with open(os.path.join(tmp_dir, f"{cls_id[1:]}.txt")) as f:
-            res.extend(f.readlines()[2:] if len(res) > 0 else f.readlines())
+        with open(os.path.join(tmp_dir, f"{cls_id[1:]}.txt")) as file:
+            res.extend(file.readlines()[2:] if len(res) > 0 else file.readlines())
 
-    with open(out_file, "w") as f:
-        f.write("".join(res))
+    with open(out_file, "w") as file:
+        file.write("".join(res))

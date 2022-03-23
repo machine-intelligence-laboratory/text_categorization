@@ -4,6 +4,7 @@ import os
 import tempfile
 import uuid
 import json
+
 from concurrent import futures
 
 import artm
@@ -74,11 +75,11 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
             rubric = str(grnti_to_number[elib_grnti[doc_id]])
             train_grnti[doc_id] = rubric
         return train_grnti
-    
+
     def _create_batches(self, dock_pack, batches_dir):
-        with open(os.path.join(self._rubric_dir, 'udk_codes.json'), "r") as f:
-            udk_codes = json.loads(f.read())
-            
+        with open(os.path.join(self._rubric_dir, 'udk_codes.json'), "r") as file:
+            udk_codes = json.loads(file.read())
+
         grnti_codes = self.get_rubric_of_train_docs()
 
         documents = []
@@ -87,7 +88,7 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
         for doc in dock_pack.Documents:
             modality = ["@" + doc.Language]
             doc_id = id_to_str(doc.Id)
-            
+
             doc_vw_dict = {doc.Language: " ".join(doc.Tokens)}
             if doc_id in udk_codes:
                 modality += ["@UDK"]
@@ -96,9 +97,9 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
                 modality += ["@GRNTI"]
                 if grnti_codes[doc_id] != "нет":
                     doc_vw_dict.update({"@GRNTI": grnti_codes[doc_id]})
-            
+
             vw_doc = self._vw.convert_doc(doc_vw_dict)
-            
+
             for modl in modality:
                 key = modl if modl in ["@UDK", "@GRNTI"] else modl[1:]
                 documents.append((id_to_str(doc.Id), key, vw_doc[key]))
@@ -126,9 +127,9 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
                         local_dict[token] = 0
                     local_dict[token] += 1
 
-                for k, v in local_dict.items():
-                    item.token_id.append(dictionary[(modality, k)])
-                    item.token_weight.append(v)
+                for key, value in local_dict.items():
+                    item.token_id.append(dictionary[(modality, key)])
+                    item.token_weight.append(value)
             else:
                 for token in doc:
                     item.token_id.append(dictionary[(modality, token)])
@@ -172,7 +173,7 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
             "Embeddings calculated, spent %.2f seconds",
             (datetime.datetime.now() - processing_start).total_seconds(),
         )
-        
+
         emb_doc = list()
         for doc in request.Pack.Documents:
             emb = embeddings[f"{doc.Id.Hi}_{doc.Id.Lo}"]
@@ -220,4 +221,5 @@ def serve(model, bpe, rubric):
 
 
 if __name__ == "__main__":
+    # TODO: сюда надо передавать model, bpe, rubric
     serve()

@@ -15,7 +15,6 @@ def artm_model():
         return_value=pd.DataFrame.from_dict({"0_0": [3, 2, 1, 0], "1_0": [3, 2, 1, 0]})
     )
     return mocked_model
-    # return  artm.load_artm_model("../antiplagiat_models/PLSA_L14_V20000_TOP100_E1_G0_T10")
 
 
 @pytest.fixture(scope="module")
