@@ -105,7 +105,7 @@ def test_add_documents(models_dir, data_dir, grpc_stub):
         Document(Id=DocId(Lo=0, Hi=1), Tokens=["c", "D"], Language="en"),
     ]
     parallel_docs = ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)])
-    resp = grpc_stub.add_documents_to_model(
+    resp = grpc_stub.AddDocumentsToModel(
         AddDocumentsToModelRequest(
             Collection=DocumentPack(Documents=docs), ParallelDocuments=[parallel_docs]
         )
@@ -125,7 +125,7 @@ def test_add_documents_new_lang(models_dir, data_dir, grpc_stub):
         Document(Id=DocId(Lo=0, Hi=1), Tokens=["c", "D"], Language="en"),
     ]
     parallel_docs = ParallelDocIds(Ids=[DocId(Lo=0, Hi=0), DocId(Lo=0, Hi=1)])
-    resp = grpc_stub.add_documents_to_model(
+    resp = grpc_stub.AddDocumentsToModel(
         AddDocumentsToModelRequest(
             Collection=DocumentPack(Documents=docs), ParallelDocuments=[parallel_docs]
         )
@@ -146,7 +146,7 @@ def test_add_documents_new_lang_no_translation(models_dir, data_dir, grpc_stub):
         Document(Id=DocId(Lo=0, Hi=2), Tokens=["c", "D"], Language="fr"),
     ]
     parallel_docs = ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)])
-    resp = grpc_stub.add_documents_to_model(
+    resp = grpc_stub.AddDocumentsToModel(
         AddDocumentsToModelRequest(
             Collection=DocumentPack(Documents=docs), ParallelDocuments=[parallel_docs]
         )
@@ -171,7 +171,7 @@ def test_start_train(data_dir, grpc_stub):
         ParallelDocIds(Ids=[DocId(Lo=2, Hi=0), DocId(Lo=2, Hi=1)]),
     ]
 
-    resp = grpc_stub.add_documents_to_model(
+    resp = grpc_stub.AddDocumentsToModel(
         AddDocumentsToModelRequest(
             Collection=DocumentPack(Documents=docs), ParallelDocuments=parallel_docs
         )

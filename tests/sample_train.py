@@ -53,7 +53,7 @@ if __name__ == "__main__":
         ParallelDocIds(Ids=[DocId(Lo=0, Hi=1)]),
         ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)]),
     ]
-    resp = grpc_stub.add_documents_to_model(
+    resp = grpc_stub.AddDocumentsToModel(
         AddDocumentsToModelRequest(
             Collection=DocumentPack(Documents=docs), ParallelDocuments=parallel_docs
         )
