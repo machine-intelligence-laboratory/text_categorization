@@ -273,6 +273,31 @@ def _get_rubric_of_train_docs(experiment_config) -> dict:
     return train_grnti
 
 
+def _get_modality_distribution(modality_list, path_train):
+    """
+    Get document number foe each of modality.
+
+
+    :modality_list path_train: typing.List[str]
+        list with title of modalities to calculate distribution
+    :param path_train: pathlib.Path
+        path to txt file with non-wiki part of train data.
+    :return: typing.Dict[str, int]
+        dict, key - modality, value - amount of documents of this modality
+    """
+    # TODO: add wiki part of train data
+    with open(path_train) as file:
+        train_data = file.read()
+
+    modality_distribution = {
+        mod: train_data.count('|@{mod}')
+        for mod in modality_list
+    }
+
+    return modality_distribution
+
+
+
 def _recursively_unlink(path: Path):
     for child in path.iterdir():
         if child.is_file():
@@ -300,6 +325,8 @@ def _train_iteration(
     with open(path_balanced_train, 'w') as file:
         file.writelines([train_dict[doc_id].strip() + '\n'
                          for doc_id in balanced_doc_ids])
+    modality_list = experiment_config["LANGUAGES_MAIN"]
+    modality_distribution = _get_modality_distribution(modality_list, path_balanced_train)
     del train_dict
 
     # строю батчи по сбалансированным данным

@@ -26,6 +26,23 @@ artm_model_params:
     tau_SmoothTheta: 0.025
     tau_SparseTheta: -0.1
 
+LANGUAGES_MAIN:
+    - ru
+    - en
+    - cs
+    - de
+    - es
+    - fr
+    - it
+    - ja
+    - kk
+    - ky
+    - nl
+    - pl
+    - pt
+    - tr
+    - zh
+
 LANGUAGES_ALL:
     - af
     - am
