@@ -322,11 +322,10 @@ def _train_iteration(
         balanced_doc_ids, train_dict = _get_balanced_doc_ids(
             train_dict, train_grnti, docs_of_rubrics
         )
+
     with open(path_balanced_train, 'w') as file:
         file.writelines([train_dict[doc_id].strip() + '\n'
                          for doc_id in balanced_doc_ids])
-    modality_list = experiment_config["LANGUAGES_MAIN"]
-    modality_distribution = _get_modality_distribution(modality_list, path_balanced_train)
     del train_dict
 
     # строю батчи по сбалансированным данным
@@ -385,6 +384,11 @@ def fit_topic_model(experiment_config):
     model = _create_init_model(experiment_config)
     path_batches_wiki = experiment_config.get("path_wiki_train_batches", None)
     num_collection_passes = experiment_config["artm_model_params"]["num_collection_passes"]
+    average_rubric_size = int(len(train_grnti) / len(set(train_grnti.values())))
+    print(f'На каждой итерации используется по {average_rubric_size} документа\n' +
+          f'для каждлй из {experiment_config["num_rubric"]} рубрик.')
+    # тут нужно визуализировать "распределение" документов по модальностям (рубрикам)
+
     for iteration in tqdm(range(num_collection_passes)):
         _train_iteration(model, experiment_config, train_grnti, docs_of_rubrics,
                          path_balanced_train, path_to_batches, path_batches_wiki)
@@ -394,6 +398,9 @@ def fit_topic_model(experiment_config):
         search_metrics = calculate_search_quality(experiment_config)
         # тут нужно визуализировать итерацию iteration
         # тут нужно визуализировать метрики search_metrics
+        modality_list = experiment_config["LANGUAGES_MAIN"]
+        modality_distribution = _get_modality_distribution(modality_list, path_balanced_train)
+        # тут нужно визуализировать распределение документов по модальностям modality_distribution
 
 
 def _get_args():
