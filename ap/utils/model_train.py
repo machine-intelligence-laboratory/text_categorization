@@ -32,10 +32,10 @@ def _create_init_model(experiment_config) -> artm.artm_model.ARTM:
     dictionary = artm.Dictionary()
     dictionary.load_text(experiment_config["dictionary_path"])
 
-    background_topic_list = [f'topic_{i}' for i in range(artm_model_params["num_not_sp"])]
+    background_topic_list = [f'topic_{i}' for i in range(artm_model_params["num_bckg_topic"])]
     subject_topic_list = [
-        f'topic_{i}' for i in range(artm_model_params["num_not_sp"],
-                                    artm_model_params["NUM_TOPICS"]-artm_model_params["num_not_sp"])
+        f'topic_{i}' for i in range(artm_model_params["num_bckg_topic"],
+                                    artm_model_params["NUM_TOPICS"]-artm_model_params["num_bckg_topic"])
     ]
 
     model = artm.ARTM(num_topics=artm_model_params["NUM_TOPICS"],
