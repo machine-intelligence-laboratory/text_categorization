@@ -1,20 +1,24 @@
+import json
 import os
+
+from itertools import combinations_with_replacement
 from pathlib import Path
 
 import artm
+import joblib
 import numpy as np
 import pandas as pd
-import json
+
 from sklearn.metrics.pairwise import cosine_similarity
-import joblib
-from itertools import combinations_with_replacement
 from tqdm import tqdm
 
 
 class RankingByModel:
-    def __init__(self, bcg_topic_list, metrics_to_calculate,
-                 model_path, matrix_norm_metric, path_subsamples, path_rubrics,
-                 mode, **kwargs):
+    def __init__(
+            self, bcg_topic_list, metrics_to_calculate,
+            model_path, matrix_norm_metric, path_subsamples, path_rubrics,
+            mode, **kwargs
+    ):
         """
         Class for ranking document search between language pairs.
 
@@ -68,24 +72,24 @@ class RankingByModel:
             path_to_batches = os.path.join(
                 os.path.dirname(path_to_data), Path(path_to_data).stem + "_rank_batches"
             )
-            bv = artm.BatchVectorizer(
+            batch_vectorizer = artm.BatchVectorizer(
                 data_path=path_to_data,
                 data_format="vowpal_wabbit",
                 target_folder=path_to_batches,
             )
 
         elif len(os.listdir(path_to_data)) > 0:
-            bv = artm.BatchVectorizer(data_path=path_to_data, data_format="batches",)
+            batch_vectorizer = artm.BatchVectorizer(data_path=path_to_data, data_format="batches")
         else:
             raise ValueError("Unknown data format")
 
-        theta = self._model.transform(batch_vectorizer=bv)
+        theta = self._model.transform(batch_vectorizer=batch_vectorizer)
         theta = theta.loc[self._sbj_topic_list]
         return theta.columns, theta
 
     def _metrics_on_analogy_similarity(
         self, theta_original,
-        search_indices, doc_id, top_10_percent,
+        doc_id, top_10_percent,
         a_train, a_z_train,
         subsample_for_doc_id, vectors_source
     ):
@@ -136,7 +140,7 @@ class RankingByModel:
         a_train = joblib.load(path_train_lang.joinpath(f'{lang_original}', 'centroid.joblib'))
         a_z_train = joblib.load(path_train_lang.joinpath(f'{lang_source}', 'centroid.joblib'))
 
-        for search_num in range(len(search_indices)):
+        for search_num, doc_id in enumerate(search_indices):
             doc_id = search_indices[search_num]
             top_10_percent, bottom_90_percent = subsamples[doc_id]
             subsample_for_doc_id = pd.Index(top_10_percent + bottom_90_percent)
@@ -148,7 +152,7 @@ class RankingByModel:
             if 'analogy' in self._metrics_to_calculate:
                 metric = 'analogy'
                 percent, count = self._metrics_on_analogy_similarity(
-                    theta_original, search_indices, doc_id, top_10_percent,
+                    theta_original, doc_id, top_10_percent,
                     a_train, a_z_train,
                     subsample_for_doc_id, vectors_source
                 )
@@ -276,7 +280,7 @@ class RankingByModel:
             percent[metric].to_csv(path_experiment_result.joinpath(f'percent_{metric}.csv'))
         intersections.to_csv(path_experiment_result.joinpath('intersections.csv'))
 
-        return (percent, frequency, intersections)
+        return percent, frequency, intersections
 
 
 def quality_of_models(path_train_lang, bcg_topic_list,
@@ -299,7 +303,7 @@ def quality_of_models(path_train_lang, bcg_topic_list,
         list of names of proximity measures to use in ranking
     path_model: str
         path to models
-    path_experiment_result: str
+    path_experiment_result: pathlib.Path
         path to the folder to save results of models
     matrix_norm_metric: callable
         a way to measure norm of a matrix of vectors
@@ -325,8 +329,6 @@ def quality_of_models(path_train_lang, bcg_topic_list,
     path_model_result = path_experiment_result.joinpath(path_model.name)
     path_model_result.mkdir(parents=True, exist_ok=True)
     path_thetas = path_model_result.joinpath('theta_lang.joblib')
-    average_frequency = dict()
-    average_percent = dict()
 
     rbm = RankingByModel(
         bcg_topic_list, metrics_to_calculate,

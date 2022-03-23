@@ -1,10 +1,11 @@
 import re
 import typing
-import json
+
 from collections import Counter
 from string import punctuation
 
 import youtokentome as yttm
+
 from zhon import hanzi
 
 
@@ -51,7 +52,7 @@ class VowpalWabbitBPE:
         """
         for key, modality_bows in sessions_bow_messages.items():
             new_message_str_format = str(key).replace(" ", "_")
-            for modality, bow in modality_bows.items():
+            for modality, _ in modality_bows.items():
                 if modality == "plain_text":
                     continue
                 if self._use_counters:
@@ -106,7 +107,7 @@ class VowpalWabbitBPE:
         for modality, mod_elem in doc.items():
             print(modality)
             tokens = " ".join(self._token_filtration(mod_elem))
-            if modality != '@UDK' and modality != '@GRNTI':
+            if modality not in ['@UDK', '@GRNTI']:
                 tokens = self._bpe_models[modality].encode(
                     tokens, output_type=yttm.OutputType.SUBWORD
                 )

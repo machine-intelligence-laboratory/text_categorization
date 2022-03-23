@@ -1,12 +1,17 @@
-import artm
-import numpy as np
 from pathlib import Path
-from tqdm import tqdm
-import joblib
+
 import json
+import warnings
+
+import artm
+import joblib
+import numpy as np
+
+from tqdm import tqdm
+
 import rank_metric
 import config
-import warnings
+
 warnings.filterwarnings('ignore')
 
 

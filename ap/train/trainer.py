@@ -3,6 +3,8 @@ import logging
 import os
 import typing
 
+import artm
+
 from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
 from ap.utils.general import ensure_directory
@@ -36,7 +38,6 @@ class ModelTrainer:
         ----------
         train_type - full for full train from scratch, update to get the latest model and train it.
         """
-        import artm
 
         model_name = self.generate_model_name()
         batch_vectorizer = self._data_manager.prepare_batches()

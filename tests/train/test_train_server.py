@@ -56,8 +56,8 @@ def data_dir(tmpdir_factory):
         "zh",
     ]
     class_ids = {"@" + language: 1 for language in langs}
-    with open(os.path.join(data_dir, "classes.yaml"), "w") as f:
-        yaml.safe_dump(class_ids, f)
+    with open(os.path.join(data_dir, "classes.yaml"), "w") as file:
+        yaml.safe_dump(class_ids, file)
 
     shutil.copy("./tests/data/dictionary.txt", os.path.join(data_dir, "dictionary.txt"))
 
@@ -85,7 +85,7 @@ def grpc_servicer(test_conf, models_dir, data_dir, bpe_models):
 
 
 @pytest.fixture(scope="module")
-def grpc_stub_cls(grpc_channel):
+def grpc_stub_cls():
     from ap.topic_model.v1.TopicModelTrain_pb2_grpc import TopicModelTrainServiceStub
 
     return TopicModelTrainServiceStub
@@ -105,7 +105,7 @@ def test_add_documents(models_dir, data_dir, grpc_stub):
         Document(Id=DocId(Lo=0, Hi=1), Tokens=["c", "D"], Language="en"),
     ]
     parallel_docs = ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)])
-    resp = grpc_stub.AddDocumentsToModel(
+    resp = grpc_stub.add_documents_to_model(
         AddDocumentsToModelRequest(
             Collection=DocumentPack(Documents=docs), ParallelDocuments=[parallel_docs]
         )
@@ -113,8 +113,8 @@ def test_add_documents(models_dir, data_dir, grpc_stub):
 
     assert resp.Status == AddDocumentsToModelResponse.AddDocumentsStatus.OK
 
-    with open(os.path.join(data_dir, "vw_new", "actual.txt"), "r") as f:
-        res = f.readlines()
+    with open(os.path.join(data_dir, "vw_new", "actual.txt"), "r") as file:
+        res = file.readlines()
         assert len(res) == 2
 
 
@@ -125,7 +125,7 @@ def test_add_documents_new_lang(models_dir, data_dir, grpc_stub):
         Document(Id=DocId(Lo=0, Hi=1), Tokens=["c", "D"], Language="en"),
     ]
     parallel_docs = ParallelDocIds(Ids=[DocId(Lo=0, Hi=0), DocId(Lo=0, Hi=1)])
-    resp = grpc_stub.AddDocumentsToModel(
+    resp = grpc_stub.add_documents_to_model(
         AddDocumentsToModelRequest(
             Collection=DocumentPack(Documents=docs), ParallelDocuments=[parallel_docs]
         )
@@ -133,8 +133,8 @@ def test_add_documents_new_lang(models_dir, data_dir, grpc_stub):
 
     assert resp.Status == AddDocumentsToModelResponse.AddDocumentsStatus.OK
 
-    with open(os.path.join(data_dir, "vw_new", "actual.txt"), "r") as f:
-        res = f.readlines()
+    with open(os.path.join(data_dir, "vw_new", "actual.txt"), "r") as file:
+        res = file.readlines()
         assert len(res) == 2
 
 
@@ -146,7 +146,7 @@ def test_add_documents_new_lang_no_translation(models_dir, data_dir, grpc_stub):
         Document(Id=DocId(Lo=0, Hi=2), Tokens=["c", "D"], Language="fr"),
     ]
     parallel_docs = ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)])
-    resp = grpc_stub.AddDocumentsToModel(
+    resp = grpc_stub.add_documents_to_model(
         AddDocumentsToModelRequest(
             Collection=DocumentPack(Documents=docs), ParallelDocuments=[parallel_docs]
         )
@@ -171,7 +171,7 @@ def test_start_train(data_dir, grpc_stub):
         ParallelDocIds(Ids=[DocId(Lo=2, Hi=0), DocId(Lo=2, Hi=1)]),
     ]
 
-    resp = grpc_stub.AddDocumentsToModel(
+    resp = grpc_stub.add_documents_to_model(
         AddDocumentsToModelRequest(
             Collection=DocumentPack(Documents=docs), ParallelDocuments=parallel_docs
         )
@@ -179,7 +179,7 @@ def test_start_train(data_dir, grpc_stub):
 
     assert resp.Status == AddDocumentsToModelResponse.AddDocumentsStatus.OK
 
-    resp = grpc_stub.StartTrainTopicModel(
+    resp = grpc_stub.start_train_topic_model(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.FULL)
     )
     assert resp.Status == StartTrainTopicModelResponse.StartTrainTopicModelStatus.OK
@@ -199,10 +199,10 @@ def test_start_train(data_dir, grpc_stub):
     assert len(os.listdir(os.path.join(data_dir, "vw"))) > 0
     assert len(os.listdir(os.path.join(data_dir, "batches"))) > 0
 
-    with open(os.path.join(data_dir, "dictionary.txt")) as f:
-        assert len(f.readlines()) == 10
+    with open(os.path.join(data_dir, "dictionary.txt")) as file:
+        assert len(file.readlines()) == 10
 
-    resp = grpc_stub.StartTrainTopicModel(
+    resp = grpc_stub.start_train_topic_model(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.UPDATE)
     )
     assert resp.Status == StartTrainTopicModelResponse.StartTrainTopicModelStatus.OK
