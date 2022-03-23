@@ -221,5 +221,4 @@ def serve(model, bpe, rubric):
 
 
 if __name__ == "__main__":
-    # TODO: сюда надо передавать model, bpe, rubric
     serve()
