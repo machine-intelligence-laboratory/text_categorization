@@ -1,11 +1,11 @@
 # data paths
-path_experiment: '/home/common/potapova.ps/experiments/best_model'
-dictionary_path: '/home/common/potapova.ps/data/dictionaries/dictionary_train_BPE_wiki_100_120k_11k.txt'
-path_wiki_train_batches: '/home/common/potapova.ps/data/wiki_100/batches_train'
-path_articles_rubrics_train_grnti: '/home/common/potapova.ps/data/grnti_codes.json'
-path_elib_train_rubrics_grnti: '/home/common/potapova.ps/data/elib_train_grnti_codes.json'
-path_grnti_mapping: '/home/common/potapova.ps/data/grnti_to_number.json'
-train_dict_path: '/home/common/potapova.ps/data/train_rubrics_modalities/train_with_combined_grnti_69_rubric_dict.joblib'
+path_experiment: '/home/potapova/Projects/antiplagiat_categorization/best_model'
+dictionary_path: '/data/datasets/Antiplagiat/dictionaties/dictionary_train_BPE_wiki_100_120k_11k.txt'
+path_wiki_train_batches: '/data/datasets/Antiplagiat//wiki_100/batches_train'
+path_articles_rubrics_train_grnti: '/data/datasets/Antiplagiat/grnti_codes.json'
+path_elib_train_rubrics_grnti: '/data/datasets/Antiplagiat/articles_train_val2/data_train/elib_train_grnti_codes.json'
+path_grnti_mapping: '/data/datasets/Antiplagiat/grnti_to_number.json'
+train_dict_path: '/home/potapova/Projects/antiplagiat_categorization/train_with_combined_grnti_69_rubric_dict.joblib'
 
 need_augmentation: False
 aug_proportion: 0.2
