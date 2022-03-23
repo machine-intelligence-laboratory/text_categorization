@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
     print(resp)
 
-    resp = grpc_stub.start_train_topic_model(
+    resp = grpc_stub.StartTrainTopicModel(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.FULL)
     )
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
     print(resp)
 
-    resp = grpc_stub.start_train_topic_model(
+    resp = grpc_stub.StartTrainTopicModel(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.UPDATE)
     )
 

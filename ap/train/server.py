@@ -90,7 +90,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
             Status=AddDocumentsToModelResponse.AddDocumentsStatus.OK
         )
 
-    def start_train_topic_model(
+    def StartTrainTopicModel(
         self, request: StartTrainTopicModelRequest, context
     ) -> StartTrainTopicModelResponse:
         """

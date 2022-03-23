@@ -179,7 +179,7 @@ def test_start_train(data_dir, grpc_stub):
 
     assert resp.Status == AddDocumentsToModelResponse.AddDocumentsStatus.OK
 
-    resp = grpc_stub.start_train_topic_model(
+    resp = grpc_stub.StartTrainTopicModel(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.FULL)
     )
     assert resp.Status == StartTrainTopicModelResponse.StartTrainTopicModelStatus.OK
@@ -202,7 +202,7 @@ def test_start_train(data_dir, grpc_stub):
     with open(os.path.join(data_dir, "dictionary.txt")) as file:
         assert len(file.readlines()) == 10
 
-    resp = grpc_stub.start_train_topic_model(
+    resp = grpc_stub.StartTrainTopicModel(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.UPDATE)
     )
     assert resp.Status == StartTrainTopicModelResponse.StartTrainTopicModelStatus.OK
