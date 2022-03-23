@@ -109,6 +109,7 @@ def get_balanced_doc_ids(
     Returns balanced_doc_ids - list of document ids, balanced by rubric. Documents of
     all rubrics occurs in balanced_doc_ids the same number of times,
     equal to average_rubric_size.
+
     Returns train_dict - dict where key - document id, value - document in
     Vowpal Wabbit format. Function change train_dict, multiplying token counters
     by number of occurrences of document id in balanced_doc_ids.
@@ -237,7 +238,7 @@ def get_rubric_of_train_docs() -> typing.Dict[str, str]:
     Returns
     -------
     train_grnti: dict
-        dict where keys - document ids, value - numer of GRNTI rubric of document.
+        dict where keys - document ids, value - number of GRNTI rubric of document.
     """
     with open(experiment_config.path_articles_rubrics_train_grnti) as file:
         articles_grnti_with_no = json.load(file)
