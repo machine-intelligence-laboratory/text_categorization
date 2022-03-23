@@ -274,7 +274,7 @@ def _get_rubric_of_train_docs(experiment_config) -> dict:
 
 def _train_iteration(
         model, experiment_config, train_grnti, docs_of_rubrics,
-        path_balanced_train, path_to_batches, path_batches_wiki
+        path_balanced_train, path_to_batches, path_batches_wiki=None
 ):
     train_dict = joblib.load(experiment_config["train_dict_path"])
 
@@ -302,10 +302,15 @@ def _train_iteration(
         data_format="vowpal_wabbit",
         target_folder=str(path_to_batches),
     )
-    batch_vectorizer = artm.BatchVectorizer(
-        data_path=[path_to_batches, path_batches_wiki],
-        data_weight=[1, 1]
-    )
+    if path_batches_wiki:
+        batch_vectorizer = artm.BatchVectorizer(
+            data_path=[path_to_batches, path_batches_wiki],
+            data_weight=[1, 1]
+        )
+    else:
+        batch_vectorizer = artm.BatchVectorizer(
+            data_path=path_to_batches
+        )
     model.fit_offline(batch_vectorizer, num_collection_passes=1)
 
 
@@ -337,7 +342,7 @@ def fit_topic_model(experiment_config):
     del train_dict
 
     model = _create_init_model(experiment_config)
-    path_batches_wiki = experiment_config["path_wiki_train_batches"]
+    path_batches_wiki = experiment_config.get("path_wiki_train_batches", None)
     num_collection_passes = experiment_config["artm_model_params"]["num_collection_passes"]
     for iteration in tqdm(range(num_collection_passes)):
         _train_iteration(model, experiment_config, train_grnti, docs_of_rubrics,
