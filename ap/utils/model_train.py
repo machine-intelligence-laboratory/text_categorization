@@ -1,5 +1,6 @@
 import json
 import itertools
+import pprint
 import typing
 
 from argparse import ArgumentParser
@@ -385,7 +386,7 @@ def fit_topic_model(experiment_config):
     path_batches_wiki = experiment_config.get("path_wiki_train_batches", None)
     num_collection_passes = experiment_config["artm_model_params"]["num_collection_passes"]
     average_rubric_size = int(len(train_grnti) / len(set(train_grnti.values())))
-    print(f'На каждой эпохе используется по {average_rubric_size} документа' +
+    print(f'На каждой эпохе используется по {average_rubric_size} документа ' +
           f'для каждой из {experiment_config["num_rubric"]} рубрик.')
     # тут нужно визуализировать "распределение" документов по модальностям (рубрикам)
 
@@ -400,6 +401,7 @@ def fit_topic_model(experiment_config):
         # тут нужно визуализировать метрики search_metrics
         modality_list = experiment_config["LANGUAGES_MAIN"]
         modality_distribution = _get_modality_distribution(modality_list, path_balanced_train)
+        pprint(modality_distribution)
         # тут нужно визуализировать распределение документов по модальностям modality_distribution
 
 
