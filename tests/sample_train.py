@@ -32,7 +32,7 @@ if __name__ == "__main__":
                 "sobr",
                 "seguida",
             ],
-            Modalities=[Modality(Key="lang", Value='es')],
+            Modalities=[Modality(Key="lang", Value='ru')],
         ),
         Document(
             Id=DocId(Lo=0, Hi=1),
@@ -46,12 +46,11 @@ if __name__ == "__main__":
                 "coherente",
                 "ook",
             ],
-            Modalities=[Modality(Key="lang", Value='nl')],
+            Modalities=[Modality(Key="lang", Value='ru')],
         ),
     ]
     parallel_docs = [
-        ParallelDocIds(Ids=[DocId(Lo=0, Hi=1)]),
-        ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)]),
+        ParallelDocIds(Ids=[DocId(Lo=0, Hi=1), DocId(Lo=0, Hi=0)])
     ]
     resp = grpc_stub.AddDocumentsToModel(
         AddDocumentsToModelRequest(
@@ -61,24 +60,24 @@ if __name__ == "__main__":
 
     print(resp)
 
-    resp = grpc_stub.StartTrainTopicModel(
-        StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.FULL)
-    )
-
-    while (
-        grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
-        == TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
-    ):
-        sleep(1)
-
-    print(resp)
-
-    resp = grpc_stub.StartTrainTopicModel(
-        StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.UPDATE)
-    )
-
-    while (
-        grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
-        == TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
-    ):
-        sleep(1)
+    # resp = grpc_stub.StartTrainTopicModel(
+    #     StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.FULL)
+    # )
+    #
+    # while (
+    #     grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
+    #     == TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
+    # ):
+    #     sleep(1)
+    #
+    # print(resp)
+    #
+    # resp = grpc_stub.StartTrainTopicModel(
+    #     StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.UPDATE)
+    # )
+    #
+    # while (
+    #     grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
+    #     == TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
+    # ):
+    #     sleep(1)

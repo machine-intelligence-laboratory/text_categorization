@@ -73,14 +73,15 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
             logging.info("AddDocumentsToModel")
 
             docs = docs_from_pack(request.Collection)
-
+            grouped_docs = {}
             for parallel_docs in request.ParallelDocuments:
                 base_id = id_to_str(parallel_docs.Ids[0])
+                grouped_docs[base_id] = docs[base_id]
                 for i in range(1, len(parallel_docs.Ids)):
-                    docs[base_id].update(docs[id_to_str(parallel_docs.Ids[i])])
+                    grouped_docs[base_id].update(docs[id_to_str(parallel_docs.Ids[i])])
 
-            self._data_manager.write_new_docs(self._vw, docs)
-            self._docs.inc(len(docs))
+            self._data_manager.write_new_docs(self._vw, grouped_docs)
+            self._docs.inc(len(grouped_docs))
         except NoTranslationException:
             return AddDocumentsToModelResponse(
                 Status=AddDocumentsToModelResponse.AddDocumentsStatus.NO_TRANSLATION
@@ -192,7 +193,7 @@ def serve(models, bpe, data, rubric):
     )
     server.add_insecure_port("[::]:50051")
     server.start()
-    start_http_server(8000)
+    start_http_server(8000, addr='0.0.0.0')
     logging.info("Server started")
     server.wait_for_termination()
 
