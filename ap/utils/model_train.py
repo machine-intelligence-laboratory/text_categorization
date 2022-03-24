@@ -399,7 +399,7 @@ def fit_topic_model(experiment_config):
         # тут нужно визуализировать метрики search_metrics
         modality_list = experiment_config["LANGUAGES_MAIN"]
         modality_distribution = _get_modality_distribution(modality_list, path_balanced_train)
-        pprint(modality_distribution)
+        pprint.pprint(modality_distribution)
         # тут нужно визуализировать распределение документов по модальностям modality_distribution
 
 
