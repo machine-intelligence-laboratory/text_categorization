@@ -289,12 +289,11 @@ def _get_modality_distribution(modality_list, path_train):
         train_data = file.read()
 
     modality_distribution = {
-        mod: train_data.count('|@{mod}')
+        mod: train_data.count(f'|@{mod}')
         for mod in modality_list
     }
 
     return modality_distribution
-
 
 
 def _recursively_unlink(path: Path):
