@@ -385,8 +385,8 @@ def fit_topic_model(experiment_config):
     path_batches_wiki = experiment_config.get("path_wiki_train_batches", None)
     num_collection_passes = experiment_config["artm_model_params"]["num_collection_passes"]
     average_rubric_size = int(len(train_grnti) / len(set(train_grnti.values())))
-    print(f'На каждой итерации используется по {average_rubric_size} документа\n' +
-          f'для каждлй из {experiment_config["num_rubric"]} рубрик.')
+    print(f'На каждой эпохе используется по {average_rubric_size} документа' +
+          f'для каждой из {experiment_config["num_rubric"]} рубрик.')
     # тут нужно визуализировать "распределение" документов по модальностям (рубрикам)
 
     for iteration in tqdm(range(num_collection_passes)):
