@@ -16,8 +16,6 @@ from topicnet.cooking_machine import rel_toolbox_lite
 from tqdm import tqdm
 from search_quality import calculate_search_quality
 
-# import experiment_config
-
 
 def _create_init_model(experiment_config) -> artm.artm_model.ARTM:
     """
