@@ -189,7 +189,23 @@ class ModelTrainer:
         """
 
         return self.model.info
-        # return параметры, коэффициенты регуляризации, модальности  модели
+
+    @property
+    def model_main_info(self):
+        """
+        Возвращает основную информацию о модели
+        :return:
+        """
+        info = self._config["artm_model_params"]
+        info["Модальности"] = self._data_manager.class_ids
+        info["need_augmentation"] = self._config.get("need_augmentation", False)
+        if info["need_augmentation"]:
+            info["aug_proportion"] = self._config.get("aug_proportion")
+        info["metrics_to_calculate"] = self._config["metrics_to_calculate"]
+        info["num_modalities"] = len(info["Модальности"])
+        info["dictionary_path"] = self._config["dictionary_path"]
+
+        return info # параметры,
 
     def _train_epoch(self):
         batch_vectorizer = self._data_manager.generate_batches_balanced_by_rubric()
@@ -204,14 +220,16 @@ class ModelTrainer:
         ----------
         train_type - full for full train from scratch, update to get the latest model and train it.
         """
+        main_info = self.model_main_info()
+        # Здесь можно визуализировать основную информацию о модели main_info
         for epoch in tqdm(range(self._config["num_collection_passes"])):
             logging.info(epoch)
             self._train_epoch()
             # тут нужно визуализировать epoch
             scores_value = self.model_scores_value
+            # тут можно визуализировать скоры модели scores_value
             if "PerlexityScore_ru" in scores_value:
                 logging.info(f"PerlexityScore_ru: {scores_value['PerlexityScore_@ru']}")
-            # тут можно визуализировать скоры модели scores_value
         self.model.dump_artm_model(self._path_to_dump_model)
 
     @staticmethod
