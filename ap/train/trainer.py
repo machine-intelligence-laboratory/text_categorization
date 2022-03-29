@@ -210,7 +210,7 @@ class ModelTrainer:
             # тут нужно визуализировать epoch
             scores_value = self.model_scores_value
             if "PerlexityScore_ru" in scores_value:
-                logging.info(f"PerlexityScore_ru: {scores_value['PerlexityScore_ru']}")
+                logging.info(f"PerlexityScore_ru: {scores_value['PerlexityScore_@ru']}")
             # тут можно визуализировать скоры модели scores_value
         self.model.dump_artm_model(self._path_to_dump_model)
 
