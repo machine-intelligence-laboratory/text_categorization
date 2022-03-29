@@ -86,7 +86,7 @@ class ModelTrainer:
 
         model = artm.ARTM(num_topics=artm_model_params["NUM_TOPICS"],
                           theta_columns_naming='title',
-                          class_ids={f'@{lang}': 1 for lang in self._config["LANGUAGES_ALL"]},
+                          class_ids={f'@{lang}': 1 for lang in self._data_manager.class_ids},
                           show_progress_bars=True,
                           dictionary=dictionary)
 

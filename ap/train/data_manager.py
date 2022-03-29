@@ -156,7 +156,7 @@ class ModelDataManager:
             train_grnti[doc_id] = rubric
         return train_grnti
 
-    def get_balanced_doc_ids(self) -> list:
+    def _get_balanced_doc_ids(self) -> list:
         """
         Create train data balanced by rubrics.
 
@@ -199,7 +199,7 @@ class ModelDataManager:
                     self.train_dict[doc_id] = new_line
         return balanced_doc_ids
 
-    def get_balanced_doc_ids_with_augmentation(self) -> list:
+    def _get_balanced_doc_ids_with_augmentation(self) -> list:
         """
         Create train data balanced by rubrics with augmentation.
 
@@ -278,11 +278,16 @@ class ModelDataManager:
         return balanced_doc_ids
 
     def _generate_vw_file_balanced_by_rubric(self):
+        """
+        Генерирует vw файл, где данные сбалансирваны по рубрикам ГРНТИ.
+
+        :return:
+        """
         # генерирую сбалансированные данные
         if self._config.get("need_augmentation", None):
-            balanced_doc_ids = self.get_balanced_doc_ids_with_augmentation()
+            balanced_doc_ids = self._get_balanced_doc_ids_with_augmentation()
         else:
-            balanced_doc_ids = self.get_balanced_doc_ids()
+            balanced_doc_ids = self._get_balanced_doc_ids()
         with open(self._path_balanced_train, 'w') as file:
             file.writelines([self.train_dict[doc_id].strip() + '\n'
                              for doc_id in balanced_doc_ids])
@@ -292,6 +297,9 @@ class ModelDataManager:
         Возвращает artm.BatchVectorizer, построенный на сбалансированных батчах.
 
         Генерирует батчи, в которых документы сбалансированны относительно рубрик ГРНТИ.
+        Из всего тренировочного датасета сэмплируются документы так, чтобы
+        в обучении на эпохе участвовало одинаковое количество документов каждой рубрики ГРНТИ.
+        Количество документов каждой рубрики равно average_rubric_size - среднему размеру рубрики ГРНТИ.
         Возвразает artm.BatchVectorizer, построенный на этих батчах.
 
         Returns
