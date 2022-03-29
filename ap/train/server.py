@@ -181,7 +181,7 @@ def serve(models, config, data):
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_TopicModelTrainServiceServicer_to_server(
-        TopicModelTrainServiceImpl(load_bpe_models(config["BPE_models"]), train_conf, models, data),
+        TopicModelTrainServiceImpl(load_bpe_models(train_conf["BPE_models"]), train_conf, models, data),
         server,
     )
     server.add_insecure_port("[::]:50051")
