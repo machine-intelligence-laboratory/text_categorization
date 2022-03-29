@@ -148,6 +148,17 @@ class ModelTrainer:
         )
         return model
 
+    @property
+    def model_scores(self) -> artm.scores.Scores:
+        """
+        Возвращает все скоры тематической модели
+
+        :return:
+        artm.scores.Scores
+            список скоров тематической модели
+        """
+        return self.model.scores
+
     def _train_epoch(self):
         batch_vectorizer = self._data_manager.generate_batches_balanced_by_rubric()
         self.model.fit_offline(batch_vectorizer, num_collection_passes=1)
@@ -165,7 +176,10 @@ class ModelTrainer:
             logging.info(epoch)
             self._train_epoch()
             # тут нужно визуализировать epoch
-            # тут можно визуализировать скоры модели
+            scores = self.model_scores
+            if "PerlexityScore" in scores:
+                logging.info(scores["PerlexityScore"])
+            # тут можно визуализировать скоры модели scores
         self.model.dump_artm_model(self._path_to_dump_model)
 
     @staticmethod
