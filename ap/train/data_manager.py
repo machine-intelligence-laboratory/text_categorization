@@ -4,6 +4,7 @@
 
 import json
 import itertools
+import logging
 import os
 # import shutil
 # import tempfile
@@ -44,7 +45,7 @@ class ModelDataManager:
         self._config = experiment_config
 
         # self._data_dir = data_dir
-        self.train_grnti: typing.Dict[str, str] = self.get_rubric_of_train_docs()
+        self.train_grnti: typing.Dict[str, str] = self._get_rubric_of_train_docs()
         # self.train_dict: typing.Dict[str, str] = joblib.load(self._config["train_dict_path"])
         with open(self._config["train_vw_path"]) as file:
             train_vw = file.readlines()
@@ -124,7 +125,7 @@ class ModelDataManager:
     #     return artm.BatchVectorizer(data_path=[self._new_batches_dir, self._batches_dir],
     #                                 data_weight=[1, 1])
 
-    def get_rubric_of_train_docs(self):
+    def _get_rubric_of_train_docs(self):
         """
         Get dict where keys - document ids, value - number of GRNTI rubric of document.
 
@@ -318,16 +319,26 @@ class ModelDataManager:
         batches_list = list(self._path_to_batches.iterdir())
         if batches_list:
             for batch in batches_list:
-                batch.unlink()
+                if batch.is_file():
+                    batch.unlink()
+                else:
+                    self._recursively_unlink(batch)
         _ = artm.BatchVectorizer(
             data_path=str(self._path_balanced_train),
             data_format="vowpal_wabbit",
             target_folder=str(self._path_to_batches),
         )
-        batch_vectorizer = artm.BatchVectorizer(
-            data_path=[self._path_to_batches, self._path_batches_wiki],
-            data_weight=[1, 1]
-        )
+        if self._path_batches_wiki:
+            batch_vectorizer = artm.BatchVectorizer(
+                data_path=[self._path_to_batches, self._path_batches_wiki],
+                data_weight=[1, 1]
+            )
+            logging.info('Built batches with wiki')
+        else:
+            batch_vectorizer = artm.BatchVectorizer(
+                data_path=self._path_to_batches
+            )
+            logging.info('Built batches without wiki')
         return batch_vectorizer
 
     # def _merge_batches(self):
@@ -409,6 +420,15 @@ class ModelDataManager:
         dictionary = artm.Dictionary("main_dict")
         dictionary.load_text(self._config["dictionary_path"])
         return dictionary
+
+    def _recursively_unlink(self, path: Path):
+        for child in path.iterdir():
+            if child.is_file():
+                child.unlink()
+            else:
+                self._recursively_unlink(child)
+        path.rmdir()
+
 
     # def _update_classes(self, new_classes):
     #     for cls in new_classes:
