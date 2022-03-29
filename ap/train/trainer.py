@@ -165,6 +165,7 @@ class ModelTrainer:
             logging.info(iteration)
             self._train_epoch()
             # тут нужно визуализировать iteration
+            # тут можно визуализировать скоры модели
         self.model.dump_artm_model(self._path_to_dump_model)
 
     @staticmethod
