@@ -159,7 +159,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
     "--config", help="A path to experiment yaml config",
 )
 @click.option(
-    "--bpe", help="A path to a directory with BPE models",
+    "--models", help="A path to store trained bigARTM models",
 )
 @click.option(
     "--data", help="A path to data directories",
