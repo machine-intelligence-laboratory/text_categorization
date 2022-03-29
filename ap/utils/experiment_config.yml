@@ -29,6 +29,8 @@ artm_model_params:
   tau_SparseTheta: -0.1
 
 LANGUAGES_TRAIN:
+  GRNTI: 1
+  UDK: 1
   af: 1
   am: 1
   ar: 1
