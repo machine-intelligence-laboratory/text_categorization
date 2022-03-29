@@ -167,7 +167,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
 @click.option(
     "--data", help="A path to data directories",
 )
-def serve(models, config, bpe, data, rubric):
+def serve(models, config, bpe, data):
     """
     Запускает сервер.
 
