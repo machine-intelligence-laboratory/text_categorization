@@ -28,7 +28,7 @@ artm_model_params:
   tau_SmoothTheta: 0.025
   tau_SparseTheta: -0.1
 
-LANGUAGES_TRAIN:
+MODALITIES_TRAIN:
   GRNTI: 1
   UDK: 1
   af: 1
