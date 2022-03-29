@@ -3,6 +3,7 @@ import itertools
 import os
 import shutil
 import tempfile
+import typing
 import uuid
 
 from collections import Counter
@@ -11,7 +12,6 @@ from pathlib import Path
 import artm
 import joblib
 import numpy as np
-import typing
 import yaml
 
 from ap.utils.general import batch_names, ensure_directory
@@ -38,6 +38,7 @@ class ModelDataManager:
         self._config = experiment_config
 
         self._data_dir = data_dir
+        self._rubric_dir = rubric_dir
         self.train_grnti: typing.Dict[str, str] = self.get_rubric_of_train_docs()
         self.train_dict: typing.Dict[str, str] = joblib.load(self._config.train_dict_path)
 
@@ -72,8 +73,6 @@ class ModelDataManager:
             self._new_class_ids = {class_id: val for class_id, val in self._class_ids.items()}
 
         self._vw_dict = joblib.load(os.path.join(data_dir, "train_dict.joblib"), mmap_mode='r+')
-
-        self._rubric_dir = rubric_dir
 
     # def prepare_batches(self):
     #     """
@@ -274,7 +273,7 @@ class ModelDataManager:
         else:
             balanced_doc_ids = self.get_balanced_doc_ids()
         with open(self._path_balanced_train, 'w') as file:
-            file.writelines([self._train_dict[doc_id].strip() + '\n'
+            file.writelines([self.train_dict[doc_id].strip() + '\n'
                              for doc_id in balanced_doc_ids])
         # del train_dict
 
