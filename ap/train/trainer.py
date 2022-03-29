@@ -161,6 +161,7 @@ class ModelTrainer:
         ----------
         train_type - full for full train from scratch, update to get the latest model and train it.
         """
+        logging.info("Start model training")
         for epoch in tqdm(range(self._config["num_collection_passes"])):
             logging.info(epoch)
             self._train_epoch()
