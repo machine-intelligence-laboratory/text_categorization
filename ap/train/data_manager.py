@@ -421,6 +421,24 @@ class ModelDataManager:
         dictionary.load_text(self._config["dictionary_path"])
         return dictionary
 
+    def _get_modality_distribution(self) -> typing.Dict[str, int]:
+        """
+        Возвращает количество документов кажджой модальности из self.class_ids.
+
+        :return: modality_distribution
+            словарь, ключ - модальность, значение - количество документов с такой модальностью
+        """
+        # TODO: add wiki part of train data
+        with open(self._config["train_vw_path"]) as file:
+            train_data = file.read()
+
+        modality_distribution = {
+            mod: train_data.count(f'|@{mod}')
+            for mod in self.class_ids
+        }
+
+        return modality_distribution
+
     def _recursively_unlink(self, path: Path):
         for child in path.iterdir():
             if child.is_file():
