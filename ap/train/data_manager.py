@@ -298,7 +298,6 @@ class ModelDataManager:
         )
         return batch_vectorizer
 
-
     # def _merge_batches(self):
     #     logging.info("Merging batches")
     #     old_batches = os.listdir(self._batches_dir)

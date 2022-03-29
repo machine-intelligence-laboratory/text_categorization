@@ -157,6 +157,9 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
 
 @click.command()
 @click.option(
+    "--config", help="A path to experiment yaml config",
+)
+@click.option(
     "--models", help="A path to store trained bigARTM models",
 )
 @click.option(
@@ -168,7 +171,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
 @click.option(
     "--rubric", help="A path to data directories",
 )
-def serve(models, bpe, data, rubric):
+def serve(models, config, bpe, data, rubric):
     """
     Запускает сервер.
 
@@ -177,13 +180,13 @@ def serve(models, bpe, data, rubric):
     models - Путь к моделям
     data - Путь к данным
     """
-    with open("./train_conf.yaml", "r") as file:
-        train_conf = yaml.safe_load(file)
+    # with open("./train_conf.yaml", "r") as file:
+    #     train_conf = yaml.safe_load(file)
 
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_TopicModelTrainServiceServicer_to_server(
-        TopicModelTrainServiceImpl(load_bpe_models(bpe), train_conf, models, data, rubric),
+        TopicModelTrainServiceImpl(load_bpe_models(bpe), config, models, data, rubric),
         server,
     )
     server.add_insecure_port("[::]:50051")
