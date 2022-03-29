@@ -53,13 +53,13 @@ if __name__ == "__main__":
         ParallelDocIds(Ids=[DocId(Lo=0, Hi=1)]),
         ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)]),
     ]
-    resp = grpc_stub.AddDocumentsToModel(
-        AddDocumentsToModelRequest(
-            Collection=DocumentPack(Documents=docs), ParallelDocuments=parallel_docs
-        )
-    )
+    # resp = grpc_stub.AddDocumentsToModel(
+    #     AddDocumentsToModelRequest(
+    #         Collection=DocumentPack(Documents=docs), ParallelDocuments=parallel_docs
+    #     )
+    # )
 
-    print(resp)
+    # print(resp)
 
     resp = grpc_stub.StartTrainTopicModel(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.FULL)
@@ -73,9 +73,9 @@ if __name__ == "__main__":
 
     print(resp)
 
-    resp = grpc_stub.StartTrainTopicModel(
-        StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.UPDATE)
-    )
+    # resp = grpc_stub.StartTrainTopicModel(
+    #     StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.UPDATE)
+    # )
 
     while (
         grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
