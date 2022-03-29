@@ -46,6 +46,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         """
         self._vw = VowpalWabbitBPE(bpe_models)
         self._data_manager = ModelDataManager(data_dir, train_conf)
+        print(StartTrainTopicModelRequest.TrainType)
         self._trainer = ModelTrainer(StartTrainTopicModelRequest.TrainType, self._data_manager, train_conf, models_dir)
 
         self._executor = concurrent.futures.ProcessPoolExecutor(max_workers=2)
