@@ -122,11 +122,11 @@ class ModelDataManager:
         train_grnti: dict
             dict where keys - document ids, value - number of GRNTI rubric of document.
         """
-        with open(os.path.join(self._rubric_dir, 'grnti_codes.json')) as file:
+        with open(self._config.path_articles_rubrics_train_grnti) as file:
             articles_grnti_with_no = json.load(file)
-        with open(os.path.join(self._rubric_dir, "elib_train_grnti_codes.json")) as file:
+        with open(self._config.path_elib_train_rubrics_grnti) as file:
             elib_grnti_to_fix_with_no = json.load(file)
-        with open(os.path.join(self._rubric_dir, "grnti_to_number.json")) as file:
+        with open(self._config.path_grnti_mapping) as file:
             grnti_to_number = json.load(file)
 
         articles_grnti = {doc_id: rubric
