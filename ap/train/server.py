@@ -159,15 +159,12 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
     "--config", help="A path to experiment yaml config",
 )
 @click.option(
-    "--models", help="A path to store trained bigARTM models",
-)
-@click.option(
     "--bpe", help="A path to a directory with BPE models",
 )
 @click.option(
     "--data", help="A path to data directories",
 )
-def serve(models, config, bpe, data):
+def serve(models, config, data):
     """
     Запускает сервер.
 
@@ -179,10 +176,12 @@ def serve(models, config, bpe, data):
     with open(config, "r") as file:
         train_conf = yaml.safe_load(file)
 
+    # TODO: дообучение:
+    # если пути config["BPE_models"] нет - не надо загружать модели
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_TopicModelTrainServiceServicer_to_server(
-        TopicModelTrainServiceImpl(load_bpe_models(bpe), train_conf, models, data),
+        TopicModelTrainServiceImpl(load_bpe_models(config["BPE_models"]), train_conf, models, data),
         server,
     )
     server.add_insecure_port("[::]:50051")

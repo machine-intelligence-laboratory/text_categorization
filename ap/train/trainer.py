@@ -14,7 +14,7 @@ from topicnet.cooking_machine import rel_toolbox_lite
 from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
 from ap.utils.general import ensure_directory
-from ap.utils import config
+# from ap.utils import config
 
 
 class ModelTrainer:
@@ -43,7 +43,8 @@ class ModelTrainer:
         self._path_to_dump_model = Path(self._config["path_experiment"]).joinpath(model_name)
 
         current_models = os.listdir(models_dir)
-        # TODO: добавить условие: есть язык не из 100 языков
+        # TODO: для дообучения
+        # добавить условие: есть язык не из 100 языков
         # new_modality = not set(self._class_ids).issubset(config["LANGUAGES_ALL"])
         # или
         # new_modality = not set(self._config["LANGUAGES_TRAIN"]).issubset(config["LANGUAGES_ALL"])
@@ -161,6 +162,7 @@ class ModelTrainer:
         train_type - full for full train from scratch, update to get the latest model and train it.
         """
         for iteration in tqdm(range(self._config["num_collection_passes"])):
+            logging.info(iteration)
             self._train_epoch()
             # тут нужно визуализировать iteration
         self.model.dump_artm_model(self._path_to_dump_model)
