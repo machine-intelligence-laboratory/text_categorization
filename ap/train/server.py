@@ -1,6 +1,7 @@
 import concurrent
 import logging
 import typing
+
 from concurrent import futures
 
 import click
@@ -28,12 +29,12 @@ from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
     def __init__(
-        self,
-        bpe_models: typing.Dict[str, typing.Any],
-        train_conf: typing.Dict[str, typing.Any],
-        models_dir: str,
-        data_dir: str,
-        rubric_dir: str,
+            self,
+            bpe_models: typing.Dict[str, typing.Any],
+            train_conf: typing.Dict[str, typing.Any],
+            models_dir: str,
+            data_dir: str,
+            rubric_dir: str,
     ):
         """
         Инициализирует сервер.
@@ -52,7 +53,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         self._training_future = None
 
     def AddDocumentsToModel(
-        self, request: AddDocumentsToModelRequest, context
+            self, request: AddDocumentsToModelRequest, context
     ) -> AddDocumentsToModelResponse:
         """
         Добавляет документы в модель.
@@ -91,7 +92,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         )
 
     def StartTrainTopicModel(
-        self, request: StartTrainTopicModelRequest, context
+            self, request: StartTrainTopicModelRequest, context
     ) -> StartTrainTopicModelResponse:
         """
         Запускает обучение.
@@ -111,17 +112,16 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
             return StartTrainTopicModelResponse(
                 Status=StartTrainTopicModelResponse.StartTrainTopicModelStatus.ALREADY_STARTED
             )
-        else:
-            self._training_future = self._executor.submit(
-                self._trainer.train_model, [request.Type]
-            )
 
+        self._training_future = self._executor.submit(
+            self._trainer.train_model, [request.Type]
+        )
         return StartTrainTopicModelResponse(
             Status=StartTrainTopicModelResponse.StartTrainTopicModelStatus.OK
         )
 
     def TrainTopicModelStatus(
-        self, request: TrainTopicModelStatusRequest, context
+            self, request: TrainTopicModelStatusRequest, context
     ) -> TrainTopicModelStatusResponse:
         """
         Возвращает статус текущей сессии обучения.
@@ -136,7 +136,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         Статус
         """
         if self._training_future is None or (
-            self._training_future.done() and self._training_future.exception() is None
+                self._training_future.done() and self._training_future.exception() is None
         ):
             return TrainTopicModelStatusResponse(
                 Status=TrainTopicModelStatusResponse.TrainTopicModelStatus.COMPLETE
@@ -146,8 +146,8 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
                 Status=TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
             )
         elif (
-            self._training_future.cancelled()
-            or logging.error(self._training_future.exception()) is not None
+                self._training_future.cancelled()
+                or logging.error(self._training_future.exception()) is not None
         ):
             logging.error(str(self._training_future.exception()))
             return TrainTopicModelStatusResponse(
@@ -177,8 +177,8 @@ def serve(models, bpe, data, rubric):
     models - Путь к моделям
     data - Путь к данным
     """
-    with open("./train_conf.yaml", "r") as f:
-        train_conf = yaml.safe_load(f)
+    with open("./train_conf.yaml", "r") as file:
+        train_conf = yaml.safe_load(file)
 
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

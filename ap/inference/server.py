@@ -41,11 +41,12 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
         self._work_dir = work_dir
         self._rubric_dir = rubric_dir
 
+    # TODO: может стоит испортировать? дублируется с ap/train/data_manager.py
     def get_rubric_of_train_docs(self):
         """
-        Get dict where keys - document ids, value - numer of GRNTI rubric of document.
+        Get dict where keys - document ids, value - number of GRNTI rubric of document.
 
-        Do not conteins rubric 'нет'.
+        Do not contains rubric 'нет'.
 
         Returns
         -------
@@ -104,7 +105,6 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
                 key = modl if modl in ["@UDK", "@GRNTI"] else modl[1:]
                 documents.append((id_to_str(doc.Id), key, vw_doc[key]))
                 vocab.update(((key, token) for token in vw_doc[key].keys()))
-
 
         batch = artm.messages.Batch()
         batch.id = str(uuid.uuid4())
@@ -181,7 +181,6 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
                 emb_doc += [Embedding(Vector=embeddings[f"{doc.Id.Hi}_{doc.Id.Lo}"].iloc[:, 0].tolist())]
             else:
                 emb_doc += [Embedding(Vector=embeddings[f"{doc.Id.Hi}_{doc.Id.Lo}"].tolist())]
-
 
         return GetDocumentsEmbeddingResponse(
             Embeddings=emb_doc

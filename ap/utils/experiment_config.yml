@@ -1,0 +1,129 @@
+path_experiment: '/home/potapova/Projects/text_categorization/best_model'
+dictionary_path: '/data/datasets/Antiplagiat/dictionaties/dictionary_train_BPE_wiki_100_120k_11k.txt'
+path_wiki_train_batches: '/data/datasets/Antiplagiat/wiki_100/batches_train'
+train_dict_path: '/home/potapova/Projects/text_categorization/train_with_combined_grnti_69_rubric_dict.joblib'
+
+# rubrics
+num_rubric: 69
+path_articles_rubrics_train_grnti: '/data/datasets/Antiplagiat/grnti_codes.json'
+path_elib_train_rubrics_grnti: '/data/datasets/Antiplagiat/articles_train_val2/data_train/elib_train_grnti_codes.json'
+path_grnti_mapping: '/data/datasets/Antiplagiat/grnti_to_number.json'
+
+need_augmentation: False
+aug_proportion: 0.2
+
+# metrics parameters
+metrics_to_calculate: ['analogy']
+recalculate_train_centroids: True
+path_train_thetas: '/data/datasets/Antiplagiat/combined_train/train_by_lang'
+recalculate_test_thetas: True
+
+artm_model_params:
+  num_collection_passes: 25
+  NUM_TOPICS: 125
+  num_bcg_topic: 1
+  tau_DecorrelatorPhi: 0.05
+  tau_SmoothTheta: 0.025
+  tau_SparseTheta: -0.1
+
+LANGUAGES_TRAIN:
+  - af
+  - am
+  - ar
+  - av
+  - az
+  - ba
+  - be
+  - bg
+  - bn
+  - bs
+  - ca
+  - ce
+  - cs
+  - cv
+  - cy
+  - da
+  - de
+  - el
+  - en
+  - eo
+  - es
+  - et
+  - eu
+  - fa
+  - fi
+  - fr
+  - gd
+  - gl
+  - gu
+  - he
+  - hi
+  - hr
+  - hu
+  - hy
+  - ia
+  - id
+  - inh
+  - is
+  - it
+  - ja
+  - jv
+  - ka
+  - kaa
+  - kbd
+  - kk
+  - kl
+  - km
+  - ko
+  - krc
+  - ky
+  - la
+  - lez
+  - lo
+  - lt
+  - lv
+  - mg
+  - mhr
+  - mi
+  - mk
+  - ml
+  - mn
+  - mo
+  - ms
+  - my
+  - myv
+  - ne
+  - nl
+  - no
+  - oc
+  - os
+  - pl
+  - pt
+  - rm
+  - rn
+  - ro
+  - ru
+  - sah
+  - sh
+  - si
+  - sk
+  - sl
+  - sm
+  - so
+  - sq
+  - sr
+  - sv
+  - sw
+  - ta
+  - tg
+  - th
+  - tk
+  - tr
+  - tt
+  - udm
+  - uk
+  - ur
+  - uz
+  - vi
+  - yi
+  - zh
