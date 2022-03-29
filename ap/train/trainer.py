@@ -113,7 +113,7 @@ class ModelTrainer:
             regularizer=model.regularizers['SmoothThetaRegularizer'],
             data_stats=rel_toolbox_lite.count_vocab_size(
                 dictionary=dictionary,
-                modalities={f'@{lang}': 1 for lang in self._config["LANGUAGES_ALL"]})
+                modalities={f'@{lang}': 1 for lang in self._data_manager.class_ids})
         )
 
         # SparseTheta
@@ -129,7 +129,7 @@ class ModelTrainer:
             regularizer=model.regularizers['SparseThetaRegularizer'],
             data_stats=rel_toolbox_lite.count_vocab_size(
                 dictionary=dictionary,
-                modalities={f'@{lang}': 1 for lang in self._config["LANGUAGES_ALL"]})
+                modalities={f'@{lang}': 1 for lang in self._data_manager.class_ids})
         )
 
         # DecorrelatorPhi
@@ -144,7 +144,7 @@ class ModelTrainer:
             model=model, regularizer=model.regularizers['DecorrelatorPhiRegularizer'],
             data_stats=rel_toolbox_lite.count_vocab_size(
                 dictionary=dictionary,
-                modalities={f'@{lang}': 1 for lang in self._config["LANGUAGES_ALL"]})
+                modalities={f'@{lang}': 1 for lang in self._data_manager.class_ids})
         )
         return model
 
@@ -161,10 +161,10 @@ class ModelTrainer:
         ----------
         train_type - full for full train from scratch, update to get the latest model and train it.
         """
-        for iteration in tqdm(range(self._config["num_collection_passes"])):
-            logging.info(iteration)
+        for epoch in tqdm(range(self._config["num_collection_passes"])):
+            logging.info(epoch)
             self._train_epoch()
-            # тут нужно визуализировать iteration
+            # тут нужно визуализировать epoch
             # тут можно визуализировать скоры модели
         self.model.dump_artm_model(self._path_to_dump_model)
 
