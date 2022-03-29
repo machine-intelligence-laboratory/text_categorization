@@ -45,7 +45,10 @@ class ModelDataManager:
 
         # self._data_dir = data_dir
         self.train_grnti: typing.Dict[str, str] = self.get_rubric_of_train_docs()
-        self.train_dict: typing.Dict[str, str] = joblib.load(self._config["train_dict_path"])
+        # self.train_dict: typing.Dict[str, str] = joblib.load(self._config["train_dict_path"])
+        with open(self._config["train_vw_path"]) as file:
+            train_vw = file.readlines()
+        self.train_dict = {line.split()[0]: line for line in train_vw}
 
         path_experiment = Path(self._config["path_experiment"])
         path_experiment.mkdir(parents=True, exist_ok=True)
