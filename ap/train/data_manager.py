@@ -1,3 +1,7 @@
+"""
+Модуль для поддержания работы с данными
+"""
+
 import json
 import itertools
 import os
@@ -22,10 +26,12 @@ class NoTranslationException(Exception):
 
 
 class ModelDataManager:
+    """
+    Класс для поддержания работы с данными
+    """
     # MAX_FILE_SIZE = 512 * 1024 ^ 2
     # BATCH_SIZE = 10000
 
-    # TODO: оставить только конфиг
     def __init__(self, data_dir, experiment_config):
         """
         Создает дата менеджер.
@@ -37,16 +43,16 @@ class ModelDataManager:
         # self._train_conf = train_conf
         self._config = experiment_config
 
-        self._data_dir = data_dir
+        # self._data_dir = data_dir
         self.train_grnti: typing.Dict[str, str] = self.get_rubric_of_train_docs()
         self.train_dict: typing.Dict[str, str] = joblib.load(self._config["train_dict_path"])
 
-        self._path_experiment = Path(self._config["path_experiment"])
-        self._path_experiment.mkdir(parents=True, exist_ok=True)
-        self._path_train_data = self._path_experiment.joinpath('train_data')
-        self._path_to_batches = self._path_train_data.joinpath('batches_balanced')
+        path_experiment = Path(self._config["path_experiment"])
+        path_experiment.mkdir(parents=True, exist_ok=True)
+        path_train_data = path_experiment.joinpath('train_data')
+        self._path_to_batches = path_train_data.joinpath('batches_balanced')
         self._path_to_batches.mkdir(parents=True, exist_ok=True)
-        self._path_balanced_train = self._path_train_data.joinpath('train_balanced.txt')
+        self._path_balanced_train = path_train_data.joinpath('train_balanced.txt')
         self._path_batches_wiki = self._config["path_wiki_train_batches"]
 
         docs_of_rubrics = {rubric: [] for rubric in set(self.train_grnti.values())}
@@ -58,7 +64,7 @@ class ModelDataManager:
         # self._batches_dir = ensure_directory(os.path.join(data_dir, "batches"))
         # self._new_batches_dir = ensure_directory(os.path.join(data_dir, "batches_balanced"))
 
-        self._current_vw_name = os.path.join(data_dir, "train_balanced.txt")
+        # self._current_vw_name = os.path.join(data_dir, "train_balanced.txt")
 
         self._class_ids_path = os.path.join(data_dir, "classes.yaml")
         with open(self._class_ids_path, "r") as file:
@@ -209,7 +215,8 @@ class ModelDataManager:
         balanced_doc_ids = []
         for rubric in set(self.train_grnti.values()):
             if len(self._docs_of_rubrics[rubric]) >= average_rubric_size:
-                doc_ids_rubric = np.random.choice(self._docs_of_rubrics[rubric], average_rubric_size)
+                doc_ids_rubric = np.random.choice(self._docs_of_rubrics[rubric],
+                                                  average_rubric_size)
                 balanced_doc_ids.extend(doc_ids_rubric)
             else:
                 # все возможные уникальные пары айди
@@ -274,9 +281,19 @@ class ModelDataManager:
         with open(self._path_balanced_train, 'w') as file:
             file.writelines([self.train_dict[doc_id].strip() + '\n'
                              for doc_id in balanced_doc_ids])
-        # del train_dict
 
-    def generate_batches_balanced_by_rubric(self):
+    def generate_batches_balanced_by_rubric(self) -> artm.BatchVectorizer:
+        """
+        Возвращает artm.BatchVectorizer, построенный на сбалансированных батчах.
+
+        Генерирует батчи, в которых документы сбалансированны относительно рубрик ГРНТИ.
+        Возвразает artm.BatchVectorizer, построенный на этих батчах.
+
+        Returns
+        -------
+        batch_vectorizer: artm.BatchVectorizer
+            artm.BatchVectorizer, построенный на сбалансированных батчах.
+        """
         # TODO: при ошибках добавить
         # import artm
         self._generate_vw_file_balanced_by_rubric()
@@ -336,7 +353,6 @@ class ModelDataManager:
     #     return self._current_vw_name
 
     def write_new_docs(self, vw_writer, docs):
-
         if not all(
                 [
                     any([f"@{lang}" in self._class_ids for lang in doc])

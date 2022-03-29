@@ -40,7 +40,7 @@ class ModelTrainer:
 
         models_dir = ensure_directory(models_dir)
         model_name = self.generate_model_name()
-        self._path_to_dump_model = Path(models_dir).joinpath(model_name)
+        self._path_to_dump_model = Path(self._config["path_experiment"]).joinpath(model_name)
 
         current_models = os.listdir(models_dir)
         # TODO: добавить условие: есть язык не из 100 языков
