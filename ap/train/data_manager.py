@@ -26,7 +26,7 @@ class ModelDataManager:
     # BATCH_SIZE = 10000
 
     # TODO: оставить только конфиг
-    def __init__(self, data_dir, experiment_config, rubric_dir):
+    def __init__(self, data_dir, experiment_config):
         """
         Создает дата менеджер.
 
@@ -38,7 +38,6 @@ class ModelDataManager:
         self._config = experiment_config
 
         self._data_dir = data_dir
-        self._rubric_dir = rubric_dir
         self.train_grnti: typing.Dict[str, str] = self.get_rubric_of_train_docs()
         self.train_dict: typing.Dict[str, str] = joblib.load(self._config["train_dict_path"])
 
