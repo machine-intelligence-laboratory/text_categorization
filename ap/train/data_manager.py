@@ -16,7 +16,7 @@ from pathlib import Path
 import artm
 import joblib
 import numpy as np
-import yaml
+# import yaml
 
 # from ap.utils.general import batch_names, ensure_directory
 
@@ -66,16 +66,21 @@ class ModelDataManager:
 
         # self._current_vw_name = os.path.join(data_dir, "train_balanced.txt")
 
-        self._class_ids_path = os.path.join(data_dir, "classes.yaml")
-        with open(self._class_ids_path, "r") as file:
-            self._class_ids = yaml.safe_load(file)
+        # TODO: в добучении
+        # старые модальности - вытащить из модели
+        # новые - из конфига
 
-        self._new_class_ids_path = os.path.join(data_dir, "classes_new.yaml")
-        if os.path.exists(self._new_class_ids_path):
-            with open(self._new_class_ids_path, "r") as file:
-                self._new_class_ids = yaml.safe_load(file)
-        else:
-            self._new_class_ids = {class_id: val for class_id, val in self._class_ids.items()}
+        self._class_ids = experiment_config["LANGUAGES_TRAIN"]
+        # self._class_ids_path = os.path.join(data_dir, "classes.yaml")
+        # with open(self._class_ids_path, "r") as file:
+        #     self._class_ids = yaml.safe_load(file)
+
+        # self._new_class_ids_path = os.path.join(data_dir, "classes_new.yaml")
+        # if os.path.exists(self._new_class_ids_path):
+        #     with open(self._new_class_ids_path, "r") as file:
+        #         self._new_class_ids = yaml.safe_load(file)
+        # else:
+        #     self._new_class_ids = {class_id: val for class_id, val in self._class_ids.items()}
 
         self._vw_dict = joblib.load(os.path.join(data_dir, "train_dict.joblib"), mmap_mode='r+')
 
