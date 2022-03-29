@@ -44,6 +44,8 @@ class ModelTrainer:
 
         current_models = os.listdir(models_dir)
         # TODO: добавить условие: есть язык не из 100 языков
+        # new_modality = not set(self._class_ids).issubset(config["LANGUAGES_ALL"])
+        # или
         # new_modality = not set(self._config["LANGUAGES_TRAIN"]).issubset(config["LANGUAGES_ALL"])
         # if new_modality
         if (

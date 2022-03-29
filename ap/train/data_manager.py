@@ -1,10 +1,10 @@
 import json
 import itertools
 import os
-import shutil
-import tempfile
+# import shutil
+# import tempfile
 import typing
-import uuid
+# import uuid
 
 from collections import Counter
 from pathlib import Path
@@ -14,7 +14,7 @@ import joblib
 import numpy as np
 import yaml
 
-from ap.utils.general import batch_names, ensure_directory
+# from ap.utils.general import batch_names, ensure_directory
 
 
 class NoTranslationException(Exception):
@@ -55,8 +55,8 @@ class ModelDataManager:
                 docs_of_rubrics[rubric].append(doc_id)
         self._docs_of_rubrics: typing.Dict[str, list] = docs_of_rubrics
 
-        self._batches_dir = ensure_directory(os.path.join(data_dir, "batches"))
-        self._new_batches_dir = ensure_directory(os.path.join(data_dir, "batches_balanced"))
+        # self._batches_dir = ensure_directory(os.path.join(data_dir, "batches"))
+        # self._new_batches_dir = ensure_directory(os.path.join(data_dir, "batches_balanced"))
 
         self._current_vw_name = os.path.join(data_dir, "train_balanced.txt")
 
@@ -347,10 +347,10 @@ class ModelDataManager:
 
         vw_writer.save_docs(self._vw_dict, docs)
 
-    def _close_current(self):
-        shutil.move(
-            self._current_vw_name, os.path.join(self._new_vw_dir, f"{uuid.uuid4()}.txt")
-        )
+    # def _close_current(self):
+    #     shutil.move(
+    #         self._current_vw_name, os.path.join(self._new_vw_dir, f"{uuid.uuid4()}.txt")
+    #     )
 
     @property
     def class_ids(self):
@@ -375,59 +375,59 @@ class ModelDataManager:
         import artm
 
         dictionary = artm.Dictionary("main_dict")
-        dictionary.load_text(os.path.join(self._data_dir, "dictionary.txt"))
+        dictionary.load_text(self._config["dictionary_path"])
         return dictionary
 
-    def _update_classes(self, new_classes):
-        for cls in new_classes:
-            self._new_class_ids[f"@{cls}"] = 1
+    # def _update_classes(self, new_classes):
+    #     for cls in new_classes:
+    #         self._new_class_ids[f"@{cls}"] = 1
+    #
+    #     with open(self._new_class_ids_path, "w") as file:
+    #         yaml.dump(self._new_class_ids, file)
 
-        with open(self._new_class_ids_path, "w") as file:
-            yaml.dump(self._new_class_ids, file)
+    # def _update_dictionary(self, new_dictionary):
+    #     with tempfile.TemporaryDirectory(dir=self._data_dir) as tmp_dir:
+    #         new_dict_dir = ensure_directory(os.path.join(tmp_dir, "new_dicts"))
+    #         old_dict_dir = ensure_directory(os.path.join(tmp_dir, "old_dicts"))
+    #
+    #         self._decompose_dicts(
+    #             new_dict_dir,
+    #             self._new_class_ids,
+    #             new_dictionary,
+    #             max_dictionary_size=self._config["max_dictionary_size"],
+    #         )
+    #         self._decompose_dicts(old_dict_dir, self._class_ids, self.dictionary)
+    #
+    #         for cls_id in self._class_ids:
+    #             shutil.copy(
+    #                 os.path.join(old_dict_dir, f"{cls_id[1:]}.txt"),
+    #                 os.path.join(new_dict_dir, f"{cls_id[1:]}.txt"),
+    #             )
+    #
+    #         res = []
+    #         for cls_id in self._new_class_ids:
+    #             with open(os.path.join(new_dict_dir, f"{cls_id[1:]}.txt")) as file:
+    #                 res.extend(file.readlines()[2:] if len(res) > 0 else file.readlines())
+    #
+    #         with open(os.path.join(self._data_dir, "dictionary.txt"), "w") as file:
+    #             file.write("".join(res))
+    #
+    #         self._class_ids = {clsid: val for clsid, val in self._new_class_ids.items()}
 
-    def _update_dictionary(self, new_dictionary):
-        with tempfile.TemporaryDirectory(dir=self._data_dir) as tmp_dir:
-            new_dict_dir = ensure_directory(os.path.join(tmp_dir, "new_dicts"))
-            old_dict_dir = ensure_directory(os.path.join(tmp_dir, "old_dicts"))
-
-            self._decompose_dicts(
-                new_dict_dir,
-                self._new_class_ids,
-                new_dictionary,
-                max_dictionary_size=self._config["max_dictionary_size"],
-            )
-            self._decompose_dicts(old_dict_dir, self._class_ids, self.dictionary)
-
-            for cls_id in self._class_ids:
-                shutil.copy(
-                    os.path.join(old_dict_dir, f"{cls_id[1:]}.txt"),
-                    os.path.join(new_dict_dir, f"{cls_id[1:]}.txt"),
-                )
-
-            res = []
-            for cls_id in self._new_class_ids:
-                with open(os.path.join(new_dict_dir, f"{cls_id[1:]}.txt")) as file:
-                    res.extend(file.readlines()[2:] if len(res) > 0 else file.readlines())
-
-            with open(os.path.join(self._data_dir, "dictionary.txt"), "w") as file:
-                file.write("".join(res))
-
-            self._class_ids = {clsid: val for clsid, val in self._new_class_ids.items()}
-
-    # TODO: @staticmethod ?
-    def _decompose_dicts(self, directory, cls_ids, dictionary, max_dictionary_size=None):
-        for cls_id in cls_ids:
-            filtered = dictionary
-            inplace = False
-            for other_id in cls_ids:
-                if other_id != cls_id:
-                    filtered = filtered.filter(
-                        class_id=other_id,
-                        max_df_rate=0.4,
-                        min_df_rate=0.5,
-                        inplace=inplace,
-                    )
-                    inplace = True
-            if max_dictionary_size is not None:
-                filtered.filter(max_dictionary_size=max_dictionary_size)
-            filtered.save_text(os.path.join(directory, f"{cls_id[1:]}.txt"))
+    # # TODO: @staticmethod ?
+    # def _decompose_dicts(self, directory, cls_ids, dictionary, max_dictionary_size=None):
+    #     for cls_id in cls_ids:
+    #         filtered = dictionary
+    #         inplace = False
+    #         for other_id in cls_ids:
+    #             if other_id != cls_id:
+    #                 filtered = filtered.filter(
+    #                     class_id=other_id,
+    #                     max_df_rate=0.4,
+    #                     min_df_rate=0.5,
+    #                     inplace=inplace,
+    #                 )
+    #                 inplace = True
+    #         if max_dictionary_size is not None:
+    #             filtered.filter(max_dictionary_size=max_dictionary_size)
+    #         filtered.save_text(os.path.join(directory, f"{cls_id[1:]}.txt"))
