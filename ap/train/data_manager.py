@@ -41,7 +41,7 @@ class ModelDataManager:
         self._data_dir = data_dir
         self._rubric_dir = rubric_dir
         self.train_grnti: typing.Dict[str, str] = self.get_rubric_of_train_docs()
-        self.train_dict: typing.Dict[str, str] = joblib.load(self._config.train_dict_path)
+        self.train_dict: typing.Dict[str, str] = joblib.load(self._config["train_dict_path"])
 
         self._path_experiment = Path(experiment_config.path_experiment)
         self._path_experiment.mkdir(parents=True, exist_ok=True)
@@ -49,7 +49,7 @@ class ModelDataManager:
         self._path_to_batches = self._path_train_data.joinpath('batches_balanced')
         self._path_to_batches.mkdir(parents=True, exist_ok=True)
         self._path_balanced_train = self._path_train_data.joinpath('train_balanced.txt')
-        self._path_batches_wiki = self._config.path_wiki_train_batches
+        self._path_batches_wiki = self._config["path_wiki_train_batches"]
 
         docs_of_rubrics = {rubric: [] for rubric in set(self.train_grnti.values())}
         for doc_id, rubric in self.train_grnti.items():
@@ -252,7 +252,7 @@ class ModelDataManager:
                             line_unique_dict[lang] = new_line
                         else:
                             line_lang_dict = {token_and_count.split(':')[0]: str(
-                                int(self._config.aug_proportion *
+                                int(self._config["aug_proportion"] *
                                     int(token_and_count.split(':')[1])))
                                 for token_and_count in line_lang.split()[1:]}
                             new_line = ' '.join([':'.join([token, count])
@@ -269,7 +269,7 @@ class ModelDataManager:
 
     def _generate_vw_file_balanced_by_rubric(self):
         # генерирую сбалансированные данные
-        if self._config.need_augmentation:
+        if self._config.get("need_augmentation", None):
             balanced_doc_ids = self.get_balanced_doc_ids_with_augmentation()
         else:
             balanced_doc_ids = self.get_balanced_doc_ids()

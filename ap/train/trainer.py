@@ -158,7 +158,7 @@ class ModelTrainer:
         ----------
         train_type - full for full train from scratch, update to get the latest model and train it.
         """
-        for iteration in tqdm(range(self._config.num_collection_passes)):
+        for iteration in tqdm(range(self._config["num_collection_passes"])):
             self._train_epoch()
             # тут нужно визуализировать iteration
         self.model.dump_artm_model(self._path_to_dump_model)
