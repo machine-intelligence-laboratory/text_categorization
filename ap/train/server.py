@@ -180,13 +180,13 @@ def serve(models, config, bpe, data, rubric):
     models - Путь к моделям
     data - Путь к данным
     """
-    # with open("./train_conf.yaml", "r") as file:
-    #     train_conf = yaml.safe_load(file)
+    with open(config, "r") as file:
+        train_conf = yaml.safe_load(file)
 
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_TopicModelTrainServiceServicer_to_server(
-        TopicModelTrainServiceImpl(load_bpe_models(bpe), config, models, data, rubric),
+        TopicModelTrainServiceImpl(load_bpe_models(bpe), train_conf, models, data, rubric),
         server,
     )
     server.add_insecure_port("[::]:50051")
