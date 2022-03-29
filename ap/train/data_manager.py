@@ -36,6 +36,7 @@ class ModelDataManager:
         """
         # self._train_conf = train_conf
         self._config = experiment_config
+        print(self._config)
 
         self._data_dir = data_dir
         self._rubric_dir = rubric_dir
