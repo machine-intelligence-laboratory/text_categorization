@@ -36,14 +36,13 @@ class ModelDataManager:
         """
         # self._train_conf = train_conf
         self._config = experiment_config
-        print(self._config)
 
         self._data_dir = data_dir
         self._rubric_dir = rubric_dir
         self.train_grnti: typing.Dict[str, str] = self.get_rubric_of_train_docs()
         self.train_dict: typing.Dict[str, str] = joblib.load(self._config["train_dict_path"])
 
-        self._path_experiment = Path(experiment_config.path_experiment)
+        self._path_experiment = Path(self._config["path_experiment"])
         self._path_experiment.mkdir(parents=True, exist_ok=True)
         self._path_train_data = self._path_experiment.joinpath('train_data')
         self._path_to_batches = self._path_train_data.joinpath('batches_balanced')
