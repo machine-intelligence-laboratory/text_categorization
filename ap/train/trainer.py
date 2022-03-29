@@ -159,6 +159,38 @@ class ModelTrainer:
         """
         return self.model.scores
 
+    @property
+    def model_scores_value(self) -> dict:
+        """
+        Возвращает значения всех скоров тематической модели на текущей эпохе
+
+        :return:
+        scores_value
+            значения всех скоров тематической модели на текущей эпохе
+        """
+
+        scores_value = {score: self.model.score_tracker[score].value[-1]
+                        for score in self.model.scores}
+        return scores_value
+
+    @property
+    def model_info(self):
+        """
+        Возвращает характеристики модели
+
+        Очень подробна информация о характеристиках модели:
+        - названия тем
+        - названия модальностей
+        - веса модальностей
+        - метрики
+        - информация о регуляризаторах
+        - другое
+        :return:
+        """
+
+        return self.model.info
+        # return параметры, коэффициенты регуляризации, модальности  модели
+
     def _train_epoch(self):
         batch_vectorizer = self._data_manager.generate_batches_balanced_by_rubric()
         self.model.fit_offline(batch_vectorizer, num_collection_passes=1)
@@ -176,10 +208,10 @@ class ModelTrainer:
             logging.info(epoch)
             self._train_epoch()
             # тут нужно визуализировать epoch
-            scores = self.model_scores
-            if "PerlexityScore" in scores:
-                logging.info(scores["PerlexityScore"])
-            # тут можно визуализировать скоры модели scores
+            scores_value = self.model_scores_value
+            if "PerlexityScore_ru" in scores_value:
+                logging.info(f"PerlexityScore_ru: {scores_value['PerlexityScore_ru']}")
+            # тут можно визуализировать скоры модели scores_value
         self.model.dump_artm_model(self._path_to_dump_model)
 
     @staticmethod
