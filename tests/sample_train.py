@@ -21,6 +21,8 @@ if __name__ == "__main__":
     channel = grpc.insecure_channel("localhost:50051")
     grpc_stub = TopicModelTrainServiceStub(channel)
 
+    print('sample_train')
+
     docs = [
         Document(
             Id=DocId(Lo=0, Hi=0),
