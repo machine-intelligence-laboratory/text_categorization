@@ -26,7 +26,7 @@ def get_modalities(doc):
         if modality.Key == 'lang':
             res[modality.Value] = " ".join(doc.Tokens)
         else:
-            res[modality.Key] = res[modality.Value]
+            res[modality.Key] = modality.Value
 
     return res
 

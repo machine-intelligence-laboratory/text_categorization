@@ -107,7 +107,7 @@ class VowpalWabbitBPE:
         for modality, mod_elem in doc.items():
             print(modality)
             tokens = " ".join(self._token_filtration(mod_elem))
-            if modality not in ['@UDK', '@GRNTI']:
+            if modality not in ['UDK', 'GRNTI']:
                 tokens = self._bpe_models[modality].encode(
                     tokens, output_type=yttm.OutputType.SUBWORD
                 )

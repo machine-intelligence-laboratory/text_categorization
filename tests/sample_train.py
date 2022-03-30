@@ -25,28 +25,27 @@ if __name__ == "__main__":
         Document(
             Id=DocId(Lo=0, Hi=0),
             Tokens=[
-                "introductorio",
-                "proporciona",
-                "rasfondo",
-                "histórico",
-                "sobr",
-                "seguida",
+                "документ",
+                "слово",
+                "научный",
+                "ответ",
+                "еще",
+                "что-то",
             ],
-            Modalities=[Modality(Key="lang", Value='ru')],
+            Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'), Modality(Key="GRNTI", Value='11806946'),],
         ),
         Document(
             Id=DocId(Lo=0, Hi=1),
             Tokens=[
-                "bevat",
-                "meer",
-                "dan",
+                "другой",
+                "документ",
+                "русский",
                 "500",
-                "analoog",
-                "gestructureerde",
-                "coherente",
-                "ook",
+                "язык",
+                "наука",
+                "ок"
             ],
-            Modalities=[Modality(Key="lang", Value='ru')],
+            Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'), Modality(Key="GRNTI", Value='11806946'),],
         ),
     ]
     parallel_docs = [
