@@ -45,10 +45,8 @@ class ModelTrainer:
         current_models = os.listdir(models_dir)
         # TODO: для дообучения
         # добавить условие: есть язык не из 100 языков
-        # new_modality = not set(self._class_ids).issubset(config["LANGUAGES_ALL"])
-        # или
-        # new_modality = not set(self._config["MODALITIES_TRAIN"]).issubset(config["LANGUAGES_ALL"])
-        # if new_modality
+        # new_modalities = list(config["LANGUAGES_ALL"]).extend(list(config["MODALITIES_TRAIN"]))
+        # if not set(new_modalities).issubset(set(self._class_ids))
         if (
                 train_type == StartTrainTopicModelRequest.TrainType.FULL
                 or len(current_models) == 0
@@ -85,6 +83,7 @@ class ModelTrainer:
         ]
 
         modalities_with_weight = {f'@{lang}': weight for lang, weight in self._data_manager.class_ids.items()}
+        languages_with_weight = {f'@{lang}': weight for lang, weight in self._config["LANGUAGES_TRAIN"].items()}
         model = artm.ARTM(num_topics=artm_model_params["NUM_TOPICS"],
                           theta_columns_naming='title',
                           class_ids=modalities_with_weight,
@@ -114,7 +113,7 @@ class ModelTrainer:
             regularizer=model.regularizers['SmoothThetaRegularizer'],
             data_stats=rel_toolbox_lite.count_vocab_size(
                 dictionary=dictionary,
-                modalities=modalities_with_weight)
+                modalities=languages_with_weight)
         )
 
         # SparseTheta
@@ -130,7 +129,7 @@ class ModelTrainer:
             regularizer=model.regularizers['SparseThetaRegularizer'],
             data_stats=rel_toolbox_lite.count_vocab_size(
                 dictionary=dictionary,
-                modalities=modalities_with_weight)
+                modalities=languages_with_weight)
         )
 
         # DecorrelatorPhi
@@ -145,7 +144,7 @@ class ModelTrainer:
             model=model, regularizer=model.regularizers['DecorrelatorPhiRegularizer'],
             data_stats=rel_toolbox_lite.count_vocab_size(
                 dictionary=dictionary,
-                modalities=modalities_with_weight)
+                modalities=languages_with_weight)
         )
         return model
 

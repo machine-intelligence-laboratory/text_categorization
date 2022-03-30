@@ -74,7 +74,9 @@ class ModelDataManager:
         # старые модальности - вытащить из модели
         # новые - из конфига
 
-        self._class_ids = experiment_config["MODALITIES_TRAIN"]
+        all_modalities_train = {**experiment_config["MODALITIES_TRAIN"],
+                                **experiment_config["LANGUAGES_TRAIN"]}
+        self._class_ids = all_modalities_train
         # self._class_ids_path = os.path.join(data_dir, "classes.yaml")
         # with open(self._class_ids_path, "r") as file:
         #     self._class_ids = yaml.safe_load(file)
