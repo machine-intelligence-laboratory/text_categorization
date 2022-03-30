@@ -1,6 +1,8 @@
 import os
 import typing
 
+from pathlib import Path
+
 from ap.topic_model.v1.TopicModelBase_pb2 import DocId, DocumentPack
 
 
@@ -82,5 +84,18 @@ def batch_names(starts_from, count) -> typing.Generator[str, None, None]:
 
         yield "".join(reversed(str_name))
 
+
+def recursively_unlink(path: Path):
+    """
+    Рекурсивное удаление файлов и директорий
+    :param path:
+    :return:
+    """
+    for child in path.iterdir():
+        if child.is_file():
+            child.unlink()
+        else:
+            recursively_unlink(child)
+    path.rmdir()
 
 batch_names("aaaacw.batch", 10)
