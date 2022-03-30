@@ -13,7 +13,7 @@ from topicnet.cooking_machine import rel_toolbox_lite
 
 from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
-from ap.utils.general import ensure_directory
+from ap.utils.general import ensure_directory, recursively_unlink
 # from ap.utils import config
 
 
@@ -167,7 +167,10 @@ class ModelTrainer:
             self._train_epoch()
             # тут нужно визуализировать epoch
             # тут можно визуализировать скоры модели
-        self.model.dump_artm_model(self._path_to_dump_model)
+
+            if self._path_to_dump_model.exists():
+                recursively_unlink(self._path_to_dump_model)
+            self.model.dump_artm_model(str(self._path_to_dump_model))
 
     @staticmethod
     def generate_model_name() -> str:

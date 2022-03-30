@@ -20,6 +20,7 @@ import numpy as np
 # import yaml
 
 # from ap.utils.general import batch_names, ensure_directory
+from ap.utils.general import recursively_unlink
 
 
 class NoTranslationException(Exception):
@@ -324,7 +325,7 @@ class ModelDataManager:
                 if batch.is_file():
                     batch.unlink()
                 else:
-                    self._recursively_unlink(batch)
+                    recursively_unlink(batch)
         _ = artm.BatchVectorizer(
             data_path=str(self._path_balanced_train),
             data_format="vowpal_wabbit",
@@ -448,7 +449,6 @@ class ModelDataManager:
             else:
                 self._recursively_unlink(child)
         path.rmdir()
-
 
     # def _update_classes(self, new_classes):
     #     for cls in new_classes:
