@@ -78,6 +78,12 @@ class ModelDataManager:
         all_modalities_train = {**experiment_config["MODALITIES_TRAIN"],
                                 **experiment_config["LANGUAGES_TRAIN"]}
         self._class_ids = all_modalities_train
+
+        average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
+        logging.info('Используется сбалансировнаное обучение: на каждой эпохе' +
+                     'из тренировочных данных семплируются документы, сбалансированные относительно рубрик.')
+        logging.info(f'На каждой эпохе используется по {average_rubric_size} документа ' +
+                     f'для каждой из {experiment_config["num_rubric"]} рубрик.')
         # self._class_ids_path = os.path.join(data_dir, "classes.yaml")
         # with open(self._class_ids_path, "r") as file:
         #     self._class_ids = yaml.safe_load(file)
