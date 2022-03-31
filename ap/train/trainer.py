@@ -5,11 +5,8 @@ import typing
 
 from pathlib import Path
 
-import artm
-
 from tqdm import tqdm
 
-from topicnet.cooking_machine import rel_toolbox_lite
 
 from prometheus_client import Gauge
 
@@ -67,7 +64,7 @@ class ModelTrainer:
             #
             # self.model = artm.load_artm_model(os.path.join(self._models_dir, last_model))
 
-    def _create_initial_model(self) -> artm.artm_model.ARTM:
+    def _create_initial_model(self):
         """
         Creating an initial topic model.
 

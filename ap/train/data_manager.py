@@ -14,7 +14,6 @@ import typing
 from collections import Counter
 from pathlib import Path
 
-import artm
 import joblib
 import numpy as np
 # import yaml
@@ -47,10 +46,9 @@ class ModelDataManager:
 
         # self._data_dir = data_dir
         self.train_grnti: typing.Dict[str, str] = self._get_rubric_of_train_docs()
-        # self.train_dict: typing.Dict[str, str] = joblib.load(self._config["train_dict_path"])
-        with open(self._config["train_vw_path"]) as file:
-            train_vw = file.readlines()
-        self.train_dict = {line.split()[0]: line for line in train_vw}
+        self.train_path = self._config["train_vw_path"]
+        self.train_dict: typing.Dict[str, str] = joblib.load(self._config["train_dict_path"])
+
 
         path_experiment = Path(self._config["path_experiment"])
         path_experiment.mkdir(parents=True, exist_ok=True)
@@ -60,11 +58,7 @@ class ModelDataManager:
         self._path_balanced_train = path_train_data.joinpath('train_balanced.txt')
         self._path_batches_wiki = self._config["path_wiki_train_batches"]
 
-        docs_of_rubrics = {rubric: [] for rubric in set(self.train_grnti.values())}
-        for doc_id, rubric in self.train_grnti.items():
-            if doc_id in self.train_dict:
-                docs_of_rubrics[rubric].append(doc_id)
-        self._docs_of_rubrics: typing.Dict[str, list] = docs_of_rubrics
+
 
         # self._batches_dir = ensure_directory(os.path.join(data_dir, "batches"))
         # self._new_batches_dir = ensure_directory(os.path.join(data_dir, "batches_balanced"))
@@ -87,44 +81,16 @@ class ModelDataManager:
         # else:
         #     self._new_class_ids = {class_id: val for class_id, val in self._class_ids.items()}
 
-        self._vw_dict = joblib.load(os.path.join(data_dir, "train_dict.joblib"), mmap_mode='r+')
+    def load_train_data(self):
+        with open(self.train_path) as file:
+            train_vw = file.readlines()
+        self.train_dict = {line.split()[0]: line for line in train_vw}
 
-    # def prepare_batches(self):
-    #     """
-    #     Досоздает батчи из новых данных и возвращает батч векторайзер.
-    #
-    #     Returns
-    #     -------
-    #     artm.BatchVectorizer
-    #     """
-    #     import artm
-    #
-    #     logging.info("Preparing batches")
-    #
-    #     train_grnti = self.get_rubric_of_train_docs()
-    #     docs_of_rubrics = {rubric: [] for rubric in set(train_grnti.values())}
-    #
-    #     for doc_id, rubric in train_grnti.items():
-    #         if doc_id in self._vw_dict:
-    #             docs_of_rubrics[rubric].append(doc_id)
-    #
-    #     balanced_doc_ids, _ = self.get_balanced_doc_ids(
-    #         self._vw_dict, train_grnti, docs_of_rubrics
-    #     )
-    #
-    #     with open(self._current_vw_name, 'w') as file:
-    #         file.writelines([self._vw_dict[doc_id].strip() + '\n'
-    #                          for doc_id in balanced_doc_ids])
-    #
-    #     _ = artm.BatchVectorizer(
-    #         data_path=str(self._current_vw_name),
-    #         data_format="vowpal_wabbit",
-    #         target_folder=str(self._new_batches_dir),
-    #     )
-    #
-    #     logging.info("Creating batch vectorizer")
-    #     return artm.BatchVectorizer(data_path=[self._new_batches_dir, self._batches_dir],
-    #                                 data_weight=[1, 1])
+        docs_of_rubrics = {rubric: [] for rubric in set(self.train_grnti.values())}
+        for doc_id, rubric in self.train_grnti.items():
+            if doc_id in self.train_dict:
+                docs_of_rubrics[rubric].append(doc_id)
+        self._docs_of_rubrics: typing.Dict[str, list] = docs_of_rubrics
 
     def _get_rubric_of_train_docs(self):
         """
@@ -297,7 +263,7 @@ class ModelDataManager:
             file.writelines([self.train_dict[doc_id].strip() + '\n'
                              for doc_id in balanced_doc_ids])
 
-    def generate_batches_balanced_by_rubric(self) -> artm.BatchVectorizer:
+    def generate_batches_balanced_by_rubric(self):
         """
         Возвращает artm.BatchVectorizer, построенный на сбалансированных батчах.
 
@@ -383,13 +349,13 @@ class ModelDataManager:
     def write_new_docs(self, vw_writer, docs):
         if not all(
                 [
-                    any([f"@{lang}" in self._class_ids for lang in doc])
+                    any([f"{lang}" in self._class_ids for lang in doc])
                     for doc in docs.values()
                 ]
         ):
             raise NoTranslationException()
 
-        vw_writer.save_docs(self._vw_dict, docs)
+        vw_writer.save_docs(self.train_path, docs)
 
     # def _close_current(self):
     #     shutil.move(

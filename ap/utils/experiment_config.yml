@@ -1,5 +1,5 @@
-path_experiment: '/home/potapova/Projects/text_categorization/best_model'
-path_wiki_train_batches: '/data/datasets/Antiplagiat/wiki_100/batches_train'
+path_experiment: 'work_dir/best_model'
+path_wiki_train_batches: 'work_dir/data/batches_train'
 train_dict_path: '/data/datasets/Antiplagiat/train_with_combined_grnti_69_rubric_dict.joblib'
 train_vw_path: '/data/datasets/Antiplagiat/train_with_combined_grnti_69_rubric.txt'
 dictionary_path: '/data/datasets/Antiplagiat/dictionaties/dictionary_train_BPE_wiki_100_120k_11k.txt'
