@@ -17,7 +17,7 @@ from pathlib import Path
 import artm
 import joblib
 import numpy as np
-# import yaml
+import yaml
 
 # from ap.utils.general import batch_names, ensure_directory
 from ap.utils.general import recursively_unlink
@@ -426,21 +426,37 @@ class ModelDataManager:
 
     def _get_modality_distribution(self) -> typing.Dict[str, int]:
         """
-        Возвращает количество документов кажджой модальности из self.class_ids.
+        Возвращает количество документов кажджой модальности из self.class_ids для тренировочных данных.
 
-        :return: modality_distribution
+        :return: modality_distribution_all
             словарь, ключ - модальность, значение - количество документов с такой модальностью
         """
-        # TODO: add wiki part of train data
         with open(self._config["train_vw_path"]) as file:
             train_data = file.read()
-
         modality_distribution = {
             mod: train_data.count(f'|@{mod}')
             for mod in self.class_ids
         }
 
-        return modality_distribution
+        # add wiki part of train data
+        path_modality_distribution_wiki = self._config.get("path_modality_distribution_wiki", None)
+        if path_modality_distribution_wiki:
+            with open(path_modality_distribution_wiki) as file:
+                modality_distribution_wiki = yaml.load(file)
+            logging.info("Данные для обучения включают статьи Wikipedia.")
+        else:
+            logging.info("Данные для обучения НЕ включают статьи Wikipedia.")
+
+        modality_distribution_all = dict()
+        for mod in modality_distribution:
+            modality_distribution_all[mod] = modality_distribution[mod]
+        for mod in modality_distribution_wiki:
+            if mod in modality_distribution_all:
+                modality_distribution_all[mod] += modality_distribution_wiki[mod]
+            else:
+                modality_distribution_all[mod] = modality_distribution_wiki[mod]
+
+        return modality_distribution_all
 
     def _recursively_unlink(self, path: Path):
         for child in path.iterdir():
