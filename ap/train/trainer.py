@@ -148,6 +148,65 @@ class ModelTrainer:
         )
         return model
 
+    @property
+    def model_scores(self) -> artm.scores.Scores:
+        """
+        Возвращает все скоры тематической модели
+
+        :return:
+        artm.scores.Scores
+            список скоров тематической модели
+        """
+        return self.model.scores
+
+    @property
+    def model_scores_value(self) -> dict:
+        """
+        Возвращает значения всех скоров тематической модели на текущей эпохе
+
+        :return:
+        scores_value
+            значения всех скоров тематической модели на текущей эпохе
+        """
+
+        scores_value = {score: self.model.score_tracker[score].value[-1]
+                        for score in self.model.scores}
+        return scores_value
+
+    @property
+    def model_info(self):
+        """
+        Возвращает характеристики модели
+
+        Очень подробна информация о характеристиках модели:
+        - названия тем
+        - названия модальностей
+        - веса модальностей
+        - метрики
+        - информация о регуляризаторах
+        - другое
+        :return:
+        """
+
+        return self.model.info
+
+    @property
+    def model_main_info(self):
+        """
+        Возвращает основную информацию о модели
+        :return:
+        """
+        info = self._config["artm_model_params"]
+        info["Модальности"] = self._data_manager.class_ids
+        info["need_augmentation"] = self._config.get("need_augmentation", False)
+        if info["need_augmentation"]:
+            info["aug_proportion"] = self._config.get("aug_proportion")
+        info["metrics_to_calculate"] = self._config["metrics_to_calculate"]
+        info["num_modalities"] = len(info["Модальности"])
+        info["dictionary_path"] = self._config["dictionary_path"]
+
+        return info # параметры,
+
     def _train_epoch(self):
         batch_vectorizer = self._data_manager.generate_batches_balanced_by_rubric()
         self.model.fit_offline(batch_vectorizer, num_collection_passes=1)
@@ -161,13 +220,17 @@ class ModelTrainer:
         ----------
         train_type - full for full train from scratch, update to get the latest model and train it.
         """
+        main_info = self.model_main_info()
+        # Здесь можно визуализировать основную информацию о модели main_info
         logging.info("Start model training")
         for epoch in tqdm(range(self._config["num_collection_passes"])):
             logging.info(epoch)
             self._train_epoch()
             # тут нужно визуализировать epoch
-            # тут можно визуализировать скоры модели
-
+            scores_value = self.model_scores_value
+            # тут можно визуализировать скоры модели scores_value
+            if "PerlexityScore_@ru" in scores_value:
+                logging.info(f"PerlexityScore_@ru: {scores_value['PerlexityScore_@ru']}")
             if self._path_to_dump_model.exists():
                 recursively_unlink(self._path_to_dump_model)
             self.model.dump_artm_model(str(self._path_to_dump_model))
