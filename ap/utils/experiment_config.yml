@@ -1,5 +1,6 @@
 path_experiment: '/home/potapova/Projects/text_categorization/best_model'
 path_wiki_train_batches: '/data/datasets/Antiplagiat/wiki_100/batches_train'
+path_modality_distribution_wiki: '/data/datasets/Antiplagiat/wiki_100/modality_distribution.yml'
 train_dict_path: '/data/datasets/Antiplagiat/train_with_combined_grnti_69_rubric_dict.joblib'
 train_vw_path: '/data/datasets/Antiplagiat/train_with_combined_grnti_69_rubric.txt'
 dictionary_path: '/data/datasets/Antiplagiat/dictionaties/dictionary_train_BPE_wiki_100_120k_11k.txt'
@@ -29,6 +30,10 @@ artm_model_params:
   tau_SparseTheta: -0.1
 
 MODALITIES_TRAIN:
+  'GRNTI': 1
+  'UDK': 1
+
+LANGUAGES_TRAIN:
   'af': 1
   'am': 1
   'ar': 1
