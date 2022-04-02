@@ -9,22 +9,20 @@ class MakeSubsamples:
     """
     Class for saving subsamples of document indices.
 
-    Parameters
-    ----------
-
-    languages: list
-        list of str of languages to use in subsamples
-    path_to_save_subsamples: str
-        path to file in json format to save subsamples
-    path_to_data: str
-        path to data for which subsamples will be created
-        expected data in txt format
-    path_rubrics: str
-        path to json file with rubrics of documents
-    mode: 'test' or 'wiki'
-        kind of data for which subsamples will be created
-    subsample_size: int
-        The size of the subsample. The default is 1000.
+    Args:
+        languages (list):
+            list of str of languages to use in subsamples
+        path_to_save_subsamples (str):
+            path to file in json format to save subsamples
+        path_to_data (str):
+            path to data for which subsamples will be created
+            expected data in txt format
+        path_rubrics (str):
+            path to json file with rubrics of documents
+        mode ('test' or 'wiki'):
+            kind of data for which subsamples will be created
+        subsample_size (int):
+            The size of the subsample. The default is 1000.
     """
     def __init__(
         self,
@@ -118,9 +116,7 @@ class MakeSubsamples:
         """
         Function saving subsamples of document indices.
 
-        Returns
-        -------
-
+        Returns:
         """
         for lang_original, lang_source in product(self._languages, self._languages):
             print(lang_original, lang_source)

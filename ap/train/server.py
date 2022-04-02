@@ -38,11 +38,11 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         """
         Инициализирует сервер.
 
-        Parameters
-        ----------
-        train_conf - словарь с конфигурацией обучения
-        models_dir - путь к директория сохранения файлов
-        data_dir - путь к директории с данными
+        Args:
+            bpe_models (typing.Dict[str, typing.Any]): TODO
+            train_conf (typing.Dict[str, typing.Any]): словарь с конфигурацией обучения
+            models_dir (str): путь к директория сохранения файлов
+            data_dir (str): путь к директории с данными
         """
         self._vw = VowpalWabbitBPE(bpe_models)
         self._data_manager = ModelDataManager(data_dir, train_conf)
@@ -57,14 +57,12 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         """
         Добавляет документы в модель.
 
-        Parameters
-        ----------
-        request - запрос с документами
-        context - не используется
+        Args:
+            request (AddDocumentsToModelRequest): запрос с документами
+            context: не используется
 
-        Returns
-        -------
-        Ответ
+        Returns:
+            (AddDocumentsToModelResponse): Ответ
         """
         try:
             logging.info("AddDocumentsToModel")
@@ -96,14 +94,12 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         """
         Запускает обучение.
 
-        Parameters
-        ----------
-        request - запрос с типом обучения.
-        context - не используется.
+        Args:
+            request (StartTrainTopicModelRequest): запрос с типом обучения.
+            context: не используется.
 
-        Returns
-        -------
-        Статус запуска.
+        Returns:
+            (StartTrainTopicModelResponse): Статус запуска.
         """
         logging.info("StartTrainTopicModel")
 
@@ -125,14 +121,12 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         """
         Возвращает статус текущей сессии обучения.
 
-        Parameters
-        ----------
-        request - пустой запрос
-        context - контекст, не используется
+        Args:
+            request (TrainTopicModelStatusRequest): пустой запрос
+            context: контекст, не используется
 
         Returns
-        -------
-        Статус
+            (TrainTopicModelStatusResponse): Статус
         """
         if self._training_future is None or (
                 self._training_future.done() and self._training_future.exception() is None
@@ -168,10 +162,10 @@ def serve(models, config, data):
     """
     Запускает сервер.
 
-    Parameters
-    ----------
-    models - Путь к моделям
-    data - Путь к данным
+    Args:
+        models (TODO): TODO
+        config (TODO): TODO
+        data (TODO): TODO
     """
     with open(config, "r") as file:
         train_conf = yaml.safe_load(file)

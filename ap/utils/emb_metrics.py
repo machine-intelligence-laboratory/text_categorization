@@ -12,20 +12,18 @@ import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from tqdm import tqdm
 
-import config
+import ap.utils.config as config
 
 
 def generate_theta(path_models, save_path):
     """
     Function to generate theta matrix.
 
-    Parameters
-    ----------
-
-    path_models: str
-        a path with artm models
-    save_path: str
-        a path for save theta matrices
+    Args:
+        path_models (str):
+            a path with artm models
+        save_path (str):
+            a path for save theta matrices
     """
     save_path = Path(save_path)
     save_path.mkdir(parents=True, exist_ok=True)
@@ -149,17 +147,15 @@ def get_topic_profile(path_models, save_path):
     """
     Function to get topic profiles for models.
 
-    Parameters
-    ----------
+    Args:
 
-    path_models: str
-        a path with artm models
-    save_path: str
-        a path for save theta matrices
+        path_models (str):
+            a path with artm models
+        save_path (str):
+            a path for save theta matrices
 
-    Returns
-    -------
-    DataFrame with topic profiles for models
+    Returns:
+        (pd.DataFrame): DataFrame with topic profiles for models
     """
     mean_rank = list()
 
@@ -184,19 +180,17 @@ def get_mean_classes_intersection(path_models, save_path, path_categories):
     """
     Function to evaluate classes intersection.
 
-    Parameters
-    ----------
+    Args:
 
-    path_models: str
+    path_models (str):
         a path with artm models
-    save_path: str
+    save_path (str):
         a path for save theta matrices
-    path_categories: str
+    path_categories (str):
         a path with classes (json)
 
-    Returns
-    -------
-    DataFrame with evaluation of classes intersection
+    Returns:
+        (pd.DataFrame): DataFrame with evaluation of classes intersection
     """
     mean_intersect = list()
 
@@ -217,17 +211,15 @@ def get_analogy_distribution(path_models, save_path):
     """
     Function to get analogy distribution for models.
 
-    Parameters
-    ----------
+    Args:
 
-    path_models: str
+    path_models  (str):
         a path with artm models
-    save_path: str
+    save_path (str):
         a path for save theta matrices
 
-    Returns
-    -------
-    dict with distribution of analogy measure
+    Returns:
+        pair_analogy (dict): dict with distribution of analogy measure
     """
     pair_analogy = dict()
 
@@ -250,19 +242,16 @@ def get_cos_distribution(path_models, save_path, path_categories):
     """
     Function to get cosine distribution in classes for models.
 
-    Parameters
-    ----------
+    Args:
+        path_models (str):
+            a path with artm models
+        save_path (str):
+            a path for save theta matrices
+        path_categories (str):
+            a path with classes (json)
 
-    path_models: str
-        a path with artm models
-    save_path: str
-        a path for save theta matrices
-    path_categories: str
-        a path with classes (json)
-
-    Returns
-    -------
-    dict with distribution of cosine measure for classes
+    Returns:
+        pair_cos (dict): dict with distribution of cosine measure for classes
     """
     pair_cos = dict()
 

@@ -9,8 +9,8 @@ import numpy as np
 
 from tqdm import tqdm
 
-import rank_metric
-import config
+import ap.utils.rank_metric as rank_metric
+import ap.utils.config as config
 
 warnings.filterwarnings('ignore')
 

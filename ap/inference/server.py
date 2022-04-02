@@ -31,10 +31,11 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
         """
         Создает инференс сервер.
 
-        Parameters
-        ----------
-        artm_model - BigARTM модель
-        work_dir - рабочая директория для сохранения временных файлов
+        Args:
+            artm_model (artm.ARTM): тематическая модель
+            bpe_models: загруженные BPE модели
+            work_dir: рабочая директория для сохранения временных файлов
+            rubric_dir: директория, где хранятся json-файлы с рубриками
         """
         self._artm_model = artm_model
         self._vw = VowpalWabbitBPE(bpe_models)
@@ -48,10 +49,8 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
 
         Do not contains rubric 'нет'.
 
-        Returns
-        -------
-        train_grnti: dict
-            dict where keys - document ids, value - numer of GRNTI rubric of document.
+        Returns:
+            train_grnti (dict): dict where keys - document ids, value - numer of GRNTI rubric of document.
         """
         with open(os.path.join(self._rubric_dir, 'grnti_codes.json')) as file:
             articles_grnti_with_no = json.load(file)
@@ -153,14 +152,12 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
         """
         Возвращает ембеддинги документов.
 
-        Parameters
-        ----------
-        request - реквест
-        context - контекст, не используется
+        Args:
+            request (GetDocumentsEmbeddingRequest): реквест
+            context: контекст, не используется
 
-        Returns
-        -------
-        Ответ
+        Returns:
+            (GetDocumentsEmbeddingResponse): Ответ
         """
         logging.info(
             "Got request to calculate embeddings for %d documents",
@@ -201,9 +198,10 @@ def serve(model, bpe, rubric):
     """
     Запуск инференс сервера.
 
-    Parameters
-    ----------
-    model - путь к модели
+    Args:
+        model (str): путь к модели
+        bpe (str): путь к обученным BPE моделям
+        rubric (str): путь к директории с json-файлами рубрик
     """
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
@@ -220,5 +218,4 @@ def serve(model, bpe, rubric):
 
 
 if __name__ == "__main__":
-    # TODO: сюда надо передавать model, bpe, rubric
     serve()

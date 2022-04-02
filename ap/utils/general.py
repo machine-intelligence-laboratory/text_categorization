@@ -10,13 +10,11 @@ def id_to_str(id: DocId) -> str:
     """
     Конвертирует DocId в строку.
 
-    Parameters
-    ----------
-    id - DocId
+    Args:
+        id (DocId): id документа
 
-    Returns
-    -------
-    Строка из DocId
+    Returns:
+        Строка из DocId
     """
     return f"{id.Hi}_{id.Lo}"
 
@@ -25,13 +23,11 @@ def docs_from_pack(pack: DocumentPack) -> typing.Dict[str, typing.Dict[str, str]
     """
     Создает dict документов из DocumentPack.
 
-    Parameters
-    ----------
-    pack - DocumentPack
+    Args:
+        pack (DocumentPack): TODO
 
-    Returns
-    -------
-    dict из документов
+    Returns:
+        dict из документов
     """
     return {
         id_to_str(doc.Id): {doc.Language: " ".join(doc.Tokens)}
@@ -43,13 +39,11 @@ def ensure_directory(path: str) -> str:
     """
     Создает директорию, если ее нет, и возвращает path.
 
-    Parameters
-    ----------
-    path - путь к директории
+    Args:
+        path (str): путь к директории
 
-    Returns
-    -------
-    path
+    Returns:
+        path
     """
     if not os.path.exists(path):
         os.makedirs(path)
@@ -61,14 +55,12 @@ def batch_names(starts_from, count) -> typing.Generator[str, None, None]:
     """
     Генерирует названия батчей в соответствие с форматом BatchVectorizer.
 
-    Parameters
-    ----------
-    starts_from - название файла последнего батча в директории
-    count - количество батчей
+    Args:
+        starts_from - название файла последнего батча в директории
+        count - количество батчей
 
-    Returns
-    -------
-    Генератор имен батчей
+    Returns:
+        (typing.Generator[str, None, None]): Генератор имен батчей
     """
     orda = ord("a")
     letters = 26
