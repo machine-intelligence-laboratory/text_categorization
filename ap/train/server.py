@@ -7,7 +7,6 @@ from concurrent import futures
 import click
 import grpc
 import yaml
-from prometheus_client import start_http_server, Gauge
 
 from ap.topic_model.v1.TopicModelTrain_pb2 import (
     AddDocumentsToModelRequest,
@@ -22,6 +21,7 @@ from ap.topic_model.v1.TopicModelTrain_pb2_grpc import (
     add_TopicModelTrainServiceServicer_to_server,
 )
 from ap.train.data_manager import ModelDataManager, NoTranslationException
+
 from ap.train.trainer import ModelTrainer
 from ap.utils.bpe import load_bpe_models
 from ap.utils.general import docs_from_pack, id_to_str
@@ -36,6 +36,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
             models_dir: str,
             data_dir: str
     ):
+        from prometheus_client import Gauge
         """
         Инициализирует сервер.
 
@@ -120,6 +121,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         self._training_future = self._executor.submit(
             self._trainer.train_model, [request.Type]
         )
+
         return StartTrainTopicModelResponse(
             Status=StartTrainTopicModelResponse.StartTrainTopicModelStatus.OK
         )
@@ -178,6 +180,8 @@ def serve(models, config, data):
     models - Путь к моделям
     data - Путь к данным
     """
+    from prometheus_client import start_http_server
+
     with open(config, "r") as file:
         train_conf = yaml.safe_load(file)
 
