@@ -18,9 +18,9 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'pets'
-copyright = '2022, me'
-author = 'me'
+project = 'text categorization'
+copyright = '2022, MIL Team'
+author = 'MIL Team'
 
 # The full version, including alpha/beta/rc tags
 release = '0.1.0'
