@@ -1,3 +1,4 @@
+# Документация
 Документация может быть найдена [здесь](https://text-categorization.readthedocs.io/ru/latest/).
 
 # Запуск приложения
