@@ -115,8 +115,6 @@ class MakeSubsamples:
     def get_subsamples(self):
         """
         Function saving subsamples of document indices.
-
-        Returns:
         """
         for lang_original, lang_source in product(self._languages, self._languages):
             print(lang_original, lang_source)

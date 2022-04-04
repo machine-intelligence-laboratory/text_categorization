@@ -139,12 +139,11 @@ class ModelDataManager:
 
     def _get_rubric_of_train_docs(self):
         """
-        Get dict where keys - document ids, value - number of GRNTI rubric of document.
-
-        Do not contains rubric 'нет'.
+        Возвращает словарь, где ключ - id документа, значение - номер рубрики ГРНТИ этого документа.
+        Рубрики не включают рубрику "нет".
 
         Returns:
-            train_grnti (dict): dict where keys - document ids, value - number of GRNTI rubric of document.
+            train_grnti (dict): словарь, где ключ - id документа, значение - номер рубрики ГРНТИ этого документа.
         """
         with open(self._config["path_articles_rubrics_train_grnti"]) as file:
             articles_grnti_with_no = json.load(file)
@@ -172,17 +171,16 @@ class ModelDataManager:
 
     def _get_balanced_doc_ids(self) -> list:
         """
-        Create train data balanced by rubrics.
+        Создаёт тренировочные данные, сбалансированные относительно рубрик ГРНТИ.
 
-        Returns balanced_doc_ids - list of document ids, balanced by rubric. Documents of
-        all rubrics occurs in balanced_doc_ids the same number of times,
-        equal to average_rubric_size.
-        Returns train_dict - dict where key - document id, value - document in
-        vowpal wabbit format. Function change train_dict, multiplying token counters
-        by number of occurrences of document id in balanced_doc_ids.
+        Возвращает balance_doc_ids — список идентификаторов документов, сбалансированных по рубрикам.
+        Документы всех рубрик встречаются в balance_doc_ids одинаковое количество раз, равное среднему размеру рубрики.
+        # TODO: а это точно не вызывает проблем?
+        Функция изменяет self.train_dict, умноженая счетчики токенов на
+        количество вхождений id документа в balance_doc_ids.
 
         Returns:
-            balanced_doc_ids (list): list of document ids, balanced by rubric
+            balanced_doc_ids (list): список id документов, сбанасированный относительно рубрик ГРНТИ
         """
         average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
         balanced_doc_ids = []
@@ -211,7 +209,7 @@ class ModelDataManager:
 
     def _get_balanced_doc_ids_with_augmentation(self) -> list:
         """
-        Create train data balanced by rubrics with augmentation.
+        Создаёт тренировочные данные с применение аугментаци, сбалансированные относительно рубрик ГРНТИ.
 
         If the rubric size is larger than the average rubric size, a sample is taken
         equal to the average rubric size.
@@ -220,7 +218,7 @@ class ModelDataManager:
         combining the two documents in a ratio of 1 to experiment_config.aug_proportion.
 
         Returns:
-            balanced_doc_ids (list): ist of document ids, balanced by rubric
+            balanced_doc_ids (list): список id документов, сбанасированный относительно рубрик ГРНТИ
         """
         average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
         balanced_doc_ids = []
@@ -286,10 +284,7 @@ class ModelDataManager:
     def _generate_vw_file_balanced_by_rubric(self):
         """
         Генерирует vw файл, где данные сбалансирваны по рубрикам ГРНТИ.
-
-        Returns:
         """
-        # генерирую сбалансированные данные
         if self._config.get("need_augmentation", None):
             balanced_doc_ids = self._get_balanced_doc_ids_with_augmentation()
         else:
@@ -306,6 +301,11 @@ class ModelDataManager:
         Из всего тренировочного датасета сэмплируются документы так, чтобы
         в обучении на эпохе участвовало одинаковое количество документов каждой рубрики ГРНТИ.
         Количество документов каждой рубрики равно average_rubric_size - среднему размеру рубрики ГРНТИ.
+
+        Если в конфиге для обучения модели self._config присутствует путь
+        до батчей, построенных по википедии self._path_batches_wiki, то батчи будут использованы для обучения модели.
+        Иначе в обучении будут принимать участие только батчи, сбалансированные относительно рубрик ГРНТИ.
+
         Возвразает artm.BatchVectorizer, построенный на этих батчах.
 
         Returns:
@@ -315,7 +315,6 @@ class ModelDataManager:
         # import artm
         self._generate_vw_file_balanced_by_rubric()
 
-        # строю батчи по сбалансированным данным
         batches_list = list(self._path_to_batches.iterdir())
         if batches_list:
             for batch in batches_list:
@@ -328,6 +327,7 @@ class ModelDataManager:
             data_format="vowpal_wabbit",
             target_folder=str(self._path_to_batches),
         )
+
         if self._path_batches_wiki:
             batch_vectorizer = artm.BatchVectorizer(
                 data_path=[self._path_to_batches, self._path_batches_wiki],
@@ -380,6 +380,13 @@ class ModelDataManager:
     #     return self._current_vw_name
 
     def write_new_docs(self, vw_writer, docs):
+        """
+        TODO
+
+        Args:
+            vw_writer (TODO): TODO
+            docs (TODO): TODO
+        """
         if not all(
                 [
                     any([f"@{lang}" in self._class_ids for lang in doc])
@@ -421,10 +428,15 @@ class ModelDataManager:
 
     def _get_modality_distribution(self) -> typing.Dict[str, int]:
         """
-        Возвращает количество документов кажджой модальности из self.class_ids для тренировочных данных.
+        Возвращает количество документов каждой модальности из self.class_ids для тренировочных данных.
+
+        Если в конфиге для обучения модели self._config передан путь до словаря,
+        содержащего количество документов Wikipedia по модальностям, эти данные учитываются для
+        оценки всего тренировочного датасета.
 
         Returns:
-        modality_distribution_all (dict): словарь, ключ - модальность, значение - количество документов с такой модальностью
+            modality_distribution_all (dict): словарь, ключ - модальность,
+                значение - количество документов с такой модальностью
         """
         with open(self._config["train_vw_path"]) as file:
             train_data = file.read()
@@ -440,6 +452,7 @@ class ModelDataManager:
                 modality_distribution_wiki = yaml.load(file)
             logging.info("Training data includes Wikipedia articles.")
         else:
+            modality_distribution_wiki = dict()
             logging.info("Training data DOES NOT includes Wikipedia articles.")
 
         modality_distribution_all = dict()
@@ -454,6 +467,12 @@ class ModelDataManager:
         return modality_distribution_all
 
     def _recursively_unlink(self, path: Path):
+        """
+        Рекурсивно удаляет все данные, расположенные по пути path.
+
+        Args:
+            path (Path): путь до данных, которые нужно удалить
+        """
         for child in path.iterdir():
             if child.is_file():
                 child.unlink()
