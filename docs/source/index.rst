@@ -15,8 +15,6 @@ Welcome to text_categorization's documentation!
 
 .. automodule:: ap.inference
    :members:
-.. automodule:: ap.inference.server
-   :noindex:
 .. autoclass:: ap.inference.server.TopicModelInferenceServiceImpl
    :members:
 .. autofunction:: ap.inference.server.serve
