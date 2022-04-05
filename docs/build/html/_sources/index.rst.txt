@@ -15,18 +15,18 @@ Welcome to Text categorization's documentation!
 ap.inference
 ############
 
-.. autoclass:: ap.inference.server.TopicModelInferenceServiceImpl
-   :members:
-   :special-members: __init__
-.. autofunction:: ap.inference.server.serve
+.. py:module:: ap.inference
+.. py:module:: ap.inference.server
+.. py:class:: TopicModelInferenceServiceImpl
+.. py:function:: serve
 
 
 
 ap.train
-========
+########
 
 .. automodule:: ap.train
-
+   :members:
 .. autoclass:: ap.train.data_manager.ModelDataManager
    :members:
    :special-members: __init__
