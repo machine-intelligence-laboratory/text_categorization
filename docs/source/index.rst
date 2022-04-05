@@ -13,6 +13,10 @@ Welcome to Text categorization's documentation!
 ap.inference
 ############
 
+.. automodule:: ap.inference
+   :members:
+.. automodule:: ap.inference.server
+   :noindex:
 .. autoclass:: ap.inference.server.TopicModelInferenceServiceImpl
    :members:
 .. autofunction:: ap.inference.server.serve
@@ -22,11 +26,40 @@ ap.train
 
 .. automodule:: ap.train
    :members:
+.. automodule:: ap.train.data_manager
+   :noindex:
 .. autoclass:: ap.train.data_manager.ModelDataManager
    :members:
 .. automodule:: ap.train.server
    :members:
 .. automodule:: ap.train.trainer
+   :members:
+
+ap.utils
+########
+
+.. automodule:: ap.utils
+   :members:
+.. automodule:: ap.utils.bpe
+   :members:
+.. automodule:: ap.utils.config
+.. automodule:: ap.utils.dictionary
+   :members:
+.. automodule:: ap.utils.emb_metrics
+   :members:
+.. automodule:: ap.utils.general
+   :members:
+.. automodule:: ap.utils.graphics_for_emb_metrics
+   :members:
+.. automodule:: ap.utils.rank_metric
+   :members:
+.. automodule:: ap.utils.search_quality
+   :members:
+.. automodule:: ap.utils.subsamples_creator
+   :members:
+.. automodule:: ap.utils.vowpal_wabbit
+   :members:
+.. automodule:: ap.utils.vowpal_wabbit_bpe
    :members:
 
 
