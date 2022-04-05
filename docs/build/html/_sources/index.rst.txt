@@ -15,10 +15,8 @@ Welcome to Text categorization's documentation!
 ap.inference
 ############
 
-.. py:module:: ap.inference
-.. py:module:: ap.inference.server
-.. py:class:: TopicModelInferenceServiceImpl
-.. py:function:: serve
+.. automodule:: ap.inference.server
+   :members:
 
 
 
