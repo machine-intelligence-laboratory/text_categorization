@@ -42,158 +42,7 @@
 <h1>Welcome to Text categorization’s documentation!<a class="headerlink" href="#welcome-to-text-categorization-s-documentation" title="Ссылка на этот заголовок">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<section id="ap-inference">
-<h2>ap.inference<a class="headerlink" href="#ap-inference" title="Ссылка на этот заголовок">¶</a></h2>
-<blockquote>
-<div><span class="target" id="module-ap.inference"></span><dl class="py class">
-<dt class="sig sig-object py" id="ap.inference.server.TopicModelInferenceServiceImpl">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.inference.server.</span></span><span class="sig-name descname"><span class="pre">TopicModelInferenceServiceImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">artm_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpe_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">work_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rubric_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.TopicModelInferenceServiceImpl" title="Ссылка на это определение">¶</a></dt>
-<dd><dl class="py method">
-<dt class="sig sig-object py" id="ap.inference.server.TopicModelInferenceServiceImpl.GetDocumentsEmbedding">
-<span class="sig-name descname"><span class="pre">GetDocumentsEmbedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelInference_pb2.GetDocumentsEmbeddingRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.TopicModelInferenceServiceImpl.GetDocumentsEmbedding" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Возвращает ембеддинги документов.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>request (GetDocumentsEmbeddingRequest): реквест
-context: контекст, не используется</p>
-</dd>
-<dt>Returns:</dt><dd><p>(GetDocumentsEmbeddingResponse): Ответ</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ap.inference.server.TopicModelInferenceServiceImpl.get_rubric_of_train_docs">
-<span class="sig-name descname"><span class="pre">get_rubric_of_train_docs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.TopicModelInferenceServiceImpl.get_rubric_of_train_docs" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Get dict where keys - document ids, value - number of GRNTI rubric of document.</p>
-<p>Do not contains rubric „нет“.</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>train_grnti (dict): dict where keys - document ids, value - numer of GRNTI rubric of document.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="ap.inference.server.serve">
-<span class="sig-prename descclassname"><span class="pre">ap.inference.server.</span></span><span class="sig-name descname"><span class="pre">serve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.serve" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Запуск инференс сервера.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>model (str): путь к модели
-bpe (str): путь к обученным BPE моделям
-rubric (str): путь к директории с json-файлами рубрик</p>
-</dd>
-</dl>
-</dd></dl>
-
-</div></blockquote>
-</section>
-<section id="module-ap.train">
-<span id="ap-train"></span><h2>ap.train<a class="headerlink" href="#module-ap.train" title="Ссылка на этот заголовок">¶</a></h2>
-<p>Модуль для поддержания работы с данными</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.data_manager.</span></span><span class="sig-name descname"><span class="pre">ModelDataManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment_config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Класс для поддержания работы с данными</p>
-<dl class="py property">
-<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.class_ids">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">class_ids</span></span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.class_ids" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Словарь class ids с весами.</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>(dict) : Словарь class ids с весами.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.dictionary">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dictionary</span></span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.dictionary" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Возвращает словарь, которым инициализировалась модель.</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>dictionary (artm.Dictionary) : словарь, которым инициализировалась модель</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.generate_batches_balanced_by_rubric">
-<span class="sig-name descname"><span class="pre">generate_batches_balanced_by_rubric</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">artm.batches_utils.BatchVectorizer</span></span></span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.generate_batches_balanced_by_rubric" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Возвращает artm.BatchVectorizer, построенный на сбалансированных батчах.</p>
-<p>Генерирует батчи, в которых документы сбалансированны относительно рубрик ГРНТИ.
-Из всего тренировочного датасета сэмплируются документы так, чтобы
-в обучении на эпохе участвовало одинаковое количество документов каждой рубрики ГРНТИ.
-Количество документов каждой рубрики равно average_rubric_size - среднему размеру рубрики ГРНТИ.</p>
-<p>Если в конфиге для обучения модели self._config присутствует путь
-до батчей, построенных по википедии self._path_batches_wiki, то батчи будут использованы для обучения модели.
-Иначе в обучении будут принимать участие только батчи, сбалансированные относительно рубрик ГРНТИ.</p>
-<p>Возвразает artm.BatchVectorizer, построенный на этих батчах.</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>batch_vectorizer (artm.BatchVectorizer): artm.BatchVectorizer, построенный на сбалансированных батчах.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.write_new_docs">
-<span class="sig-name descname"><span class="pre">write_new_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vw_writer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.write_new_docs" title="Ссылка на это определение">¶</a></dt>
-<dd><p>TODO</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>vw_writer (TODO): TODO
-docs (TODO): TODO</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<span class="target" id="module-ap.train.server"></span><dl class="py class">
-<dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.server.</span></span><span class="sig-name descname"><span class="pre">TopicModelTrainServiceImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bpe_models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_conf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl" title="Ссылка на это определение">¶</a></dt>
-<dd><dl class="py method">
-<dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl.AddDocumentsToModel">
-<span class="sig-name descname"><span class="pre">AddDocumentsToModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.AddDocumentsToModelRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.AddDocumentsToModelResponse</span></span></span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl.AddDocumentsToModel" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Добавляет документы в модель.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>request (AddDocumentsToModelRequest): запрос с документами
-context: не используется</p>
-</dd>
-<dt>Returns:</dt><dd><p>(AddDocumentsToModelResponse): Ответ</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl.StartTrainTopicModel">
-<span class="sig-name descname"><span class="pre">StartTrainTopicModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.StartTrainTopicModelRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.StartTrainTopicModelResponse</span></span></span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl.StartTrainTopicModel" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Запускает обучение.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>request (StartTrainTopicModelRequest): запрос с типом обучения.
-context: не используется.</p>
-</dd>
-<dt>Returns:</dt><dd><p>(StartTrainTopicModelResponse): Статус запуска.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl.TrainTopicModelStatus">
-<span class="sig-name descname"><span class="pre">TrainTopicModelStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.TrainTopicModelStatusRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.TrainTopicModelStatusResponse</span></span></span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl.TrainTopicModelStatus" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Возвращает статус текущей сессии обучения.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>request (TrainTopicModelStatusRequest): пустой запрос
-context: контекст, не используется</p>
-</dd>
-<dt>Returns</dt><dd><p>(TrainTopicModelStatusResponse): Статус</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<span class="target" id="module-ap.train.trainer"></span></section>
-<section id="module-ap.utils">
-<span id="ap-utils"></span><h2>ap.utils<a class="headerlink" href="#module-ap.utils" title="Ссылка на этот заголовок">¶</a></h2>
-<span class="target" id="module-ap.utils.bpe"></span><span class="target" id="module-ap.utils.config"></span><span class="target" id="module-ap.utils.dictionary"></span><dl class="py function">
+<span class="target" id="module-ap.utils"></span><span class="target" id="module-ap.utils.bpe"></span><span class="target" id="module-ap.utils.config"></span><span class="target" id="module-ap.utils.dictionary"></span><dl class="py function">
 <dt class="sig sig-object py" id="ap.utils.dictionary.get_num_entries">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.dictionary.</span></span><span class="sig-name descname"><span class="pre">get_num_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">artm.dictionary.Dictionary</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#ap.utils.dictionary.get_num_entries" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Возвращает размер словаря.</p>
@@ -449,7 +298,6 @@ expected data in txt format</p>
 </dd></dl>
 
 <span class="target" id="module-ap.utils.vowpal_wabbit"></span><span class="target" id="module-ap.utils.vowpal_wabbit_bpe"></span></section>
-</section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Ссылка на этот заголовок">¶</a></h1>
 <ul class="simple">
@@ -469,12 +317,7 @@ expected data in txt format</p>
   <div>
     <h3><a href="#">Оглавление</a></h3>
     <ul>
-<li><a class="reference internal" href="#">Welcome to Text categorization’s documentation!</a><ul>
-<li><a class="reference internal" href="#ap-inference">ap.inference</a></li>
-<li><a class="reference internal" href="#module-ap.train">ap.train</a></li>
-<li><a class="reference internal" href="#module-ap.utils">ap.utils</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#">Welcome to Text categorization’s documentation!</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
