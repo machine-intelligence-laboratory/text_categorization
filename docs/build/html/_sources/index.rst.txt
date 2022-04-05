@@ -8,6 +8,7 @@ Welcome to text_categorization's documentation!
 
 .. toctree::
    :maxdepth: 4
+   :glob:
    :caption: Contents:
 
 ap.interface
