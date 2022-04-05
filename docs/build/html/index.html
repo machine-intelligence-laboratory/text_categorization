@@ -319,8 +319,8 @@ out_file (str): файл, в котором сохраняется резуль�
 <span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">batch_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starts_from</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.general.batch_names" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Генерирует названия батчей в соответствие с форматом BatchVectorizer.</p>
 <dl class="simple">
-<dt>Args:</dt><dd><p>starts_from - название файла последнего батча в директории
-count - количество батчей</p>
+<dt>Args:</dt><dd><p>starts_from: название файла последнего батча в директории
+count: количество батчей</p>
 </dd>
 <dt>Returns:</dt><dd><p>(typing.Generator[str, None, None]): Генератор имен батчей</p>
 </dd>
@@ -366,9 +366,11 @@ count - количество батчей</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="ap.utils.general.recursively_unlink">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">recursively_unlink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.general.recursively_unlink" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Рекурсивное удаление файлов и директорий
-:param path:
-:return:</p>
+<dd><p>Рекурсивное удаление файлов и директорий</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>path (Path): путь, по которому необходимо удалить все файлы.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <span class="target" id="module-ap.utils.graphics_for_emb_metrics"></span><dl class="py function">

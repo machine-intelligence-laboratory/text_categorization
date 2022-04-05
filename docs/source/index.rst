@@ -1,4 +1,4 @@
-.. Ttext categorization documentation master file, created by
+.. Text categorization documentation master file, created by
    sphinx-quickstart on Sat Apr  2 13:51:20 2022.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -41,6 +41,7 @@ ap.utils1
 .. automodule:: ap.utils.bpe
    :members:
 .. automodule:: ap.utils.config
+   :members:
 .. automodule:: ap.utils.dictionary
    :members:
 .. automodule:: ap.utils.emb_metrics

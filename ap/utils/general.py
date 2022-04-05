@@ -56,8 +56,8 @@ def batch_names(starts_from, count) -> typing.Generator[str, None, None]:
     Генерирует названия батчей в соответствие с форматом BatchVectorizer.
 
     Args:
-        starts_from - название файла последнего батча в директории
-        count - количество батчей
+        starts_from: название файла последнего батча в директории
+        count: количество батчей
 
     Returns:
         (typing.Generator[str, None, None]): Генератор имен батчей
@@ -80,8 +80,9 @@ def batch_names(starts_from, count) -> typing.Generator[str, None, None]:
 def recursively_unlink(path: Path):
     """
     Рекурсивное удаление файлов и директорий
-    :param path:
-    :return:
+
+    Args:
+        path (Path): путь, по которому необходимо удалить все файлы.
     """
     for child in path.iterdir():
         if child.is_file():
@@ -89,5 +90,3 @@ def recursively_unlink(path: Path):
         else:
             recursively_unlink(child)
     path.rmdir()
-
-batch_names("aaaacw.batch", 10)
