@@ -15,8 +15,10 @@ Welcome to Text categorization's documentation!
 ap.inference
 ############
 
-.. automodule:: ap.inference.server
+.. autoclass:: ap.inference.server.TopicModelInferenceServiceImpl
    :members:
+   :special-members: __init__
+.. autofunction:: ap.inference.server.serve
 
 
 
@@ -38,11 +40,7 @@ ap.train
 ap.utils
 ########
 
-.. automodule:: ap.utils
-   :members:
 .. automodule:: ap.utils.bpe
-   :members:
-.. automodule:: ap.utils.config
    :members:
 .. automodule:: ap.utils.dictionary
    :members:

@@ -42,8 +42,8 @@
 <h1>Welcome to Text categorization’s documentation!<a class="headerlink" href="#welcome-to-text-categorization-s-documentation" title="Ссылка на этот заголовок">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<section id="module-ap.inference.server">
-<span id="ap-inference"></span><h2>ap.inference<a class="headerlink" href="#module-ap.inference.server" title="Ссылка на этот заголовок">¶</a></h2>
+<section id="ap-inference">
+<h2>ap.inference<a class="headerlink" href="#ap-inference" title="Ссылка на этот заголовок">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ap.inference.server.TopicModelInferenceServiceImpl">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.inference.server.</span></span><span class="sig-name descname"><span class="pre">TopicModelInferenceServiceImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">artm_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpe_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">work_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rubric_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.TopicModelInferenceServiceImpl" title="Ссылка на это определение">¶</a></dt>
@@ -61,6 +61,19 @@ context: контекст, не используется</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ap.inference.server.TopicModelInferenceServiceImpl.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">artm_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpe_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">work_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rubric_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.TopicModelInferenceServiceImpl.__init__" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Создает инференс сервер.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>artm_model (artm.ARTM): тематическая модель
+bpe_models: загруженные BPE модели
+work_dir: рабочая директория для сохранения временных файлов
+rubric_dir: директория, где хранятся json-файлы с рубриками</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ap.inference.server.TopicModelInferenceServiceImpl.get_rubric_of_train_docs">
 <span class="sig-name descname"><span class="pre">get_rubric_of_train_docs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.TopicModelInferenceServiceImpl.get_rubric_of_train_docs" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Get dict where keys - document ids, value - number of GRNTI rubric of document.</p>
@@ -71,6 +84,18 @@ context: контекст, не используется</p>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.inference.server.serve">
+<span class="sig-prename descclassname"><span class="pre">ap.inference.server.</span></span><span class="sig-name descname"><span class="pre">serve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.serve" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Запуск инференс сервера.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>model (str): путь к модели
+bpe (str): путь к обученным BPE моделям
+rubric (str): путь к директории с json-файлами рубрик</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -188,9 +213,9 @@ context: контекст, не используется</p>
 </dd></dl>
 
 <span class="target" id="module-ap.train.trainer"></span></section>
-<section id="module-ap.utils">
-<span id="ap-utils"></span><h2>ap.utils<a class="headerlink" href="#module-ap.utils" title="Ссылка на этот заголовок">¶</a></h2>
-<span class="target" id="module-ap.utils.bpe"></span><dl class="py function">
+<section id="module-ap.utils.bpe">
+<span id="ap-utils"></span><h2>ap.utils<a class="headerlink" href="#module-ap.utils.bpe" title="Ссылка на этот заголовок">¶</a></h2>
+<dl class="py function">
 <dt class="sig sig-object py" id="ap.utils.bpe.load_bpe_models">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.bpe.</span></span><span class="sig-name descname"><span class="pre">load_bpe_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bpe_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#ap.utils.bpe.load_bpe_models" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Загружает обученные BPE модели.</p>
@@ -200,7 +225,6 @@ context: контекст, не используется</p>
 </dl>
 </dd></dl>
 
-<span class="target" id="module-ap.utils.config"></span><p>Файл с путями до различных данных.</p>
 <span class="target" id="module-ap.utils.dictionary"></span><dl class="py function">
 <dt class="sig sig-object py" id="ap.utils.dictionary.get_num_entries">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.dictionary.</span></span><span class="sig-name descname"><span class="pre">get_num_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">artm.dictionary.Dictionary</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#ap.utils.dictionary.get_num_entries" title="Ссылка на это определение">¶</a></dt>
@@ -480,9 +504,9 @@ expected data in txt format</p>
     <h3><a href="#">Оглавление</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Welcome to Text categorization’s documentation!</a><ul>
-<li><a class="reference internal" href="#module-ap.inference.server">ap.inference</a></li>
+<li><a class="reference internal" href="#ap-inference">ap.inference</a></li>
 <li><a class="reference internal" href="#module-ap.train">ap.train</a></li>
-<li><a class="reference internal" href="#module-ap.utils">ap.utils</a></li>
+<li><a class="reference internal" href="#module-ap.utils.bpe">ap.utils</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
