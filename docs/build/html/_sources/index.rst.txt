@@ -11,6 +11,7 @@ Welcome to text_categorization's documentation!
    :caption: Contents:
 
 .. automodule:: ap
+   :members:
 
 .. automodule:: ap.inference
    :members:
