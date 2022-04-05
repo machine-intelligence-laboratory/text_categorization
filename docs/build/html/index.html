@@ -119,10 +119,24 @@ rubric (str): путь к директории с json-файлами рубри
 <p>Генерирует батчи, в которых документы сбалансированны относительно рубрик ГРНТИ.
 Из всего тренировочного датасета сэмплируются документы так, чтобы
 в обучении на эпохе участвовало одинаковое количество документов каждой рубрики ГРНТИ.
-Количество документов каждой рубрики равно average_rubric_size - среднему размеру рубрики ГРНТИ.
-Возвразает artm.BatchVectorizer, построенный на этих батчах.</p>
+Количество документов каждой рубрики равно average_rubric_size - среднему размеру рубрики ГРНТИ.</p>
+<p>Если в конфиге для обучения модели self._config присутствует путь
+до батчей, построенных по википедии self._path_batches_wiki, то батчи будут использованы для обучения модели.
+Иначе в обучении будут принимать участие только батчи, сбалансированные относительно рубрик ГРНТИ.</p>
+<p>Возвразает artm.BatchVectorizer, построенный на этих батчах.</p>
 <dl class="simple">
 <dt>Returns:</dt><dd><p>batch_vectorizer (artm.BatchVectorizer): artm.BatchVectorizer, построенный на сбалансированных батчах.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.write_new_docs">
+<span class="sig-name descname"><span class="pre">write_new_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vw_writer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.write_new_docs" title="Ссылка на это определение">¶</a></dt>
+<dd><p>TODO</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>vw_writer (TODO): TODO
+docs (TODO): TODO</p>
 </dd>
 </dl>
 </dd></dl>
@@ -427,7 +441,6 @@ expected data in txt format</p>
 <dt class="sig sig-object py" id="ap.utils.subsamples_creator.MakeSubsamples.get_subsamples">
 <span class="sig-name descname"><span class="pre">get_subsamples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.subsamples_creator.MakeSubsamples.get_subsamples" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Function saving subsamples of document indices.</p>
-<p>Returns:</p>
 </dd></dl>
 
 </dd></dl>
