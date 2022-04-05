@@ -10,15 +10,9 @@ Welcome to Text categorization's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-ap.inference
-############
-
 .. autoclass:: ap.inference.server.TopicModelInferenceServiceImpl
    :members:
 .. autofunction:: ap.inference.server.serve
-
-ap.train
-########
 
 .. automodule:: ap.train
    :members:
