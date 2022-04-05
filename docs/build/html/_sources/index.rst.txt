@@ -30,6 +30,10 @@ Welcome to text_categorization's documentation!
 
 .. automodule:: ap.utils
    :members:
+.. automodule:: ap.utils.bpe
+   :members:
+.. automodule:: ap.utils.dictionary
+   :members:
 
 Indices and tables
 ==================
