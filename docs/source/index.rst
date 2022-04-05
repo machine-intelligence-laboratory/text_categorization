@@ -18,7 +18,7 @@ ap.inference
    .. automodule:: ap.inference.server
       :noindex:
    .. autoclass:: ap.inference.server.TopicModelInferenceServiceImpl
-         :members:
+      :members:
    .. autofunction:: ap.inference.server.serve
 
 ap.train
