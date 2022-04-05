@@ -7,18 +7,19 @@ Welcome to Text categorization's documentation!
 ===============================================
 
 .. toctree::
+   :maxdepth: 2
    :caption: Contents:
 
 ap.inference
 ############
 
-.. automodule:: ap.inference
-   :members:
-.. automodule:: ap.inference.server
-   :noindex:
-.. autoclass:: ap.inference.server.TopicModelInferenceServiceImpl
-   :members:
-.. autofunction:: ap.inference.server.serve
+   .. automodule:: ap.inference
+      :members:
+   .. automodule:: ap.inference.server
+      :noindex:
+   .. autoclass:: ap.inference.server.TopicModelInferenceServiceImpl
+         :members:
+   .. autofunction:: ap.inference.server.serve
 
 ap.train
 ########
@@ -60,7 +61,6 @@ ap.utils
    :members:
 .. automodule:: ap.utils.vowpal_wabbit_bpe
    :members:
-
 
 
 Indices and tables
