@@ -45,31 +45,7 @@
 <span class="target" id="module-ap"></span><span class="target" id="module-ap.inference"></span><dl class="py class">
 <dt class="sig sig-object py" id="ap.inference.server.TopicModelInferenceServiceImpl">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.inference.server.</span></span><span class="sig-name descname"><span class="pre">TopicModelInferenceServiceImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">artm_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpe_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">work_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rubric_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.TopicModelInferenceServiceImpl" title="Ссылка на это определение">¶</a></dt>
-<dd><dl class="py method">
-<dt class="sig sig-object py" id="ap.inference.server.TopicModelInferenceServiceImpl.GetDocumentsEmbedding">
-<span class="sig-name descname"><span class="pre">GetDocumentsEmbedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelInference_pb2.GetDocumentsEmbeddingRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.TopicModelInferenceServiceImpl.GetDocumentsEmbedding" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Возвращает ембеддинги документов.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>request (GetDocumentsEmbeddingRequest): реквест
-context: контекст, не используется</p>
-</dd>
-<dt>Returns:</dt><dd><p>(GetDocumentsEmbeddingResponse): Ответ</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ap.inference.server.TopicModelInferenceServiceImpl.get_rubric_of_train_docs">
-<span class="sig-name descname"><span class="pre">get_rubric_of_train_docs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.TopicModelInferenceServiceImpl.get_rubric_of_train_docs" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Get dict where keys - document ids, value - number of GRNTI rubric of document.</p>
-<p>Do not contains rubric „нет“.</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>train_grnti (dict): dict where keys - document ids, value - numer of GRNTI rubric of document.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ap.inference.server.serve">
