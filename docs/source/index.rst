@@ -10,10 +10,18 @@ Welcome to text_categorization's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-.. automodule:: ap.inference
+.. automodule:: ap.inference.server
    :members:
+
 .. automodule:: ap.train
    :members:
+.. automodule:: ap.train.data_manager
+   :members:
+.. automodule:: ap.train.server
+   :members:
+.. automodule:: ap.train.trainer
+   :members:
+
 .. automodule:: ap.utils
    :members:
 
