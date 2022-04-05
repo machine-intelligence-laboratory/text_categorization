@@ -35,8 +35,8 @@ ap.train
 
 
 
-ap.utils1
-#########
+ap.utils
+########
 
 .. automodule:: ap.utils
    :members:
