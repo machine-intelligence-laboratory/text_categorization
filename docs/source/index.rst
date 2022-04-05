@@ -10,6 +10,12 @@ Welcome to text_categorization's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+.. automodule:: ap
+
+.. automodule:: ap.inference
+   :members:
+.. automodule:: ap.inference.server
+   :noindex:
 .. autoclass:: ap.inference.server.TopicModelInferenceServiceImpl
    :members:
 .. autofunction:: ap.inference.server.serve
