@@ -79,7 +79,7 @@ def batch_names(starts_from, count) -> typing.Generator[str, None, None]:
 
 def recursively_unlink(path: Path):
     """
-    Рекурсивное удаление файлов и директорий
+    Рекурсивное удаление файлов и директорий.
 
     Args:
         path (Path): путь, по которому необходимо удалить все файлы.
