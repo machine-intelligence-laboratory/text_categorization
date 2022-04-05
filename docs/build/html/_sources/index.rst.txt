@@ -7,7 +7,6 @@ Welcome to Text categorization's documentation!
 ===============================================
 
 .. toctree::
-   :maxdepth: 2
    :caption: Contents:
 
 ap.inference
