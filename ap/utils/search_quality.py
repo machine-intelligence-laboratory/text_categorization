@@ -16,6 +16,15 @@ warnings.filterwarnings('ignore')
 
 
 def dump_train_centroids(model_path, bcg_topic_list, path_train_centroids):
+    """
+    Вычисляет центроиды, необходимые для преобразования текста из одного языка в другой.
+
+    Parameters
+    ----------
+    model_path тематичекая модель
+    bcg_topic_list список тем, которые не будут использоваться для построения
+    path_train_centroids путь для выгрузки центроид
+    """
     path_train_centroids = Path(path_train_centroids)
     model = artm.load_artm_model(model_path)
     sbj_topic_list = [topic for topic in model.topic_names
@@ -46,6 +55,28 @@ def dump_train_centroids(model_path, bcg_topic_list, path_train_centroids):
 
 
 def calculate_search_quality(config_experiment):
+    """
+    Вычисление качества модели по 6 метрикам качества: Средняя частота УДК,
+                                                       Средний процент УДК,
+                                                       Средняя частота ГРНТИ,
+                                                       Средний процент ГРНТИ,
+                                                       Средняя частота ВАК,
+                                                       Средний процент ВАК
+
+    Parameters
+    ----------
+    config_experiment - конфиг эксперимента, содержащий путь до тестируемой модели,
+                                                        путь для выгрузки результата эксперимента,
+                                                        параметры модели ARTM,
+                                                        список тем BCG,
+                                                        вероятности тем в документах,
+                                                        путь до предподситанных центроид
+                                                           
+    Returns
+    -------
+    подсчитанные метрики качества
+    """
+    
     path_experiment = Path(config_experiment["path_experiment"])
     path_model = Path(config_experiment.get('path_model', path_experiment.joinpath('topic_model')))
     # path_model = Path(config_experiment['path_model'])
@@ -118,3 +149,4 @@ def calculate_search_quality(config_experiment):
         json.dump(quality, file)
 
     return quality
+
