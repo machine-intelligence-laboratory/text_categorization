@@ -7,6 +7,7 @@ import itertools
 import logging
 # import shutil
 # import tempfile
+import random
 import typing
 # # import uuid
 #
@@ -104,12 +105,22 @@ class ModelDataManager:
     def load_train_data(self):
         with open(self.train_path) as file:
             train_vw = file.readlines()
+
         self.train_dict = {line.split()[0]: line for line in train_vw}
 
         docs_of_rubrics = {rubric: [] for rubric in set(self.train_grnti.values())}
         for doc_id, rubric in self.train_grnti.items():
             if doc_id in self.train_dict:
                 docs_of_rubrics[rubric].append(doc_id)
+
+        # new_train = []
+        # for rubric, doc_ids in docs_of_rubrics.items():
+        #     for idx, doc_id in zip(range(10), doc_ids):
+        #         new_train.append(self.train_dict[doc_id])
+        #
+        # with open('work_dir/data/train_small.txt', 'w') as file:
+        #     file.writelines(new_train)
+
         self._docs_of_rubrics: typing.Dict[str, list] = docs_of_rubrics
     #
     def _get_rubric_of_train_docs(self):

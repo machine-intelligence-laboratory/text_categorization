@@ -6,44 +6,14 @@ import typing
 from pathlib import Path
 
 from tqdm import tqdm
-
-
-
 from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
-def recursively_unlink(path: Path):
-    """
-    Рекурсивное удаление файлов и директорий
-    :param path:
-    :return:
-    """
-    for child in path.iterdir():
-        if child.is_file():
-            child.unlink()
-        else:
-            recursively_unlink(child)
-    path.rmdir()# from ap.utils import config
+from ap.utils.general import ensure_directory, recursively_unlink
 
-def ensure_directory(path: str) -> str:
-    """
-    Создает директорию, если ее нет, и возвращает path.
 
-    Parameters
-    ----------
-    path - путь к директории
-
-    Returns
-    -------
-    path
-    """
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-    return path
 class ModelTrainer:
     def __init__(
             self,
-            train_type: StartTrainTopicModelRequest.TrainType,
             data_manager: ModelDataManager,
             experiment_config: typing.Dict[str, typing.Any],
             models_dir: str,
@@ -65,11 +35,14 @@ class ModelTrainer:
         #self._iteration = Gauge('training_iteration', 'Current training iteration')
         #
         #
-        models_dir = ensure_directory(models_dir)
+
+        self._models_dir = ensure_directory(models_dir)
         model_name = self.generate_model_name()
         self._path_to_dump_model = Path(self._config["path_experiment"]).joinpath(model_name)
 
-        current_models = os.listdir(models_dir)
+    def load_model(self, train_type):
+        import artm
+        current_models = os.listdir(self._models_dir)
         # TODO: для дообучения
         # добавить условие: есть язык не из 100 языков
         # new_modality = not set(self._class_ids).issubset(config["LANGUAGES_ALL"])
@@ -85,10 +58,10 @@ class ModelTrainer:
         else:
             pass
             # TODO: загрузить модель для дообучения
-            # last_model = max(current_models)
-            # logging.info("Start training based on %s model", last_model)
-            #
-            # self.model = artm.load_artm_model(os.path.join(self._models_dir, last_model))
+            last_model = max(current_models)
+            logging.info("Start training based on %s model", last_model)
+
+            self.model = artm.load_artm_model(os.path.join(self._models_dir, last_model))
 
     def _create_initial_model(self):
         """
@@ -191,6 +164,7 @@ class ModelTrainer:
         train_type - full for full train from scratch, update to get the latest model and train it.
         """
         logging.info("Start model training")
+        self.load_model(train_type)
         self._data_manager.load_train_data()
         for epoch in tqdm(range(self._config['artm_model_params']["num_collection_passes"])):
             logging.info(epoch)
