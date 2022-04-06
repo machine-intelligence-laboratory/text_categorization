@@ -19,12 +19,12 @@ def dump_train_centroids(model_path, bcg_topic_list, path_train_centroids):
     """
     Вычисляет центроиды, необходимые для преобразования текста из одного языка в другой.
 
-    Parameters
-    ----------
-    model_path тематичекая модель
-    bcg_topic_list список тем, которые не будут использоваться для построения
-    path_train_centroids путь для выгрузки центроид
+    Args:
+        model_path (pathlib.PosixPath): тематичекая модель
+        bcg_topic_list (list): список тем, которые не будут использоваться для построения
+        path_train_centroids (pathlib.PosixPath): путь для выгрузки центроид
     """
+    
     path_train_centroids = Path(path_train_centroids)
     model = artm.load_artm_model(model_path)
     sbj_topic_list = [topic for topic in model.topic_names
@@ -61,20 +61,18 @@ def calculate_search_quality(config_experiment):
                                                        Средняя частота ГРНТИ,
                                                        Средний процент ГРНТИ,
                                                        Средняя частота ВАК,
-                                                       Средний процент ВАК
+                                                       Средний процент ВАК.
 
-    Parameters
-    ----------
-    config_experiment - конфиг эксперимента, содержащий путь до тестируемой модели,
-                                                        путь для выгрузки результата эксперимента,
-                                                        параметры модели ARTM,
-                                                        список тем BCG,
-                                                        вероятности тем в документах,
-                                                        путь до предподситанных центроид
+    Args:
+        config_experiment (dict): конфиг эксперимента, содержащий путь до тестируемой модели,
+                                                       путь для выгрузки результата эксперимента,
+                                                       параметры модели ARTM,
+                                                       список тем BCG,
+                                                       вероятности тем в документах,
+                                                       путь до предподситанных центроид
                                                            
-    Returns
-    -------
-    подсчитанные метрики качества
+    Returns:
+        подсчитанные метрики качества
     """
     
     path_experiment = Path(config_experiment["path_experiment"])
