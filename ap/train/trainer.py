@@ -8,14 +8,38 @@ from pathlib import Path
 from tqdm import tqdm
 
 
-from prometheus_client import Gauge
 
 from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
-from ap.utils.general import ensure_directory, recursively_unlink
-# from ap.utils import config
+def recursively_unlink(path: Path):
+    """
+    Рекурсивное удаление файлов и директорий
+    :param path:
+    :return:
+    """
+    for child in path.iterdir():
+        if child.is_file():
+            child.unlink()
+        else:
+            recursively_unlink(child)
+    path.rmdir()# from ap.utils import config
 
+def ensure_directory(path: str) -> str:
+    """
+    Создает директорию, если ее нет, и возвращает path.
 
+    Parameters
+    ----------
+    path - путь к директории
+
+    Returns
+    -------
+    path
+    """
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    return path
 class ModelTrainer:
     def __init__(
             self,
@@ -24,21 +48,23 @@ class ModelTrainer:
             experiment_config: typing.Dict[str, typing.Any],
             models_dir: str,
     ):
-        """
-        Initialize a model trainer.
-
-        Parameters
-        ----------
-        data_manager - data manager
-        conf - training configuration dict
-        models_dir - a path to store new models
-        """
+        from prometheus_client import Gauge
+        #
+        # """
+        # Initialize a model trainer.
+        #
+        # Parameters
+        # ----------
+        # data_manager - data manager
+        # conf - training configuration dict
+        # models_dir - a path to store new models
+        # """
         # self._conf = conf
         self._config = experiment_config
         self._data_manager = data_manager
-        self._iteration = Gauge('training_iteration', 'Current training iteration')
-
-
+        #self._iteration = Gauge('training_iteration', 'Current training iteration')
+        #
+        #
         models_dir = ensure_directory(models_dir)
         model_name = self.generate_model_name()
         self._path_to_dump_model = Path(self._config["path_experiment"]).joinpath(model_name)
@@ -73,6 +99,7 @@ class ModelTrainer:
         model: artm.ARTM
             initial artm topic model with parameters from experiment_config
         """
+        import artm
         artm_model_params = self._config["artm_model_params"]
 
         dictionary = artm.Dictionary()
@@ -164,7 +191,8 @@ class ModelTrainer:
         train_type - full for full train from scratch, update to get the latest model and train it.
         """
         logging.info("Start model training")
-        for epoch in tqdm(range(self._config["num_collection_passes"])):
+        self._data_manager.load_train_data()
+        for epoch in tqdm(range(self._config['artm_model_params']["num_collection_passes"])):
             logging.info(epoch)
             self._train_epoch()
             # тут нужно визуализировать epoch
