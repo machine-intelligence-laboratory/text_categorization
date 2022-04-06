@@ -49,10 +49,8 @@ class ModelTrainer:
         current_models = os.listdir(self._models_dir)
         # TODO: для дообучения
         # добавить условие: есть язык не из 100 языков
-        # new_modality = not set(self._class_ids).issubset(config["LANGUAGES_ALL"])
-        # или
-        # new_modality = not set(self._config["MODALITIES_TRAIN"]).issubset(config["LANGUAGES_ALL"])
-        # if new_modality
+        # new_modalities = list(config["LANGUAGES_ALL"]).extend(list(config["MODALITIES_TRAIN"]))
+        # if not set(new_modalities).issubset(set(self._class_ids))
         if (
                 train_type == StartTrainTopicModelRequest.TrainType.FULL
                 or len(current_models) == 0
@@ -92,6 +90,7 @@ class ModelTrainer:
         ]
 
         modalities_with_weight = {f'@{lang}': weight for lang, weight in self._data_manager.class_ids.items()}
+        languages_with_weight = {f'@{lang}': weight for lang, weight in self._config["LANGUAGES_TRAIN"].items()}
         model = artm.ARTM(num_topics=artm_model_params["NUM_TOPICS"],
                           theta_columns_naming='title',
                           class_ids=modalities_with_weight,
@@ -121,7 +120,7 @@ class ModelTrainer:
             regularizer=model.regularizers['SmoothThetaRegularizer'],
             data_stats=rel_toolbox_lite.count_vocab_size(
                 dictionary=dictionary,
-                modalities=modalities_with_weight)
+                modalities=languages_with_weight)
         )
 
         # SparseTheta
@@ -137,7 +136,7 @@ class ModelTrainer:
             regularizer=model.regularizers['SparseThetaRegularizer'],
             data_stats=rel_toolbox_lite.count_vocab_size(
                 dictionary=dictionary,
-                modalities=modalities_with_weight)
+                modalities=languages_with_weight)
         )
 
         # DecorrelatorPhi
@@ -152,9 +151,68 @@ class ModelTrainer:
             model=model, regularizer=model.regularizers['DecorrelatorPhiRegularizer'],
             data_stats=rel_toolbox_lite.count_vocab_size(
                 dictionary=dictionary,
-                modalities=modalities_with_weight)
+                modalities=languages_with_weight)
         )
         return model
+
+    @property
+    def model_scores(self) -> artm.scores.Scores:
+        """
+        Возвращает все скоры тематической модели
+
+        :return:
+        artm.scores.Scores
+            список скоров тематической модели
+        """
+        return self.model.scores
+
+    @property
+    def model_scores_value(self) -> dict:
+        """
+        Возвращает значения всех скоров тематической модели на текущей эпохе
+
+        :return:
+        scores_value
+            значения всех скоров тематической модели на текущей эпохе
+        """
+
+        scores_value = {score: self.model.score_tracker[score].value[-1]
+                        for score in self.model.scores}
+        return scores_value
+
+    @property
+    def model_info(self):
+        """
+        Возвращает характеристики модели
+
+        Очень подробна информация о характеристиках модели:
+        - названия тем
+        - названия модальностей
+        - веса модальностей
+        - метрики
+        - информация о регуляризаторах
+        - другое
+        :return:
+        """
+
+        return self.model.info
+
+    @property
+    def model_main_info(self):
+        """
+        Возвращает основную информацию о модели
+        :return:
+        """
+        info = self._config["artm_model_params"]
+        info["Модальности"] = self._data_manager.class_ids
+        info["need_augmentation"] = self._config.get("need_augmentation", False)
+        if info["need_augmentation"]:
+            info["aug_proportion"] = self._config.get("aug_proportion")
+        info["metrics_to_calculate"] = self._config["metrics_to_calculate"]
+        info["num_modalities"] = len(info["Модальности"])
+        info["dictionary_path"] = self._config["dictionary_path"]
+
+        return info # параметры,
 
     def _train_epoch(self):
         batch_vectorizer = self._data_manager.generate_batches_balanced_by_rubric()
@@ -169,6 +227,8 @@ class ModelTrainer:
         ----------
         train_type - full for full train from scratch, update to get the latest model and train it.
         """
+        main_info = self.model_main_info()
+        # Здесь можно визуализировать основную информацию о модели main_info
         logging.info("Start model training")
         self._init_metrics()
         self._load_model(train_type)
@@ -179,8 +239,10 @@ class ModelTrainer:
             self._train_epoch()
 
             # тут нужно визуализировать epoch
-            # тут можно визуализировать скоры модели
-
+            scores_value = self.model_scores_value
+            # тут можно визуализировать скоры модели scores_value
+            if "PerlexityScore_@ru" in scores_value:
+                logging.info(f"PerlexityScore_@ru: {scores_value['PerlexityScore_@ru']}")
             if self._path_to_dump_model.exists():
                 recursively_unlink(self._path_to_dump_model)
             self.model.dump_artm_model(str(self._path_to_dump_model))

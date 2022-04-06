@@ -15,7 +15,7 @@ from collections import Counter
 from pathlib import Path
 #
 import numpy as np
-# import yaml
+import yaml
 
 # from ap.utils.general import batch_names, ensure_directory
 # def recursively_unlink(path):
@@ -86,11 +86,15 @@ class ModelDataManager:
         # старые модальности - вытащить из модели
         # новые - из конфига
 
-        self._class_ids = experiment_config["MODALITIES_TRAIN"]
+        all_modalities_train = {**experiment_config["MODALITIES_TRAIN"],
+                                **experiment_config["LANGUAGES_TRAIN"]}
+        self._class_ids = all_modalities_train
 
-
-
-
+        average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
+        logging.info('Balanced learning is used: at each epoch' +
+                     'rubric-balanced documents are sampled from the training data.')
+        logging.info(f'Each epoch uses {average_rubric_size} documents ' +
+                     f'for each of {experiment_config["num_rubric"]} rubrics.')
         # self._class_ids_path = os.path.join(data_dir, "classes.yaml")
         # with open(self._class_ids_path, "r") as file:
         #     self._class_ids = yaml.safe_load(file)
@@ -423,6 +427,48 @@ class ModelDataManager:
 ############
 
 
+
+    def _get_modality_distribution(self) -> typing.Dict[str, int]:
+        """
+        Возвращает количество документов кажджой модальности из self.class_ids для тренировочных данных.
+
+        :return: modality_distribution_all
+            словарь, ключ - модальность, значение - количество документов с такой модальностью
+        """
+        with open(self._config["train_vw_path"]) as file:
+            train_data = file.read()
+        modality_distribution = {
+            mod: train_data.count(f'|@{mod}')
+            for mod in self.class_ids
+        }
+
+        # add wiki part of train data
+        path_modality_distribution_wiki = self._config.get("path_modality_distribution_wiki", None)
+        if path_modality_distribution_wiki:
+            with open(path_modality_distribution_wiki) as file:
+                modality_distribution_wiki = yaml.load(file)
+            logging.info("Training data includes Wikipedia articles.")
+        else:
+            logging.info("Training data DOES NOT includes Wikipedia articles.")
+
+        modality_distribution_all = dict()
+        for mod in modality_distribution:
+            modality_distribution_all[mod] = modality_distribution[mod]
+        for mod in modality_distribution_wiki:
+            if mod in modality_distribution_all:
+                modality_distribution_all[mod] += modality_distribution_wiki[mod]
+            else:
+                modality_distribution_all[mod] = modality_distribution_wiki[mod]
+
+        return modality_distribution_all
+
+    def _recursively_unlink(self, path: Path):
+        for child in path.iterdir():
+            if child.is_file():
+                child.unlink()
+            else:
+                self._recursively_unlink(child)
+        path.rmdir()
 
     # def _update_classes(self, new_classes):
     #     for cls in new_classes:
