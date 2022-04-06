@@ -5,11 +5,11 @@ import typing
 
 from pathlib import Path
 
+from prometheus_client import Gauge
 from tqdm import tqdm
 from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
 from ap.utils.general import ensure_directory, recursively_unlink
-
 
 class ModelTrainer:
     def __init__(
@@ -32,7 +32,6 @@ class ModelTrainer:
         # self._conf = conf
         self._config = experiment_config
         self._data_manager = data_manager
-        #self._iteration = Gauge('training_iteration', 'Current training iteration')
         #
         #
 
@@ -40,7 +39,10 @@ class ModelTrainer:
         model_name = self.generate_model_name()
         self._path_to_dump_model = Path(self._config["path_experiment"]).joinpath(model_name)
 
-    def load_model(self, train_type):
+    def _init_metrics(self):
+        self._iteration = Gauge('training_iteration', 'Current training iteration')
+
+    def _load_model(self, train_type):
         import artm
         current_models = os.listdir(self._models_dir)
         # TODO: для дообучения
@@ -73,6 +75,8 @@ class ModelTrainer:
             initial artm topic model with parameters from experiment_config
         """
         import artm
+        from topicnet.cooking_machine import rel_toolbox_lite
+
         artm_model_params = self._config["artm_model_params"]
 
         dictionary = artm.Dictionary()
@@ -164,7 +168,8 @@ class ModelTrainer:
         train_type - full for full train from scratch, update to get the latest model and train it.
         """
         logging.info("Start model training")
-        self.load_model(train_type)
+        self._init_metrics()
+        # self._load_model(train_type)
         self._data_manager.load_train_data()
         for epoch in tqdm(range(self._config['artm_model_params']["num_collection_passes"])):
             logging.info(epoch)
