@@ -4,8 +4,9 @@ import os
 import typing
 
 from pathlib import Path
+from time import sleep
 
-from prometheus_client import Gauge
+from prometheus_client import Gauge, start_http_server
 from tqdm import tqdm
 from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
@@ -40,6 +41,7 @@ class ModelTrainer:
         self._path_to_dump_model = Path(self._config["path_experiment"]).joinpath(model_name)
 
     def _init_metrics(self):
+        start_http_server(8001, addr='0.0.0.0')
         self._iteration = Gauge('training_iteration', 'Current training iteration')
 
     def _load_model(self, train_type):
@@ -169,11 +171,13 @@ class ModelTrainer:
         """
         logging.info("Start model training")
         self._init_metrics()
-        # self._load_model(train_type)
+        self._load_model(train_type)
         self._data_manager.load_train_data()
-        for epoch in tqdm(range(self._config['artm_model_params']["num_collection_passes"])):
-            logging.info(epoch)
+        for epoch in range(self._config['artm_model_params']["num_collection_passes"]):
+            logging.info('Training epoch %i', epoch)
+            self._iteration.set(epoch+1)
             self._train_epoch()
+
             # тут нужно визуализировать epoch
             # тут можно визуализировать скоры модели
 

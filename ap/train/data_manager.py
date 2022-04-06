@@ -103,7 +103,7 @@ class ModelDataManager:
         #     self._new_class_ids = {class_id: val for class_id, val in self._class_ids.items()}
 
     def load_train_data(self):
-        with open(self.train_path) as file:
+        with open(self.train_path, encoding='utf-8') as file:
             train_vw = file.readlines()
 
         self.train_dict = {line.split()[0]: line for line in train_vw}
@@ -112,14 +112,6 @@ class ModelDataManager:
         for doc_id, rubric in self.train_grnti.items():
             if doc_id in self.train_dict:
                 docs_of_rubrics[rubric].append(doc_id)
-
-        # new_train = []
-        # for rubric, doc_ids in docs_of_rubrics.items():
-        #     for idx, doc_id in zip(range(10), doc_ids):
-        #         new_train.append(self.train_dict[doc_id])
-        #
-        # with open('work_dir/data/train_small.txt', 'w') as file:
-        #     file.writelines(new_train)
 
         self._docs_of_rubrics: typing.Dict[str, list] = docs_of_rubrics
     #
