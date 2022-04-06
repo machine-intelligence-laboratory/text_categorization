@@ -23,12 +23,18 @@ ap.inference
 ap.train1
 #########
 
-.. autoclass:: ap.train.data_manager.ModelDataManager
+.. automodule:: ap.train.data_manager
    :members:
+   :undoc-members:
+   :show-inheritance:
 .. automodule:: ap.train.server
    :members:
+   :undoc-members:
+   :show-inheritance:
 .. automodule:: ap.train.trainer
    :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 
