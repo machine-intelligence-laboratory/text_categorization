@@ -20,10 +20,10 @@ ap.inference
 
 
 
-ap.train
-########
+ap.train11
+##########
 
-.. automodule:: ap.train.data_manager
+.. autoclass:: ap.train.data_manager.ModelDataManager
    :members:
 .. automodule:: ap.train.server
    :members:
