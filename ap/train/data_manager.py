@@ -2,35 +2,11 @@
 Модуль для поддержания работы с данными
 """
 
-import json
-import itertools
 import logging
-# import shutil
-# import tempfile
-import random
-import typing
-# # import uuid
-#
 from collections import Counter
-from pathlib import Path
-#
 import numpy as np
 import yaml
 
-# from ap.utils.general import batch_names, ensure_directory
-# def recursively_unlink(path):
-#     """
-#     Рекурсивное удаление файлов и директорий
-#     :param path:
-#     :return:
-#     """
-#     for child in path.iterdir():
-#         if child.is_file():
-#             child.unlink()
-#         else:
-#             recursively_unlink(child)
-#     path.rmdir()
-#
 import json
 import typing
 from pathlib import Path
