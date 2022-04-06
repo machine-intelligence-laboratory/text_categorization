@@ -50,7 +50,6 @@ class ModelDataManager:
     # BATCH_SIZE = 10000
 
     def __init__(self, data_dir, experiment_config):
-        pass
         """
         Создает дата менеджер.
 
@@ -439,7 +438,7 @@ class ModelDataManager:
             train_data = file.read()
         modality_distribution = {
             mod: train_data.count(f'|@{mod}')
-            for mod in self.class_ids
+            for mod in self._class_ids
         }
 
         # add wiki part of train data

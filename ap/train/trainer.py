@@ -99,7 +99,7 @@ class ModelTrainer:
 
         model.scores.add(artm.SparsityThetaScore(name='SparsityThetaScore',
                                                  topic_names=subject_topic_list))
-        for lang in model.class_ids:
+        for lang in model._class_ids:
             model.scores.add(artm.SparsityPhiScore(name=f'SparsityPhiScore_{lang}',
                                                    class_id=lang,
                                                    topic_names=subject_topic_list))
@@ -156,7 +156,7 @@ class ModelTrainer:
         return model
 
     @property
-    def model_scores(self) -> artm.scores.Scores:
+    def model_scores(self):
         """
         Возвращает все скоры тематической модели
 
@@ -197,14 +197,13 @@ class ModelTrainer:
 
         return self.model.info
 
-    @property
     def model_main_info(self):
         """
         Возвращает основную информацию о модели
         :return:
         """
         info = self._config["artm_model_params"]
-        info["Модальности"] = self._data_manager.class_ids
+        info["Модальности"] = self._data_manager._class_ids
         info["need_augmentation"] = self._config.get("need_augmentation", False)
         if info["need_augmentation"]:
             info["aug_proportion"] = self._config.get("aug_proportion")
