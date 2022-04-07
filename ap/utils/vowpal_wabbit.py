@@ -1,3 +1,5 @@
+"""Класс для работы с данными в формате Vowpal Wabbit."""
+
 import re
 import typing
 
@@ -8,13 +10,15 @@ from zhon import hanzi
 
 
 class VowpalWabbit:
+    """
+    Класс сохранения VW файлов.
+    """
     def __init__(self, use_counters):
         """
         Создает класс сохранения VW файлов.
 
-        Parameters
-        ----------
-        use_counters - признак использования каунтеров
+        Parameters:
+            use_counters: признак использования каунтеров
         """
         self._use_counters = use_counters
         self.punctuation = punctuation + hanzi.punctuation
@@ -25,14 +29,13 @@ class VowpalWabbit:
         """
         Конвертирует документы в BOW и сохраняет их.
 
-        Parameters
-        ----------
-        target_file путь к файлу
-        doc сырые документы
+        Parameters:
+            target_file: путь к файлу
+            doc: сырые документы
         """
-        self.save_bow(target_file, self.convert_to_bow(doc))
+        self._save_bow(target_file, self._convert_to_bow(doc))
 
-    def save_bow(
+    def _save_bow(
         self,
         target_file: typing.TextIO,
         sessions_bow_messages: typing.Dict[
@@ -42,10 +45,9 @@ class VowpalWabbit:
         """
         Сохраняет BOW представление документов.
 
-        Parameters
-        ----------
-        target_file путь к файлу
-        sessions_bow_messages документы в формате BOW
+        Parameters:
+            target_file: путь к файлу
+            sessions_bow_messages: документы в формате BOW
         """
         for key, modality_bows in sessions_bow_messages.items():
             new_message_str_format = str(key).replace(" ", "_")
@@ -67,19 +69,17 @@ class VowpalWabbit:
             target_file.write(new_message_str_format)
             target_file.write("\n")
 
-    def convert_to_bow(
+    def _convert_to_bow(
         self, data: typing.Dict[str, typing.Dict[str, str]]
     ) -> typing.Dict[str, typing.Dict[str, typing.Union[str, typing.Counter]]]:
         """
         Конвертирует набор документов в BOW представление (см. VowpalWabbit.convet_doct).
 
-        Parameters
-        ----------
-        param data словарь айди документа->документ
+        Parameters:
+            data (dict): словарь айди документа->документ
 
-        Returns
-        -------
-        словарь айди документа->документ в виде BOW
+        Returns:
+            sessions_bow_messages: словарь айди документа->документ в виде BOW
         """
         sessions_bow_messages = dict()
         for elem_id, elem in data.items():
@@ -92,12 +92,11 @@ class VowpalWabbit:
         """
         Конвертирует исходный документ в формат BOW.
 
-        Parameters
-        ----------
-        doc словарь язык->текст документа
-        Returns
-        -------
-        словарь язык->BOW документа. Если use_counters==True, словарь в виде Counter
+        Parameters:
+            doc: словарь язык->текст документа
+
+        Returns:
+            res: словарь язык->BOW документа. Если use_counters==True, словарь в виде Counter
         """
         res = {}
         if self._use_counters:
