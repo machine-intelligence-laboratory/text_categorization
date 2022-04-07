@@ -2,19 +2,22 @@ name: documentation_builder
 
 on:
   push:
-    branches: [ add_documentation, develop, main ]
+    branches: [ add_documentation ]
   pull_request:
-    branches: [ add_documentation, develop, main ]
+    branches: [ add_documentation ]
 
 jobs:
   build_documentation:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        python-version: [3.8]
+#     strategy:
+#       matrix:
+#         python-version: [3.8]
 
     steps:
+      - name: clone the repo
+        uses: actions/checkout@v1
+      
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
@@ -25,7 +28,7 @@ jobs:
           pip install -U sphinx
           pwd
           ls
-          bash ../generate.sh
+          ./generate.sh
 
       - name: Build Docs
         run: |
