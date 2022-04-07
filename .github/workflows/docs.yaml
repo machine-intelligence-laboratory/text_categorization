@@ -1,4 +1,4 @@
-name: docs
+name: documentation_builder
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ add_documentation ]
 
 jobs:
-  build:
+  build_documentation:
     runs-on: ubuntu-latest
 
     strategy:
