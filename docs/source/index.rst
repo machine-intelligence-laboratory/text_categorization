@@ -6,37 +6,49 @@
 Welcome to Text categorization's documentation!
 ===============================================
 
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+
 ap.inference
 ############
 
-.. autoclass:: ap.inference.server.TopicModelInferenceServiceImpl
+.. automodule:: ap.inference.server
    :members:
-.. autofunction:: ap.inference.server.serve
+   :undoc-members:
+   :show-inheritance:
+
+
 
 ap.train
 ########
 
-.. automodule:: ap.train
+.. automodule:: ap.train.data_manager
    :members:
-.. autoclass:: ap.train.data_manager.ModelDataManager
+   :undoc-members:
+   :show-inheritance:
+.. automodule:: ap.train.my_boy
    :members:
+   :undoc-members:
+   :show-inheritance:
 .. automodule:: ap.train.server
    :members:
+   :undoc-members:
+   :show-inheritance:
 .. automodule:: ap.train.trainer
    :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 
 ap.utils
 ########
 
-.. automodule:: ap.utils
-   :members:
 .. automodule:: ap.utils.bpe
    :members:
-.. automodule:: ap.utils.config
 .. automodule:: ap.utils.dictionary
    :members:
 .. automodule:: ap.utils.emb_metrics

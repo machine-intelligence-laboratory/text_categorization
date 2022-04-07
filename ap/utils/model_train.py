@@ -235,10 +235,9 @@ def get_rubric_of_train_docs() -> typing.Dict[str, str]:
 
     Do not contents rubric 'нет'.
 
-    Returns
-    -------
-    train_grnti: dict
-        dict where keys - document ids, value - number of GRNTI rubric of document.
+    Returns:
+        train_grnti (dict):
+            dict where keys - document ids, value - number of GRNTI rubric of document.
     """
     with open(experiment_config.path_articles_rubrics_train_grnti) as file:
         articles_grnti_with_no = json.load(file)
@@ -307,9 +306,6 @@ def fit_topic_model():
     The function fits topic model according to the experiment_config file.
 
     experiment_config file should be placed in the same folder with this module.
-
-    Returns
-    -------
     """
     path_experiment = Path(experiment_config.path_experiment)
     path_experiment.mkdir(parents=True, exist_ok=True)

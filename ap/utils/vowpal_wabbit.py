@@ -75,11 +75,13 @@ class VowpalWabbit:
         """
         Конвертирует набор документов в BOW представление (см. VowpalWabbit.convet_doct).
 
-        Parameters:
-            data (dict): словарь айди документа->документ
+        Parameters
+        ----------
+        param data словарь айди документа->документ
 
-        Returns:
-            sessions_bow_messages: словарь айди документа->документ в виде BOW
+        Returns
+        -------
+        словарь айди документа->документ в виде BOW
         """
         sessions_bow_messages = dict()
         for elem_id, elem in data.items():
@@ -92,11 +94,12 @@ class VowpalWabbit:
         """
         Конвертирует исходный документ в формат BOW.
 
-        Parameters:
-            doc: словарь язык->текст документа
-
-        Returns:
-            res: словарь язык->BOW документа. Если use_counters==True, словарь в виде Counter
+        Parameters
+        ----------
+        doc словарь язык->текст документа
+        Returns
+        -------
+        словарь язык->BOW документа. Если use_counters==True, словарь в виде Counter
         """
         res = {}
         if self._use_counters:
