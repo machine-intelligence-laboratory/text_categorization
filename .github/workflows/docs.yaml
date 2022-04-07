@@ -2,9 +2,9 @@ name: documentation_builder
 
 on:
   push:
-    branches: [ add_documentation ]
+    branches: [ add_documentation, develop, main ]
   pull_request:
-    branches: [ add_documentation ]
+    branches: [ add_documentation, develop, main ]
 
 jobs:
   build_documentation:
