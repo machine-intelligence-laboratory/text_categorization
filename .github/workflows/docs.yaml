@@ -31,6 +31,9 @@ jobs:
 
       - name: Build Docs
         run: |
-          echo "I'm already here!"
           cd ./docs
           make clean html
+      
+      - name: Host Docs on readthedocs.org
+        run: |
+          echo "I don't know today"
