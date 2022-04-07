@@ -65,10 +65,10 @@ class ModelDataManager:
                                 **experiment_config["LANGUAGES_TRAIN"]}
         self._class_ids = all_modalities_train
 
-        average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
+        self.average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
         logging.info('Balanced learning is used: at each epoch' +
                      'rubric-balanced documents are sampled from the training data.')
-        logging.info(f'Each epoch uses {average_rubric_size} documents ' +
+        logging.info(f'Each epoch uses {self.average_rubric_size} documents ' +
                      f'for each of {experiment_config["num_rubric"]} rubrics.')
         # self._class_ids_path = os.path.join(data_dir, "classes.yaml")
         # with open(self._class_ids_path, "r") as file:

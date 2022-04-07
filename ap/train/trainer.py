@@ -43,6 +43,11 @@ class ModelTrainer:
     def _init_metrics(self):
         start_http_server(8001, addr='0.0.0.0')
         self._iteration = Gauge('training_iteration', 'Current training iteration')
+        self._average_rubric_size = Gauge('average_rubric_size', 'Average rubric size')
+        self._num_rubric = Gauge('num_rubric', 'Number of rubrics')
+
+        self._average_rubric_size.set(self._data_manager.average_rubric_size)
+        self._num_rubric.set(self._data_manager._config["num_rubric"])
 
     def _load_model(self, train_type):
         import artm
@@ -58,7 +63,6 @@ class ModelTrainer:
             logging.info("Start full training")
             self.model = self._create_initial_model()
         else:
-            pass
             # TODO: загрузить модель для дообучения
             last_model = max(current_models)
             logging.info("Start training based on %s model", last_model)
