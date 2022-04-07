@@ -26,11 +26,11 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install -U sphinx
-          pwd
-          ls
+          pip install -r requirements.txt
           ./generate.sh
 
       - name: Build Docs
         run: |
+          echo "I'm already here!"
           cd ./docs
           make clean html
