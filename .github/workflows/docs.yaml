@@ -1,0 +1,32 @@
+name: docs
+
+on:
+  push:
+    branches: [ add_documentation ]
+  pull_request:
+    branches: [ add_documentation ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: Install Dependencies
+        run: |
+          pip install -U sphinx
+          pip install -U sphinx-rtd-theme
+          ./generate.sh
+
+      - name: Build Docs
+        run: |
+          cd ./docs
+          make clean html
