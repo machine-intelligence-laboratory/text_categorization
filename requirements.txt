@@ -12,3 +12,5 @@ zhon==1.1.5
 pyyaml==5.3.1
 youtokentome==1.0.6
 scikit-learn==0.24.2
+prometheus-client==0.13.1
+

@@ -4,45 +4,54 @@ import os
 import typing
 
 from pathlib import Path
+from time import sleep
 
-import artm
-
+from prometheus_client import Gauge, start_http_server
 from tqdm import tqdm
-
-from topicnet.cooking_machine import rel_toolbox_lite
-
 from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
 from ap.utils.general import ensure_directory, recursively_unlink
-# from ap.utils import config
-
 
 class ModelTrainer:
     def __init__(
             self,
-            train_type: StartTrainTopicModelRequest.TrainType,
             data_manager: ModelDataManager,
             experiment_config: typing.Dict[str, typing.Any],
             models_dir: str,
     ):
-        """
-        Initialize a model trainer.
-
-        Parameters
-        ----------
-        data_manager - data manager
-        conf - training configuration dict
-        models_dir - a path to store new models
-        """
+        from prometheus_client import Gauge
+        #
+        # """
+        # Initialize a model trainer.
+        #
+        # Parameters
+        # ----------
+        # data_manager - data manager
+        # conf - training configuration dict
+        # models_dir - a path to store new models
+        # """
         # self._conf = conf
         self._config = experiment_config
         self._data_manager = data_manager
+        #
+        #
 
-        models_dir = ensure_directory(models_dir)
+        self._models_dir = ensure_directory(models_dir)
         model_name = self.generate_model_name()
         self._path_to_dump_model = Path(self._config["path_experiment"]).joinpath(model_name)
 
-        current_models = os.listdir(models_dir)
+    def _init_metrics(self):
+        start_http_server(8001, addr='0.0.0.0')
+        self._iteration = Gauge('training_iteration', 'Current training iteration')
+        self._average_rubric_size = Gauge('average_rubric_size', 'Average rubric size')
+        self._num_rubric = Gauge('num_rubric', 'Number of rubrics')
+
+        self._average_rubric_size.set(self._data_manager.average_rubric_size)
+        self._num_rubric.set(self._data_manager._config["num_rubric"])
+
+    def _load_model(self, train_type):
+        import artm
+        current_models = os.listdir(self._models_dir)
         # TODO: для дообучения
         # добавить условие: есть язык не из 100 языков
         # new_modalities = list(config["LANGUAGES_ALL"]).extend(list(config["MODALITIES_TRAIN"]))
@@ -54,14 +63,13 @@ class ModelTrainer:
             logging.info("Start full training")
             self.model = self._create_initial_model()
         else:
-            pass
             # TODO: загрузить модель для дообучения
-            # last_model = max(current_models)
-            # logging.info("Start training based on %s model", last_model)
-            #
-            # self.model = artm.load_artm_model(os.path.join(self._models_dir, last_model))
+            last_model = max(current_models)
+            logging.info("Start training based on %s model", last_model)
 
-    def _create_initial_model(self) -> artm.artm_model.ARTM:
+            self.model = artm.load_artm_model(os.path.join(self._models_dir, last_model))
+
+    def _create_initial_model(self):
         """
         Creating an initial topic model.
 
@@ -70,6 +78,9 @@ class ModelTrainer:
         model: artm.ARTM
             initial artm topic model with parameters from experiment_config
         """
+        import artm
+        from topicnet.cooking_machine import rel_toolbox_lite
+
         artm_model_params = self._config["artm_model_params"]
 
         dictionary = artm.Dictionary()
@@ -92,7 +103,7 @@ class ModelTrainer:
 
         model.scores.add(artm.SparsityThetaScore(name='SparsityThetaScore',
                                                  topic_names=subject_topic_list))
-        for lang in model.class_ids:
+        for lang in model._class_ids:
             model.scores.add(artm.SparsityPhiScore(name=f'SparsityPhiScore_{lang}',
                                                    class_id=lang,
                                                    topic_names=subject_topic_list))
@@ -149,7 +160,7 @@ class ModelTrainer:
         return model
 
     @property
-    def model_scores(self) -> artm.scores.Scores:
+    def model_scores(self):
         """
         Возвращает все скоры тематической модели
 
@@ -190,14 +201,13 @@ class ModelTrainer:
 
         return self.model.info
 
-    @property
     def model_main_info(self):
         """
         Возвращает основную информацию о модели
         :return:
         """
         info = self._config["artm_model_params"]
-        info["Модальности"] = self._data_manager.class_ids
+        info["Модальности"] = self._data_manager._class_ids
         info["need_augmentation"] = self._config.get("need_augmentation", False)
         if info["need_augmentation"]:
             info["aug_proportion"] = self._config.get("aug_proportion")
@@ -223,9 +233,14 @@ class ModelTrainer:
         main_info = self.model_main_info()
         # Здесь можно визуализировать основную информацию о модели main_info
         logging.info("Start model training")
-        for epoch in tqdm(range(self._config["num_collection_passes"])):
-            logging.info(epoch)
+        self._init_metrics()
+        self._load_model(train_type)
+        self._data_manager.load_train_data()
+        for epoch in range(self._config['artm_model_params']["num_collection_passes"]):
+            logging.info('Training epoch %i', epoch)
+            self._iteration.set(epoch+1)
             self._train_epoch()
+
             # тут нужно визуализировать epoch
             scores_value = self.model_scores_value
             # тут можно визуализировать скоры модели scores_value

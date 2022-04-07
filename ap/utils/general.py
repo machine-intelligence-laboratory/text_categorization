@@ -21,6 +21,18 @@ def id_to_str(id: DocId) -> str:
     return f"{id.Hi}_{id.Lo}"
 
 
+def get_modalities(doc):
+    res = {}
+
+    for modality in doc.Modalities:
+        if modality.Key == 'lang':
+            res[modality.Value] = " ".join(doc.Tokens)
+        else:
+            res[modality.Key] = modality.Value
+
+    return res
+
+
 def docs_from_pack(pack: DocumentPack) -> typing.Dict[str, typing.Dict[str, str]]:
     """
     Создает dict документов из DocumentPack.
@@ -33,8 +45,10 @@ def docs_from_pack(pack: DocumentPack) -> typing.Dict[str, typing.Dict[str, str]
     -------
     dict из документов
     """
+
+
     return {
-        id_to_str(doc.Id): {doc.Language: " ".join(doc.Tokens)}
+        id_to_str(doc.Id): get_modalities(doc)
         for doc in pack.Documents
     }
 
