@@ -29,6 +29,10 @@ ap.train
    :members:
    :undoc-members:
    :show-inheritance:
+.. automodule:: ap.train.my_boy
+   :members:
+   :undoc-members:
+   :show-inheritance:
 .. automodule:: ap.train.server
    :members:
    :undoc-members:
