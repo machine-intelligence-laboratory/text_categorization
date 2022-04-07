@@ -46,14 +46,7 @@ language = 'ru'
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = [
-    'ap.topic_model.v1.TopicModelBase_pb2',
-    'ap.topic_model.v1.TopicModelBase_pb2_grpc',
-    'ap.topic_model.v1.TopicModelInference_pb2',
-    'ap.topic_model.v1.TopicModelInference_pb2_grpc'
-    'ap.topic_model.v1.TopicModelTrain_pb2'
-    'ap.topic_model.v1.TopicModelTrain_pb2_grpc'
-]
+exclude_patterns = []
 
 
 # -- Options for HTML output -------------------------------------------------
