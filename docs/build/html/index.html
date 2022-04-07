@@ -1,0 +1,699 @@
+
+<!DOCTYPE html>
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Welcome to Text categorization’s documentation! &#8212; документация Text categorization 0.2.0</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/translations.js"></script>
+    
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             accesskey="I">указатель</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Содержание модулей Python"
+             >модули</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">документация Text categorization 0.2.0</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Welcome to Text categorization’s documentation!</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="welcome-to-text-categorization-s-documentation">
+<h1>Welcome to Text categorization’s documentation!<a class="headerlink" href="#welcome-to-text-categorization-s-documentation" title="Ссылка на этот заголовок">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="module-ap.inference.server">
+<span id="ap-inference"></span><h2>ap.inference<a class="headerlink" href="#module-ap.inference.server" title="Ссылка на этот заголовок">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ap.inference.server.TopicModelInferenceServiceImpl">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.inference.server.</span></span><span class="sig-name descname"><span class="pre">TopicModelInferenceServiceImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">artm_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpe_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">work_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rubric_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.TopicModelInferenceServiceImpl" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">ap.topic_model.v1.TopicModelInference_pb2_grpc.TopicModelInferenceServiceServicer</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.inference.server.TopicModelInferenceServiceImpl.GetDocumentsEmbedding">
+<span class="sig-name descname"><span class="pre">GetDocumentsEmbedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelInference_pb2.GetDocumentsEmbeddingRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.TopicModelInferenceServiceImpl.GetDocumentsEmbedding" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает ембеддинги документов.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>GetDocumentsEmbeddingRequest</em>) – реквест</p></li>
+<li><p><strong>context</strong> – контекст, не используется</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Ответ</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>(GetDocumentsEmbeddingResponse)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.inference.server.TopicModelInferenceServiceImpl.get_rubric_of_train_docs">
+<span class="sig-name descname"><span class="pre">get_rubric_of_train_docs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.TopicModelInferenceServiceImpl.get_rubric_of_train_docs" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Get dict where keys - document ids, value - number of GRNTI rubric of document.</p>
+<p>Do not contains rubric „нет“.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>dict where keys - document ids, value - numer of GRNTI rubric of document.</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>train_grnti (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ap.train.data_manager">
+<span id="ap-train"></span><h2>ap.train<a class="headerlink" href="#module-ap.train.data_manager" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Модуль для поддержания работы с данными</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.data_manager.</span></span><span class="sig-name descname"><span class="pre">ModelDataManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment_config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Класс для поддержания работы с данными</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.class_ids">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">class_ids</span></span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.class_ids" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Словарь class ids с весами.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>Словарь class ids с весами.</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>(dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.dictionary">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dictionary</span></span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.dictionary" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает словарь, которым инициализировалась модель.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>словарь, которым инициализировалась модель</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>dictionary (artm.Dictionary)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.generate_batches_balanced_by_rubric">
+<span class="sig-name descname"><span class="pre">generate_batches_balanced_by_rubric</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">artm.batches_utils.BatchVectorizer</span></span></span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.generate_batches_balanced_by_rubric" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает artm.BatchVectorizer, построенный на сбалансированных батчах.</p>
+<p>Генерирует батчи, в которых документы сбалансированны относительно рубрик ГРНТИ.
+Из всего тренировочного датасета сэмплируются документы так, чтобы
+в обучении на эпохе участвовало одинаковое количество документов каждой рубрики ГРНТИ.
+Количество документов каждой рубрики равно average_rubric_size - среднему размеру рубрики ГРНТИ.</p>
+<p>Если в конфиге для обучения модели self._config присутствует путь
+до батчей, построенных по википедии self._path_batches_wiki, то батчи будут использованы для обучения модели.
+Иначе в обучении будут принимать участие только батчи, сбалансированные относительно рубрик ГРНТИ.</p>
+<p>Возвразает artm.BatchVectorizer, построенный на этих батчах.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>artm.BatchVectorizer, построенный на сбалансированных батчах.</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>batch_vectorizer (artm.BatchVectorizer)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.write_new_docs">
+<span class="sig-name descname"><span class="pre">write_new_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vw_writer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.write_new_docs" title="Ссылка на это определение">¶</a></dt>
+<dd><p>TODO</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vw_writer</strong> (<em>TODO</em>) – TODO</p></li>
+<li><p><strong>docs</strong> (<em>TODO</em>) – TODO</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ap.train.data_manager.NoTranslationException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.data_manager.</span></span><span class="sig-name descname"><span class="pre">NoTranslationException</span></span><a class="headerlink" href="#ap.train.data_manager.NoTranslationException" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<span class="target" id="module-ap.train.my_boy"></span><dl class="py function">
+<dt class="sig sig-object py" id="ap.train.my_boy.my_funk">
+<span class="sig-prename descclassname"><span class="pre">ap.train.my_boy.</span></span><span class="sig-name descname"><span class="pre">my_funk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.my_boy.my_funk" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Sum of a and b</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>int</em>) – value of a</p></li>
+<li><p><strong>b</strong> (<em>int</em>) – value of b</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>sum of a and b</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-ap.train.server"></span><dl class="py class">
+<dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.server.</span></span><span class="sig-name descname"><span class="pre">TopicModelTrainServiceImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bpe_models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_conf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2_grpc.TopicModelTrainServiceServicer</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl.AddDocumentsToModel">
+<span class="sig-name descname"><span class="pre">AddDocumentsToModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.AddDocumentsToModelRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.AddDocumentsToModelResponse</span></span></span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl.AddDocumentsToModel" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Добавляет документы в модель.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>AddDocumentsToModelRequest</em>) – запрос с документами</p></li>
+<li><p><strong>context</strong> – не используется</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Ответ</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>(AddDocumentsToModelResponse)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl.StartTrainTopicModel">
+<span class="sig-name descname"><span class="pre">StartTrainTopicModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.StartTrainTopicModelRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.StartTrainTopicModelResponse</span></span></span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl.StartTrainTopicModel" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Запускает обучение.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>StartTrainTopicModelRequest</em>) – запрос с типом обучения.</p></li>
+<li><p><strong>context</strong> – не используется.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Статус запуска.</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>(StartTrainTopicModelResponse)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl.TrainTopicModelStatus">
+<span class="sig-name descname"><span class="pre">TrainTopicModelStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.TrainTopicModelStatusRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.TrainTopicModelStatusResponse</span></span></span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl.TrainTopicModelStatus" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает статус текущей сессии обучения.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>TrainTopicModelStatusRequest</em>) – пустой запрос</p></li>
+<li><p><strong>context</strong> – контекст, не используется</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>(TrainTopicModelStatusResponse): Статус</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ap.train.trainer"></span><dl class="py class">
+<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.trainer.</span></span><span class="sig-name descname"><span class="pre">ModelTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f726ebdf7c0&gt;,</span> <span class="pre">data_manager:</span> <span class="pre">ap.train.data_manager.ModelDataManager,</span> <span class="pre">experiment_config:</span> <span class="pre">typing.Dict[str,</span> <span class="pre">typing.Any],</span> <span class="pre">models_dir:</span> <span class="pre">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.generate_model_name">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_model_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.generate_model_name" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Генерирует новое имя для модели.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>Новое имя для модели</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.model_info">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_info</span></span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.model_info" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает характеристики модели</p>
+<p>Очень подробна информация о характеристиках модели:
+- названия тем
+- названия модальностей
+- веса модальностей
+- метрики
+- информация о регуляризаторах
+- другое</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>характеристики модели</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.model_main_info">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_main_info</span></span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.model_main_info" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает основную информацию о модели</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>основная информация о модели</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>info</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.model_scores">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_scores</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">artm.scores.Scores</span></em><a class="headerlink" href="#ap.train.trainer.ModelTrainer.model_scores" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает все скоры тематической модели</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>список скоров тематической модели</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>(artm.scores.Scores)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.model_scores_value">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_scores_value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#ap.train.trainer.ModelTrainer.model_scores_value" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает значения всех скоров тематической модели на текущей эпохе</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>значения всех скоров тематической модели на текущей эпохе</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>scores_value (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.train_model">
+<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f726ebdf7c0&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.train_model" title="Ссылка на это определение">¶</a></dt>
+<dd><p># TODO: обновить док-стринг
+Train model synchronously. Save trained model to a new subfolder of self._models_dir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>train_type</strong> (<em>StartTrainTopicModelRequest.TrainType</em>) – full for full train from scratch, update to get the latest model and train it.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ap.utils.bpe"></span><dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.bpe.load_bpe_models">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.bpe.</span></span><span class="sig-name descname"><span class="pre">load_bpe_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bpe_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#ap.utils.bpe.load_bpe_models" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Загружает обученные BPE модели.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>bpe_path</strong> (<em>str</em>) – путь до папки с обученными BPE моделями.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-ap.utils.dictionary"></span><dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.dictionary.get_num_entries">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.dictionary.</span></span><span class="sig-name descname"><span class="pre">get_num_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">artm.dictionary.Dictionary</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#ap.utils.dictionary.get_num_entries" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает размер словаря.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>dictionary</strong> (<em>artm.Dictionary</em>) – словарь тематической модели</p>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>количество токенов в словаре</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.dictionary.limit_classwise">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.dictionary.</span></span><span class="sig-name descname"><span class="pre">limit_classwise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">artm.dictionary.Dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dictionary_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.dictionary.limit_classwise" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Ограничивает словарь.</p>
+<p>Таким образом, что в разрезе каждоого class id будет не более max_dictionary_size токенов.
+Сохраняет словарь в текстовым форматом в файле out_file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dictionary</strong> (<em>artm.Dictionary</em>) – исходный словарь</p></li>
+<li><p><strong>cls_ids</strong> (<em>list</em>) – модальности</p></li>
+<li><p><strong>max_dictionary_size</strong> (<em>int</em>) – максимальный размер словаря в разрезе модальности</p></li>
+<li><p><strong>tmp_dir</strong> (<em>str</em>) – директория для хранения промежуточных результатов</p></li>
+<li><p><strong>out_file</strong> (<em>str</em>) – файл, в котором сохраняется результат</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-ap.utils.emb_metrics"></span><dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.emb_metrics.generate_theta">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.emb_metrics.</span></span><span class="sig-name descname"><span class="pre">generate_theta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.emb_metrics.generate_theta" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Function to generate theta matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_models</strong> (<em>str</em>) – a path with artm models</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – a path for save theta matrices</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.emb_metrics.get_analogy_distribution">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.emb_metrics.</span></span><span class="sig-name descname"><span class="pre">get_analogy_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.emb_metrics.get_analogy_distribution" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Function to get analogy distribution for models.</p>
+<p>Args:</p>
+<dl class="simple">
+<dt>path_models  (str):</dt><dd><p>a path with artm models</p>
+</dd>
+<dt>save_path (str):</dt><dd><p>a path for save theta matrices</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>dict with distribution of analogy measure</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>pair_analogy (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.emb_metrics.get_cos_distribution">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.emb_metrics.</span></span><span class="sig-name descname"><span class="pre">get_cos_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_categories</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.emb_metrics.get_cos_distribution" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Function to get cosine distribution in classes for models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_models</strong> (<em>str</em>) – a path with artm models</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – a path for save theta matrices</p></li>
+<li><p><strong>path_categories</strong> (<em>str</em>) – a path with classes (json)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>dict with distribution of cosine measure for classes</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>pair_cos (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.emb_metrics.get_mean_classes_intersection">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.emb_metrics.</span></span><span class="sig-name descname"><span class="pre">get_mean_classes_intersection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_categories</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.emb_metrics.get_mean_classes_intersection" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Function to evaluate classes intersection.</p>
+<p>Args:</p>
+<dl class="simple">
+<dt>path_models (str):</dt><dd><p>a path with artm models</p>
+</dd>
+<dt>save_path (str):</dt><dd><p>a path for save theta matrices</p>
+</dd>
+<dt>path_categories (str):</dt><dd><p>a path with classes (json)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>DataFrame with evaluation of classes intersection</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>(pd.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.emb_metrics.get_topic_profile">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.emb_metrics.</span></span><span class="sig-name descname"><span class="pre">get_topic_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.emb_metrics.get_topic_profile" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Function to get topic profiles for models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_models</strong> (<em>str</em>) – a path with artm models</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – a path for save theta matrices</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>DataFrame with topic profiles for models</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>(pd.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-ap.utils.general"></span><dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.general.batch_names">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">batch_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starts_from</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.general.batch_names" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Генерирует названия батчей в соответствие с форматом BatchVectorizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>starts_from</strong> – название файла последнего батча в директории</p></li>
+<li><p><strong>count</strong> – количество батчей</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Генератор имен батчей</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>(<em>Generator</em>[str, None, None])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.general.docs_from_pack">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">docs_from_pack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pack</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelBase_pb2.DocumentPack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.general.docs_from_pack" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Создает dict документов из DocumentPack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>pack</strong> (<em>DocumentPack</em>) – TODO</p>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>dict из документов</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.general.ensure_directory">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">ensure_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#ap.utils.general.ensure_directory" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Создает директорию, если ее нет, и возвращает path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – путь к директории</p>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>path</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.general.id_to_str">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">id_to_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelBase_pb2.DocId</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#ap.utils.general.id_to_str" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Конвертирует DocId в строку.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>DocId</em>) – id документа</p>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Строка из DocId</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.general.recursively_unlink">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">recursively_unlink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.general.recursively_unlink" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Рекурсивное удаление файлов и директорий.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>Path</em>) – путь, по которому необходимо удалить все файлы.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-ap.utils.graphics_for_emb_metrics"></span><dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.graphics_for_emb_metrics.show_analogy_distribution">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.graphics_for_emb_metrics.</span></span><span class="sig-name descname"><span class="pre">show_analogy_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pair_analogy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_save_figs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bins</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.graphics_for_emb_metrics.show_analogy_distribution" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Function to visualize analogy distribution.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.graphics_for_emb_metrics.show_cos_distribution">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.graphics_for_emb_metrics.</span></span><span class="sig-name descname"><span class="pre">show_cos_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cos_distribution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_save_figs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rubrics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bins</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.graphics_for_emb_metrics.show_cos_distribution" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Function to visualize cos distribution.</p>
+</dd></dl>
+
+<span class="target" id="module-ap.utils.rank_metric"></span><dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.rank_metric.quality_of_models">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.rank_metric.</span></span><span class="sig-name descname"><span class="pre">quality_of_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_train_lang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bcg_topic_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_to_calculate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_experiment_result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix_norm_metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_subsamples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_rubrics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_languages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recalculate_test_thetas</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.rank_metric.quality_of_models" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Function to calculate quality of models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_train_lang</strong> (<em>str</em>) – path to train thetas by languages</p></li>
+<li><p><strong>bcg_topic_list</strong> (<em>list of str</em>) – backgroung topics of a topic model
+for example init as:
+bcg_topic_list = [„topic_0“]</p></li>
+<li><p><strong>metrics_to_calculate</strong> (<em>list of str</em><em> (</em><em>'analogy'</em><em>, </em><em>'eucl'</em><em>)</em>) – list of names of proximity measures to use in ranking</p></li>
+<li><p><strong>path_model</strong> (<em>str</em>) – path to models</p></li>
+<li><p><strong>path_experiment_result</strong> (<em>pathlib.Path</em>) – path to the folder to save results of models</p></li>
+<li><p><strong>matrix_norm_metric</strong> (<em>callable</em>) – a way to measure norm of a matrix of vectors
+for example init as:
+matrix_norm_metric = np.linalg.norm</p></li>
+<li><p><strong>path_subsamples</strong> (<em>str</em>) – path to folder with subsemples of different languages in json format</p></li>
+<li><p><strong>path_rubrics</strong> (<em>str</em>) – path to file with rubrics of documents in json format</p></li>
+<li><p><strong>path_test</strong> (<em>str</em>) – path to folder with txt files for calculate metrics</p></li>
+<li><p><strong>current_languages</strong> (<em>list of str</em>) – names of languages to use to calculate metrics</p></li>
+<li><p><strong>recalculate_test_thetas</strong> (<em>bool</em>) – True means rebuild thetas
+False means load existing thetas</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>словарь словарей - по имени модели хранятся названия метрик,</dt><dd><p>по названиям метрик хранятся значения метрик этих моделей</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>quality_experiment (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-ap.utils.search_quality"></span><span class="target" id="module-ap.utils.subsamples_creator"></span><dl class="py class">
+<dt class="sig sig-object py" id="ap.utils.subsamples_creator.MakeSubsamples">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.utils.subsamples_creator.</span></span><span class="sig-name descname"><span class="pre">MakeSubsamples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">languages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_save_subsamples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_rubrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsample_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.subsamples_creator.MakeSubsamples" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Class for saving subsamples of document indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>languages</strong> (<em>list</em>) – list of str of languages to use in subsamples</p></li>
+<li><p><strong>path_to_save_subsamples</strong> (<em>str</em>) – path to file in json format to save subsamples</p></li>
+<li><p><strong>path_to_data</strong> (<em>str</em>) – path to data for which subsamples will be created
+expected data in txt format</p></li>
+<li><p><strong>path_rubrics</strong> (<em>str</em>) – path to json file with rubrics of documents</p></li>
+<li><p><strong>mode</strong> (<em>'test'</em><em> or </em><em>'wiki'</em>) – kind of data for which subsamples will be created</p></li>
+<li><p><strong>subsample_size</strong> (<em>int</em>) – The size of the subsample. The default is 1000.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.utils.subsamples_creator.MakeSubsamples.get_subsamples">
+<span class="sig-name descname"><span class="pre">get_subsamples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.subsamples_creator.MakeSubsamples.get_subsamples" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Function saving subsamples of document indices.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ap.utils.vowpal_wabbit"></span><span class="target" id="module-ap.utils.vowpal_wabbit_bpe"></span></section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Ссылка на этот заголовок">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Алфавитный указатель</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Состав модуля</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Поиск</span></a></p></li>
+</ul>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="#">Оглавление</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Welcome to Text categorization’s documentation!</a><ul>
+<li><a class="reference internal" href="#module-ap.inference.server">ap.inference</a></li>
+<li><a class="reference internal" href="#module-ap.train.data_manager">ap.train</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>Эта страница</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Исходный текст</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Быстрый поиск</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Искать" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             >указатель</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Содержание модулей Python"
+             >модули</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">документация Text categorization 0.2.0</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Welcome to Text categorization’s documentation!</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, MIL Team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+  </body>
+</html>
