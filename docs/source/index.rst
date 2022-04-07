@@ -15,6 +15,10 @@ Welcome to Text categorization's documentation!
 ap.inference
 ############
 
+.. automodule:: ap.inference
+   :members:
+   :undoc-members:
+   :show-inheritance:
 .. automodule:: ap.inference.server
    :members:
    :undoc-members:
@@ -25,6 +29,10 @@ ap.inference
 ap.train
 ########
 
+.. automodule:: ap.train
+   :members:
+   :undoc-members:
+   :show-inheritance:
 .. automodule:: ap.train.data_manager
    :members:
    :undoc-members:
@@ -64,7 +72,10 @@ ap.utils
 .. automodule:: ap.utils.vowpal_wabbit_bpe
    :members:
 
-
+.. automodule:: ap
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Indices and tables
 ==================
