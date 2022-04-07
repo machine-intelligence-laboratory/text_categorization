@@ -3,7 +3,7 @@ import typing
 
 from pathlib import Path
 
-from ap.topic_model.v1.TopicModelBase_pb2 import DocId, DocumentPack
+# from ap.topic_model.v1.TopicModelBase_pb2 import DocId, DocumentPack
 
 
 def id_to_str(id) -> str:
