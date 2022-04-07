@@ -6,7 +6,7 @@ from pathlib import Path
 from ap.topic_model.v1.TopicModelBase_pb2 import DocId, DocumentPack
 
 
-def id_to_str(id: DocId) -> str:
+def id_to_str(id) -> str:
     """
     Конвертирует DocId в строку.
 
@@ -19,7 +19,7 @@ def id_to_str(id: DocId) -> str:
     return f"{id.Hi}_{id.Lo}"
 
 
-def docs_from_pack(pack: DocumentPack) -> typing.Dict[str, typing.Dict[str, str]]:
+def docs_from_pack(pack) -> typing.Dict[str, typing.Dict[str, str]]:
     """
     Создает dict документов из DocumentPack.
 
