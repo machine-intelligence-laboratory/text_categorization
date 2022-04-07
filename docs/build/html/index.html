@@ -249,7 +249,7 @@
 
 <span class="target" id="module-ap.train.trainer"></span><dl class="py class">
 <dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.trainer.</span></span><span class="sig-name descname"><span class="pre">ModelTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f726ebdf7c0&gt;,</span> <span class="pre">data_manager:</span> <span class="pre">ap.train.data_manager.ModelDataManager,</span> <span class="pre">experiment_config:</span> <span class="pre">typing.Dict[str,</span> <span class="pre">typing.Any],</span> <span class="pre">models_dir:</span> <span class="pre">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer" title="Ссылка на это определение">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.trainer.</span></span><span class="sig-name descname"><span class="pre">ModelTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f72dffe27c0&gt;,</span> <span class="pre">data_manager:</span> <span class="pre">ap.train.data_manager.ModelDataManager,</span> <span class="pre">experiment_config:</span> <span class="pre">typing.Dict[str,</span> <span class="pre">typing.Any],</span> <span class="pre">models_dir:</span> <span class="pre">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.generate_model_name">
@@ -324,7 +324,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.train_model">
-<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f726ebdf7c0&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.train_model" title="Ссылка на это определение">¶</a></dt>
+<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f72dffe27c0&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.train_model" title="Ссылка на это определение">¶</a></dt>
 <dd><p># TODO: обновить док-стринг
 Train model synchronously. Save trained model to a new subfolder of self._models_dir.</p>
 <dl class="field-list simple">
@@ -336,7 +336,10 @@ Train model synchronously. Save trained model to a new subfolder of self._models
 
 </dd></dl>
 
-<span class="target" id="module-ap.utils.bpe"></span><dl class="py function">
+</section>
+<section id="module-ap.utils.bpe">
+<span id="ap-utils"></span><h2>ap.utils<a class="headerlink" href="#module-ap.utils.bpe" title="Ссылка на этот заголовок">¶</a></h2>
+<dl class="py function">
 <dt class="sig sig-object py" id="ap.utils.bpe.load_bpe_models">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.bpe.</span></span><span class="sig-name descname"><span class="pre">load_bpe_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bpe_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#ap.utils.bpe.load_bpe_models" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Загружает обученные BPE модели.</p>
@@ -651,6 +654,7 @@ expected data in txt format</p></li>
 <li><a class="reference internal" href="#">Welcome to Text categorization’s documentation!</a><ul>
 <li><a class="reference internal" href="#module-ap.inference.server">ap.inference</a></li>
 <li><a class="reference internal" href="#module-ap.train.data_manager">ap.train</a></li>
+<li><a class="reference internal" href="#module-ap.utils.bpe">ap.utils</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
