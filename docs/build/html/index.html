@@ -51,11 +51,18 @@
 <dt class="sig sig-object py" id="ap.inference.server.TopicModelInferenceServiceImpl.GetDocumentsEmbedding">
 <span class="sig-name descname"><span class="pre">GetDocumentsEmbedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelInference_pb2.GetDocumentsEmbeddingRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.TopicModelInferenceServiceImpl.GetDocumentsEmbedding" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Возвращает ембеддинги документов.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>request (GetDocumentsEmbeddingRequest): реквест
-context: контекст, не используется</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>GetDocumentsEmbeddingRequest</em>) – реквест</p></li>
+<li><p><strong>context</strong> – контекст, не используется</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>(GetDocumentsEmbeddingResponse): Ответ</p>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Ответ</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>(GetDocumentsEmbeddingResponse)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -65,8 +72,12 @@ context: контекст, не используется</p>
 <span class="sig-name descname"><span class="pre">get_rubric_of_train_docs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.inference.server.TopicModelInferenceServiceImpl.get_rubric_of_train_docs" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Get dict where keys - document ids, value - number of GRNTI rubric of document.</p>
 <p>Do not contains rubric „нет“.</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>train_grnti (dict): dict where keys - document ids, value - numer of GRNTI rubric of document.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>dict where keys - document ids, value - numer of GRNTI rubric of document.</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>train_grnti (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -86,8 +97,12 @@ context: контекст, не используется</p>
 <dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.class_ids">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">class_ids</span></span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.class_ids" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Словарь class ids с весами.</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>(dict) : Словарь class ids с весами.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>Словарь class ids с весами.</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>(dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -96,8 +111,12 @@ context: контекст, не используется</p>
 <dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.dictionary">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dictionary</span></span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.dictionary" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Возвращает словарь, которым инициализировалась модель.</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>dictionary (artm.Dictionary) : словарь, которым инициализировалась модель</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>словарь, которым инициализировалась модель</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>dictionary (artm.Dictionary)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -114,8 +133,12 @@ context: контекст, не используется</p>
 до батчей, построенных по википедии self._path_batches_wiki, то батчи будут использованы для обучения модели.
 Иначе в обучении будут принимать участие только батчи, сбалансированные относительно рубрик ГРНТИ.</p>
 <p>Возвразает artm.BatchVectorizer, построенный на этих батчах.</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>batch_vectorizer (artm.BatchVectorizer): artm.BatchVectorizer, построенный на сбалансированных батчах.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>artm.BatchVectorizer, построенный на сбалансированных батчах.</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>batch_vectorizer (artm.BatchVectorizer)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -124,9 +147,12 @@ context: контекст, не используется</p>
 <dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.write_new_docs">
 <span class="sig-name descname"><span class="pre">write_new_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vw_writer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.write_new_docs" title="Ссылка на это определение">¶</a></dt>
 <dd><p>TODO</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>vw_writer (TODO): TODO
-docs (TODO): TODO</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vw_writer</strong> (<em>TODO</em>) – TODO</p></li>
+<li><p><strong>docs</strong> (<em>TODO</em>) – TODO</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -147,11 +173,18 @@ docs (TODO): TODO</p>
 <dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl.AddDocumentsToModel">
 <span class="sig-name descname"><span class="pre">AddDocumentsToModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.AddDocumentsToModelRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.AddDocumentsToModelResponse</span></span></span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl.AddDocumentsToModel" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Добавляет документы в модель.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>request (AddDocumentsToModelRequest): запрос с документами
-context: не используется</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>AddDocumentsToModelRequest</em>) – запрос с документами</p></li>
+<li><p><strong>context</strong> – не используется</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>(AddDocumentsToModelResponse): Ответ</p>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Ответ</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>(AddDocumentsToModelResponse)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -160,11 +193,18 @@ context: не используется</p>
 <dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl.StartTrainTopicModel">
 <span class="sig-name descname"><span class="pre">StartTrainTopicModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.StartTrainTopicModelRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.StartTrainTopicModelResponse</span></span></span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl.StartTrainTopicModel" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Запускает обучение.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>request (StartTrainTopicModelRequest): запрос с типом обучения.
-context: не используется.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>StartTrainTopicModelRequest</em>) – запрос с типом обучения.</p></li>
+<li><p><strong>context</strong> – не используется.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>(StartTrainTopicModelResponse): Статус запуска.</p>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Статус запуска.</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>(StartTrainTopicModelResponse)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -173,10 +213,15 @@ context: не используется.</p>
 <dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl.TrainTopicModelStatus">
 <span class="sig-name descname"><span class="pre">TrainTopicModelStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.TrainTopicModelStatusRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.TrainTopicModelStatusResponse</span></span></span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl.TrainTopicModelStatus" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Возвращает статус текущей сессии обучения.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>request (TrainTopicModelStatusRequest): пустой запрос
-context: контекст, не используется</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>TrainTopicModelStatusRequest</em>) – пустой запрос</p></li>
+<li><p><strong>context</strong> – контекст, не используется</p></li>
+</ul>
 </dd>
+</dl>
+<dl class="simple">
 <dt>Returns</dt><dd><p>(TrainTopicModelStatusResponse): Статус</p>
 </dd>
 </dl>
@@ -186,14 +231,15 @@ context: контекст, не используется</p>
 
 <span class="target" id="module-ap.train.trainer"></span><dl class="py class">
 <dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.trainer.</span></span><span class="sig-name descname"><span class="pre">ModelTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f15f9894700&gt;,</span> <span class="pre">data_manager:</span> <span class="pre">ap.train.data_manager.ModelDataManager,</span> <span class="pre">experiment_config:</span> <span class="pre">typing.Dict[str,</span> <span class="pre">typing.Any],</span> <span class="pre">models_dir:</span> <span class="pre">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer" title="Ссылка на это определение">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.trainer.</span></span><span class="sig-name descname"><span class="pre">ModelTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7fd75b36c880&gt;,</span> <span class="pre">data_manager:</span> <span class="pre">ap.train.data_manager.ModelDataManager,</span> <span class="pre">experiment_config:</span> <span class="pre">typing.Dict[str,</span> <span class="pre">typing.Any],</span> <span class="pre">models_dir:</span> <span class="pre">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.generate_model_name">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_model_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.generate_model_name" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Генерирует новое имя для модели.</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>Новое имя для модели</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>Новое имя для модели</p>
 </dd>
 </dl>
 </dd></dl>
@@ -209,8 +255,9 @@ context: контекст, не используется</p>
 - метрики
 - информация о регуляризаторах
 - другое</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>характеристики модели</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>характеристики модели</p>
 </dd>
 </dl>
 </dd></dl>
@@ -219,8 +266,12 @@ context: контекст, не используется</p>
 <dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.model_main_info">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_main_info</span></span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.model_main_info" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Возвращает основную информацию о модели</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>info: основная информация о модели</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>основная информация о модели</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>info</p>
 </dd>
 </dl>
 </dd></dl>
@@ -229,8 +280,12 @@ context: контекст, не используется</p>
 <dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.model_scores">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_scores</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">artm.scores.Scores</span></em><a class="headerlink" href="#ap.train.trainer.ModelTrainer.model_scores" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Возвращает все скоры тематической модели</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>(artm.scores.Scores): список скоров тематической модели</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>список скоров тематической модели</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>(artm.scores.Scores)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -239,22 +294,24 @@ context: контекст, не используется</p>
 <dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.model_scores_value">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_scores_value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#ap.train.trainer.ModelTrainer.model_scores_value" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Возвращает значения всех скоров тематической модели на текущей эпохе</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>scores_value (dict): значения всех скоров тематической модели на текущей эпохе</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>значения всех скоров тематической модели на текущей эпохе</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>scores_value (dict)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.train_model">
-<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f15f9894700&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.train_model" title="Ссылка на это определение">¶</a></dt>
+<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7fd75b36c880&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.train_model" title="Ссылка на это определение">¶</a></dt>
 <dd><p># TODO: обновить док-стринг
 Train model synchronously. Save trained model to a new subfolder of self._models_dir.</p>
-<dl class="simple">
-<dt>Parameters:</dt><dd><dl class="simple">
-<dt>train_type (StartTrainTopicModelRequest.TrainType):</dt><dd><p>full for full train from scratch, update to get the latest model and train it.</p>
-</dd>
-</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>train_type</strong> (<em>StartTrainTopicModelRequest.TrainType</em>) – full for full train from scratch, update to get the latest model and train it.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -268,8 +325,9 @@ Train model synchronously. Save trained model to a new subfolder of self._models
 <dt class="sig sig-object py" id="ap.utils.bpe.load_bpe_models">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.bpe.</span></span><span class="sig-name descname"><span class="pre">load_bpe_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bpe_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#ap.utils.bpe.load_bpe_models" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Загружает обученные BPE модели.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>bpe_path (str): путь до папки с обученными BPE моделями.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>bpe_path</strong> (<em>str</em>) – путь до папки с обученными BPE моделями.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -278,10 +336,12 @@ Train model synchronously. Save trained model to a new subfolder of self._models
 <dt class="sig sig-object py" id="ap.utils.dictionary.get_num_entries">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.dictionary.</span></span><span class="sig-name descname"><span class="pre">get_num_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">artm.dictionary.Dictionary</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#ap.utils.dictionary.get_num_entries" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Возвращает размер словаря.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dictionary (artm.Dictionary): словарь тематической модели</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>dictionary</strong> (<em>artm.Dictionary</em>) – словарь тематической модели</p>
 </dd>
-<dt>Returns:</dt><dd><p>количество токенов в словаре</p>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>количество токенов в словаре</p>
 </dd>
 </dl>
 </dd></dl>
@@ -292,12 +352,15 @@ Train model synchronously. Save trained model to a new subfolder of self._models
 <dd><p>Ограничивает словарь.</p>
 <p>Таким образом, что в разрезе каждоого class id будет не более max_dictionary_size токенов.
 Сохраняет словарь в текстовым форматом в файле out_file.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dictionary (artm.Dictionary): исходный словарь
-cls_ids (list): модальности
-max_dictionary_size (int): максимальный размер словаря в разрезе модальности
-tmp_dir (str): директория для хранения промежуточных результатов
-out_file (str): файл, в котором сохраняется результат</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dictionary</strong> (<em>artm.Dictionary</em>) – исходный словарь</p></li>
+<li><p><strong>cls_ids</strong> (<em>list</em>) – модальности</p></li>
+<li><p><strong>max_dictionary_size</strong> (<em>int</em>) – максимальный размер словаря в разрезе модальности</p></li>
+<li><p><strong>tmp_dir</strong> (<em>str</em>) – директория для хранения промежуточных результатов</p></li>
+<li><p><strong>out_file</strong> (<em>str</em>) – файл, в котором сохраняется результат</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -306,13 +369,12 @@ out_file (str): файл, в котором сохраняется резуль�
 <dt class="sig sig-object py" id="ap.utils.emb_metrics.generate_theta">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.emb_metrics.</span></span><span class="sig-name descname"><span class="pre">generate_theta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.emb_metrics.generate_theta" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Function to generate theta matrix.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>path_models (str):</dt><dd><p>a path with artm models</p>
-</dd>
-<dt>save_path (str):</dt><dd><p>a path for save theta matrices</p>
-</dd>
-</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_models</strong> (<em>str</em>) – a path with artm models</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – a path for save theta matrices</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -327,7 +389,13 @@ out_file (str): файл, в котором сохраняется резуль�
 </dd>
 <dt>save_path (str):</dt><dd><p>a path for save theta matrices</p>
 </dd>
-<dt>Returns:</dt><dd><p>pair_analogy (dict): dict with distribution of analogy measure</p>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>dict with distribution of analogy measure</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>pair_analogy (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -336,17 +404,19 @@ out_file (str): файл, в котором сохраняется резуль�
 <dt class="sig sig-object py" id="ap.utils.emb_metrics.get_cos_distribution">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.emb_metrics.</span></span><span class="sig-name descname"><span class="pre">get_cos_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_categories</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.emb_metrics.get_cos_distribution" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Function to get cosine distribution in classes for models.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>path_models (str):</dt><dd><p>a path with artm models</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_models</strong> (<em>str</em>) – a path with artm models</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – a path for save theta matrices</p></li>
+<li><p><strong>path_categories</strong> (<em>str</em>) – a path with classes (json)</p></li>
+</ul>
 </dd>
-<dt>save_path (str):</dt><dd><p>a path for save theta matrices</p>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>dict with distribution of cosine measure for classes</p>
 </dd>
-<dt>path_categories (str):</dt><dd><p>a path with classes (json)</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><p>pair_cos (dict): dict with distribution of cosine measure for classes</p>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>pair_cos (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -363,7 +433,13 @@ out_file (str): файл, в котором сохраняется резуль�
 </dd>
 <dt>path_categories (str):</dt><dd><p>a path with classes (json)</p>
 </dd>
-<dt>Returns:</dt><dd><p>(pd.DataFrame): DataFrame with evaluation of classes intersection</p>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>DataFrame with evaluation of classes intersection</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>(pd.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -372,17 +448,18 @@ out_file (str): файл, в котором сохраняется резуль�
 <dt class="sig sig-object py" id="ap.utils.emb_metrics.get_topic_profile">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.emb_metrics.</span></span><span class="sig-name descname"><span class="pre">get_topic_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.emb_metrics.get_topic_profile" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Function to get topic profiles for models.</p>
-<p>Args:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>path_models (str):</dt><dd><p>a path with artm models</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_models</strong> (<em>str</em>) – a path with artm models</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – a path for save theta matrices</p></li>
+</ul>
 </dd>
-<dt>save_path (str):</dt><dd><p>a path for save theta matrices</p>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>DataFrame with topic profiles for models</p>
 </dd>
-</dl>
-</div></blockquote>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>(pd.DataFrame): DataFrame with topic profiles for models</p>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>(pd.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -391,11 +468,18 @@ out_file (str): файл, в котором сохраняется резуль�
 <dt class="sig sig-object py" id="ap.utils.general.batch_names">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">batch_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starts_from</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.general.batch_names" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Генерирует названия батчей в соответствие с форматом BatchVectorizer.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>starts_from: название файла последнего батча в директории
-count: количество батчей</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>starts_from</strong> – название файла последнего батча в директории</p></li>
+<li><p><strong>count</strong> – количество батчей</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>(typing.Generator[str, None, None]): Генератор имен батчей</p>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Генератор имен батчей</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>(<em>Generator</em>[str, None, None])</p>
 </dd>
 </dl>
 </dd></dl>
@@ -404,10 +488,12 @@ count: количество батчей</p>
 <dt class="sig sig-object py" id="ap.utils.general.docs_from_pack">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">docs_from_pack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pack</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelBase_pb2.DocumentPack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.general.docs_from_pack" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Создает dict документов из DocumentPack.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>pack (DocumentPack): TODO</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>pack</strong> (<em>DocumentPack</em>) – TODO</p>
 </dd>
-<dt>Returns:</dt><dd><p>dict из документов</p>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>dict из документов</p>
 </dd>
 </dl>
 </dd></dl>
@@ -416,10 +502,12 @@ count: количество батчей</p>
 <dt class="sig sig-object py" id="ap.utils.general.ensure_directory">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">ensure_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#ap.utils.general.ensure_directory" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Создает директорию, если ее нет, и возвращает path.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>path (str): путь к директории</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – путь к директории</p>
 </dd>
-<dt>Returns:</dt><dd><p>path</p>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>path</p>
 </dd>
 </dl>
 </dd></dl>
@@ -428,10 +516,12 @@ count: количество батчей</p>
 <dt class="sig sig-object py" id="ap.utils.general.id_to_str">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">id_to_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelBase_pb2.DocId</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#ap.utils.general.id_to_str" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Конвертирует DocId в строку.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>id (DocId): id документа</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>DocId</em>) – id документа</p>
 </dd>
-<dt>Returns:</dt><dd><p>Строка из DocId</p>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Строка из DocId</p>
 </dd>
 </dl>
 </dd></dl>
@@ -440,8 +530,9 @@ count: количество батчей</p>
 <dt class="sig sig-object py" id="ap.utils.general.recursively_unlink">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">recursively_unlink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.general.recursively_unlink" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Рекурсивное удаление файлов и директорий.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>path (Path): путь, по которому необходимо удалить все файлы.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>Path</em>) – путь, по которому необходимо удалить все файлы.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -462,41 +553,36 @@ count: количество батчей</p>
 <dt class="sig sig-object py" id="ap.utils.rank_metric.quality_of_models">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.rank_metric.</span></span><span class="sig-name descname"><span class="pre">quality_of_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_train_lang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bcg_topic_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_to_calculate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_experiment_result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix_norm_metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_subsamples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_rubrics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_languages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recalculate_test_thetas</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.rank_metric.quality_of_models" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Function to calculate quality of models.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>path_train_lang (str):</dt><dd><p>path to train thetas by languages</p>
-</dd>
-<dt>bcg_topic_list (list of str):</dt><dd><p>backgroung topics of a topic model
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_train_lang</strong> (<em>str</em>) – path to train thetas by languages</p></li>
+<li><p><strong>bcg_topic_list</strong> (<em>list of str</em>) – backgroung topics of a topic model
 for example init as:
-bcg_topic_list = [„topic_0“]</p>
-</dd>
-<dt>metrics_to_calculate (list of str („analogy“, „eucl“)):</dt><dd><p>list of names of proximity measures to use in ranking</p>
-</dd>
-<dt>path_model (str):</dt><dd><p>path to models</p>
-</dd>
-<dt>path_experiment_result (pathlib.Path):</dt><dd><p>path to the folder to save results of models</p>
-</dd>
-<dt>matrix_norm_metric (callable):</dt><dd><p>a way to measure norm of a matrix of vectors
+bcg_topic_list = [„topic_0“]</p></li>
+<li><p><strong>metrics_to_calculate</strong> (<em>list of str</em><em> (</em><em>'analogy'</em><em>, </em><em>'eucl'</em><em>)</em>) – list of names of proximity measures to use in ranking</p></li>
+<li><p><strong>path_model</strong> (<em>str</em>) – path to models</p></li>
+<li><p><strong>path_experiment_result</strong> (<em>pathlib.Path</em>) – path to the folder to save results of models</p></li>
+<li><p><strong>matrix_norm_metric</strong> (<em>callable</em>) – a way to measure norm of a matrix of vectors
 for example init as:
-matrix_norm_metric = np.linalg.norm</p>
+matrix_norm_metric = np.linalg.norm</p></li>
+<li><p><strong>path_subsamples</strong> (<em>str</em>) – path to folder with subsemples of different languages in json format</p></li>
+<li><p><strong>path_rubrics</strong> (<em>str</em>) – path to file with rubrics of documents in json format</p></li>
+<li><p><strong>path_test</strong> (<em>str</em>) – path to folder with txt files for calculate metrics</p></li>
+<li><p><strong>current_languages</strong> (<em>list of str</em>) – names of languages to use to calculate metrics</p></li>
+<li><p><strong>recalculate_test_thetas</strong> (<em>bool</em>) – True means rebuild thetas
+False means load existing thetas</p></li>
+</ul>
 </dd>
-<dt>path_subsamples (str):</dt><dd><p>path to folder with subsemples of different languages in json format</p>
-</dd>
-<dt>path_rubrics (str):</dt><dd><p>path to file with rubrics of documents in json format</p>
-</dd>
-<dt>path_test (str):</dt><dd><p>path to folder with txt files for calculate metrics</p>
-</dd>
-<dt>current_languages (list of str):</dt><dd><p>names of languages to use to calculate metrics</p>
-</dd>
-<dt>recalculate_test_thetas (bool):</dt><dd><p>True means rebuild thetas
-False means load existing thetas</p>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>словарь словарей - по имени модели хранятся названия метрик,</dt><dd><p>по названиям метрик хранятся значения метрик этих моделей</p>
 </dd>
 </dl>
+</p>
 </dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>quality_experiment (dict): словарь словарей - по имени модели хранятся названия метрик,</dt><dd><p>по названиям метрик хранятся значения метрик этих моделей</p>
-</dd>
-</dl>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>quality_experiment (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -505,22 +591,17 @@ False means load existing thetas</p>
 <dt class="sig sig-object py" id="ap.utils.subsamples_creator.MakeSubsamples">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.utils.subsamples_creator.</span></span><span class="sig-name descname"><span class="pre">MakeSubsamples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">languages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_save_subsamples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_rubrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsample_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.subsamples_creator.MakeSubsamples" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Class for saving subsamples of document indices.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>languages (list):</dt><dd><p>list of str of languages to use in subsamples</p>
-</dd>
-<dt>path_to_save_subsamples (str):</dt><dd><p>path to file in json format to save subsamples</p>
-</dd>
-<dt>path_to_data (str):</dt><dd><p>path to data for which subsamples will be created
-expected data in txt format</p>
-</dd>
-<dt>path_rubrics (str):</dt><dd><p>path to json file with rubrics of documents</p>
-</dd>
-<dt>mode („test“ or „wiki“):</dt><dd><p>kind of data for which subsamples will be created</p>
-</dd>
-<dt>subsample_size (int):</dt><dd><p>The size of the subsample. The default is 1000.</p>
-</dd>
-</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>languages</strong> (<em>list</em>) – list of str of languages to use in subsamples</p></li>
+<li><p><strong>path_to_save_subsamples</strong> (<em>str</em>) – path to file in json format to save subsamples</p></li>
+<li><p><strong>path_to_data</strong> (<em>str</em>) – path to data for which subsamples will be created
+expected data in txt format</p></li>
+<li><p><strong>path_rubrics</strong> (<em>str</em>) – path to json file with rubrics of documents</p></li>
+<li><p><strong>mode</strong> (<em>'test'</em><em> or </em><em>'wiki'</em>) – kind of data for which subsamples will be created</p></li>
+<li><p><strong>subsample_size</strong> (<em>int</em>) – The size of the subsample. The default is 1000.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">

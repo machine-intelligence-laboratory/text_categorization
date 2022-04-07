@@ -22,21 +22,20 @@ class RankingByModel:
         """
         Class for ranking document search between language pairs.
 
-        Parameters
-        ----------
-        bcg_topic_list: list
-            backgroung topics of a topic model
-        metrics_to_calculate: list of str ('analogy', 'eucl')
-            list of names of proximity measures to use in ranking
-        model_path: str
-            a path to the artm model directory
-        matrix_norm_metric: callable
-            a way to measure norm of a matrix of vectors
-            for example init as:
-            matrix_norm_metric = np.linalg.norm
-        path_subsamples: str
-            path to file in json format that contains subsamples of documents indices
-            for which will be searched
+        Parameters:
+            bcg_topic_list: list
+                backgroung topics of a topic model
+            metrics_to_calculate: list of str ('analogy', 'eucl')
+                list of names of proximity measures to use in ranking
+            model_path: str
+                a path to the artm model directory
+            matrix_norm_metric: callable
+                a way to measure norm of a matrix of vectors
+                for example init as:
+                matrix_norm_metric = np.linalg.norm
+            path_subsamples: str
+                path to file in json format that contains subsamples of documents indices
+                for which will be searched
         """
         self._model = artm.load_artm_model(model_path)
         self._metrics_to_calculate = metrics_to_calculate
@@ -182,22 +181,21 @@ class RankingByModel:
         """
         Function returning average position of search documents in the other language.
 
-        Parameters
-        ----------
-        path_train_lang: str
-            path to train thetas by languages
-        lang_one: str
-            name of the first language
-        lang_two: str
-            name of the second language
-        data_lang_one: str
-            path to folder with batches or path to vw file
-        data_lang_two: str
-            path to folder with batches or path to vw file
+        Parameters:
+            path_train_lang: str
+                path to train thetas by languages
+            lang_one: str
+                name of the first language
+            lang_two: str
+                name of the second language
+            data_lang_one: str
+                path to folder with batches or path to vw file
+            data_lang_two: str
+                path to folder with batches or path to vw file
 
-        Returns
-        -------
-
+        Returns:
+            metrics
+            len(search_indices)
         """
         if isinstance(data_lang_one, pd.DataFrame):
             idx_one, theta_one = data_lang_one.columns, data_lang_one
