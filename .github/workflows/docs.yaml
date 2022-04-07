@@ -33,6 +33,7 @@ jobs:
         run: |
           cd ./docs
           make clean html
+          head ./build/html/index.html
       
       - name: Host Docs on readthedocs.org
         run: |
