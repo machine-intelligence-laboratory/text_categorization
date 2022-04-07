@@ -12,7 +12,7 @@ from tqdm import tqdm
 import ap.utils.rank_metric as rank_metric
 import ap.utils.config as config
 
-# warnings.filterwarnings('ignore')
+warnings.filterwarnings('ignore')
 
 
 def dump_train_centroids(model_path, bcg_topic_list, path_train_centroids):
