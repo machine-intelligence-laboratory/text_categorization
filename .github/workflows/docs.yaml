@@ -25,6 +25,7 @@ jobs:
           pip install -U sphinx
           pip install -U sphinx-rtd-theme
           pwd
+          ls
           bash generate.sh
 
       - name: Build Docs
