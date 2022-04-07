@@ -17,11 +17,13 @@ ap.inference
 
 .. automodule:: ap.inference.server
    :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 
-ap.train1
-#########
+ap.train
+########
 
 .. automodule:: ap.train.data_manager
    :members:
