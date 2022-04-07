@@ -23,7 +23,6 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install -U sphinx
-          pip install -U sphinx-rtd-theme
           pwd
           ls
           bash generate.sh
