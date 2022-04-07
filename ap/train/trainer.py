@@ -20,7 +20,7 @@ from ap.utils.general import ensure_directory, recursively_unlink
 class ModelTrainer:
     def __init__(
             self,
-            train_type,
+            train_type: StartTrainTopicModelRequest.TrainType,
             data_manager: ModelDataManager,
             experiment_config: typing.Dict[str, typing.Any],
             models_dir: str,
@@ -212,7 +212,7 @@ class ModelTrainer:
         batch_vectorizer = self._data_manager.generate_batches_balanced_by_rubric()
         self.model.fit_offline(batch_vectorizer, num_collection_passes=1)
 
-    def train_model(self, train_type):
+    def train_model(self, train_type: StartTrainTopicModelRequest.TrainType):
         """
         # TODO: обновить док-стринг
         Train model synchronously. Save trained model to a new subfolder of self._models_dir.
