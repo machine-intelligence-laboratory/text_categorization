@@ -11,34 +11,9 @@ Welcome to Text categorization's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   inference
+   train
    utils
-
-ap.inference
-############
-
-.. automodule:: ap.inference.server
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-
-ap.train
-########
-
-.. automodule:: ap.train.data_manager
-   :members:
-   :undoc-members:
-   :show-inheritance:
-.. automodule:: ap.train.server
-   :members:
-   :undoc-members:
-   :show-inheritance:
-.. automodule:: ap.train.trainer
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 
 
 
