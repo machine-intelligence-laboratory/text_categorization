@@ -7,10 +7,18 @@ import "ap/topic_model/v1/TopicModelBase.proto";
 service TopicModelTrainService{
     // загрузка документов для дообучения модели
     rpc AddDocumentsToModel(AddDocumentsToModelRequest) returns (AddDocumentsToModelResponse) {}
+    // обновление конфигурации обучения
+    rpc UpdateModelConfiguration(UpdateModelConfigurationRequest) returns (UpdateModelConfigurationResponse) {}
     // запуск дообучения
     rpc StartTrainTopicModel(StartTrainTopicModelRequest) returns (StartTrainTopicModelResponse) {}
     // статус дообучения
     rpc TrainTopicModelStatus(TrainTopicModelStatusRequest) returns (TrainTopicModelStatusResponse) {}
+}
+
+message UpdateModelConfigurationRequest {
+    // конфигурация - строка в yaml-формате
+    string Configuration = 1;
+
 }
 
 message AddDocumentsToModelRequest {
@@ -31,14 +39,25 @@ message StartTrainTopicModelRequest {
 message TrainTopicModelStatusRequest {
 }
 
+message UpdateModelConfigurationResponse {
+    // статус операции обновления конфигурации
+    enum UpdateModelConfigurationStatus {
+        OK = 0;
+        EXCEPTION = 1;
+    }
+
+    UpdateModelConfigurationStatus Status  = 1;
+    string ErrorMessage = 2;
+}
+
 message AddDocumentsToModelResponse {
-    // статус операции добавления документа 
+    // статус операции добавления документа
     // Предполагается, что статуы будут добавляться по мере уточнения кодов ошибки
-    enum AddDocumentsStatus {  
+    enum AddDocumentsStatus {
         OK = 0;
         EXCEPTION = 1;
         NO_TRANSLATION=2;//Попытка добавить новый язык без перевода на существующий
-    }   
+    }
 
     AddDocumentsStatus Status  = 1;
     string ErrorMessage = 2;
