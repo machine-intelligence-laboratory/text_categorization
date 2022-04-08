@@ -12,6 +12,7 @@ from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
 from ap.utils.general import ensure_directory, recursively_unlink
 
+
 class ModelTrainer:
     def __init__(
             self,
@@ -54,9 +55,15 @@ class ModelTrainer:
         # добавить условие: есть язык не из 100 языков
         # new_modalities = list(config["LANGUAGES_ALL"]).extend(list(config["MODALITIES_TRAIN"]))
         # if not set(new_modalities).issubset(set(self._class_ids))
+
+
+
+        # train_type - list
+        # StartTrainTopicModelRequest.TrainType.FULL - int
+        # как так?
         if (
-                train_type == StartTrainTopicModelRequest.TrainType.FULL
-                or len(current_models) == 0
+                train_type[0] == StartTrainTopicModelRequest.TrainType.FULL
+                # or len(current_models) == 0
         ):
             logging.info("Start full training")
             self.model = self._create_initial_model()
