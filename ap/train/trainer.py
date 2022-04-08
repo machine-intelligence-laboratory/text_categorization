@@ -39,7 +39,7 @@ class ModelTrainer:
         self._path_to_dump_model = Path(self._data_manager._config["path_experiment"]).joinpath(model_name)
 
     def _init_metrics(self):
-        start_http_server(8001, addr='0.0.0.0')
+        # start_http_server(8001, addr='0.0.0.0')
         self._iteration = Gauge('training_iteration', 'Current training iteration')
         self._average_rubric_size = Gauge('average_rubric_size', 'Average rubric size')
         self._num_rubric = Gauge('num_rubric', 'Number of rubrics')
