@@ -14,7 +14,7 @@ from ap.topic_model.v1.TopicModelTrain_pb2 import (
     StartTrainTopicModelRequest,
     StartTrainTopicModelResponse,
     TrainTopicModelStatusRequest,
-    TrainTopicModelStatusResponse,
+    TrainTopicModelStatusResponse, UpdateModelConfigurationRequest, UpdateModelConfigurationResponse,
 )
 from ap.topic_model.v1.TopicModelTrain_pb2_grpc import (
     TopicModelTrainServiceServicer,
@@ -31,8 +31,7 @@ from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
     def __init__(
             self,
-            bpe_models: typing.Dict[str, typing.Any],
-            train_conf: typing.Dict[str, typing.Any],
+            train_conf: str,
             models_dir: str,
             data_dir: str
     ):
@@ -46,9 +45,14 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         models_dir - путь к директория сохранения файлов
         data_dir - путь к директории с данными
         """
+
+        with open(train_conf, "r") as file:
+            self._config = yaml.safe_load(file)
+        bpe_models = load_bpe_models(self._config["BPE_models"])
         self._vw = VowpalWabbitBPE(bpe_models)
+
         self._data_manager = ModelDataManager(data_dir, train_conf)
-        self._trainer = ModelTrainer(self._data_manager, train_conf, models_dir)
+        self._trainer = ModelTrainer(self._data_manager, models_dir)
 
         self._executor = concurrent.futures.ProcessPoolExecutor(max_workers=2)
         self._training_future = None
@@ -161,6 +165,12 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
             )
 
 
+    def UpdateModelConfiguration(self, request: UpdateModelConfigurationRequest, context) -> UpdateModelConfigurationResponse:
+        """обновление конфигурации обучения
+        """
+        self._data_manager.update_config(request.Configuration)
+        return UpdateModelConfigurationResponse(Status=UpdateModelConfigurationResponse.UpdateModelConfigurationStatus.OK)
+
 @click.command()
 @click.option(
     "--config", help="A path to experiment yaml config",
@@ -182,15 +192,13 @@ def serve(models, config, data):
     """
     from prometheus_client import start_http_server
 
-    with open(config, "r") as file:
-        train_conf = yaml.safe_load(file)
 
     # TODO: дообучение:
     # если пути config["BPE_models"] нет - не надо загружать модели
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_TopicModelTrainServiceServicer_to_server(
-        TopicModelTrainServiceImpl(load_bpe_models(train_conf["BPE_models"]), train_conf, models, data),
+        TopicModelTrainServiceImpl(config, models, data),
         server,
     )
     server.add_insecure_port("[::]:50051")

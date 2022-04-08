@@ -11,7 +11,9 @@ import json
 import typing
 from pathlib import Path
 
+from ap.utils.bpe import load_bpe_models
 from ap.utils.general import recursively_unlink
+from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
 class NoTranslationException(Exception):
@@ -25,7 +27,7 @@ class ModelDataManager:
     # MAX_FILE_SIZE = 512 * 1024 ^ 2
     # BATCH_SIZE = 10000
 
-    def __init__(self, data_dir, experiment_config):
+    def __init__(self, data_dir: str, experiment_config: str):
         """
         Создает дата менеджер.
 
@@ -34,9 +36,13 @@ class ModelDataManager:
         data_dir - директория для хранения данных
         """
         # self._train_conf = train_conf
-        self._config = experiment_config
+        self._config_path = experiment_config
+        with open(self._config_path, "r") as file:
+            self._config = yaml.safe_load(file)
+
 
         self._data_dir = data_dir
+
         self.train_grnti: typing.Dict[str, str] = self._get_rubric_of_train_docs()
         self.train_path = self._config["train_vw_path"]
         #self.train_dict: typing.Dict[str, str] = joblib.load(self._config["train_dict_path"])
@@ -61,15 +67,15 @@ class ModelDataManager:
         # старые модальности - вытащить из модели
         # новые - из конфига
 
-        all_modalities_train = {**experiment_config["MODALITIES_TRAIN"],
-                                **experiment_config["LANGUAGES_TRAIN"]}
+        all_modalities_train = {**self._config["MODALITIES_TRAIN"],
+                                **self._config["LANGUAGES_TRAIN"]}
         self._class_ids = all_modalities_train
 
         self.average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
         logging.info('Balanced learning is used: at each epoch' +
                      'rubric-balanced documents are sampled from the training data.')
         logging.info(f'Each epoch uses {self.average_rubric_size} documents ' +
-                     f'for each of {experiment_config["num_rubric"]} rubrics.')
+                     f'for each of {self._config["num_rubric"]} rubrics.')
         # self._class_ids_path = os.path.join(data_dir, "classes.yaml")
         # with open(self._class_ids_path, "r") as file:
         #     self._class_ids = yaml.safe_load(file)
@@ -358,16 +364,16 @@ class ModelDataManager:
     # #
     # #     return self._current_vw_name
     #
-    # def write_new_docs(self, vw_writer, docs):
-    #     if not all(
-    #             [
-    #                 any([f"{lang}" in self._class_ids for lang in doc])
-    #                 for doc in docs.values()
-    #             ]
-    #     ):
-    #         raise NoTranslationException()
-    #
-    #     vw_writer.save_docs(self.train_path, docs)
+    def write_new_docs(self, vw, docs):
+        if not all(
+                [
+                    any([f"{lang}" in self._class_ids for lang in doc])
+                    for doc in docs.values()
+                ]
+        ):
+            raise NoTranslationException()
+
+        vw.save_docs(self.train_path, docs)
     #
     # # def _close_current(self):
     # #     shutil.move(
@@ -498,3 +504,10 @@ class ModelDataManager:
     #         if max_dictionary_size is not None:
     #             filtered.filter(max_dictionary_size=max_dictionary_size)
     #         filtered.save_text(os.path.join(directory, f"{cls_id[1:]}.txt"))
+
+
+    def update_config(self, config: str):
+        self._config = yaml.safe_load(config)
+
+        with open(self._config_path, "w") as file:
+            yaml.safe_dump(self._config)
