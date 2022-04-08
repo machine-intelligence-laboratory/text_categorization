@@ -36,7 +36,7 @@ class ModelTrainer:
 
         self._models_dir = ensure_directory(models_dir)
         model_name = self.generate_model_name()
-        self._path_to_dump_model = Path(self._data_manager._config["path_experiment"]).joinpath(model_name)
+        self._path_to_dump_model = Path(self._data_manager.config["path_experiment"]).joinpath(model_name)
 
     def _init_metrics(self):
         # start_http_server(8001, addr='0.0.0.0')
@@ -45,7 +45,7 @@ class ModelTrainer:
         self._num_rubric = Gauge('num_rubric', 'Number of rubrics')
 
         self._average_rubric_size.set(self._data_manager.average_rubric_size)
-        self._num_rubric.set(self._data_manager._config["num_rubric"])
+        self._num_rubric.set(self._data_manager.config["num_rubric"])
 
     def _load_model(self, train_type):
         import artm
@@ -79,10 +79,10 @@ class ModelTrainer:
         import artm
         from topicnet.cooking_machine import rel_toolbox_lite
 
-        artm_model_params = self._data_manager._config["artm_model_params"]
+        artm_model_params = self._data_manager.config["artm_model_params"]
 
         dictionary = artm.Dictionary()
-        dictionary.load_text(self._data_manager._config["dictionary_path"])
+        dictionary.load_text(self._data_manager.config["dictionary_path"])
 
         background_topic_list = [f'topic_{i}' for i in range(artm_model_params["num_bcg_topic"])]
         subject_topic_list = [
@@ -92,7 +92,7 @@ class ModelTrainer:
         ]
 
         modalities_with_weight = {f'@{lang}': weight for lang, weight in self._data_manager.class_ids.items()}
-        languages_with_weight = {f'@{lang}': weight for lang, weight in self._data_manager._config["LANGUAGES_TRAIN"].items()}
+        languages_with_weight = {f'@{lang}': weight for lang, weight in self._data_manager.config["LANGUAGES_TRAIN"].items()}
         model = artm.ARTM(num_topics=artm_model_params["NUM_TOPICS"],
                           theta_columns_naming='title',
                           class_ids=modalities_with_weight,
@@ -204,14 +204,14 @@ class ModelTrainer:
         Возвращает основную информацию о модели
         :return:
         """
-        info = self._data_manager._config["artm_model_params"]
-        info["Модальности"] = self._data_manager._class_ids
-        info["need_augmentation"] = self._data_manager._config.get("need_augmentation", False)
+        info = self._data_manager.config["artm_model_params"]
+        info["Модальности"] = self._data_manager.class_ids
+        info["need_augmentation"] = self._data_manager.config.get("need_augmentation", False)
         if info["need_augmentation"]:
-            info["aug_proportion"] = self._data_manager._config.get("aug_proportion")
-        info["metrics_to_calculate"] = self._data_manager._config["metrics_to_calculate"]
+            info["aug_proportion"] = self._data_manager.config.get("aug_proportion")
+        info["metrics_to_calculate"] = self._data_manager.config["metrics_to_calculate"]
         info["num_modalities"] = len(info["Модальности"])
-        info["dictionary_path"] = self._data_manager._config["dictionary_path"]
+        info["dictionary_path"] = self._data_manager.config["dictionary_path"]
 
         return info # параметры,
 
@@ -234,7 +234,7 @@ class ModelTrainer:
         self._init_metrics()
         self._load_model(train_type)
         self._data_manager.load_train_data()
-        for epoch in range(self._data_manager._config['artm_model_params']["num_collection_passes"]):
+        for epoch in range(self._data_manager.config['artm_model_params']["num_collection_passes"]):
             logging.info('Training epoch %i', epoch)
             self._iteration.set(epoch+1)
             self._train_epoch()

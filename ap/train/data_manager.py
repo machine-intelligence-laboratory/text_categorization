@@ -38,23 +38,21 @@ class ModelDataManager:
         # self._train_conf = train_conf
         self._config_path = experiment_config
         with open(self._config_path, "r") as file:
-            self._config = yaml.safe_load(file)
-
+            self.config = yaml.safe_load(file)
 
         self._data_dir = data_dir
 
         self.train_grnti: typing.Dict[str, str] = self._get_rubric_of_train_docs()
-        self.train_path = self._config["train_vw_path"]
-        #self.train_dict: typing.Dict[str, str] = joblib.load(self._config["train_dict_path"])
+        self.train_path = self.config["train_vw_path"]
+        # self.train_dict: typing.Dict[str, str] = joblib.load(self._config["train_dict_path"])
 
-
-        path_experiment = Path(self._config["path_experiment"])
+        path_experiment = Path(self.config["path_experiment"])
         path_experiment.mkdir(parents=True, exist_ok=True)
         path_train_data = path_experiment.joinpath('train_data')
         self._path_to_batches = path_train_data.joinpath('batches_balanced')
         self._path_to_batches.mkdir(parents=True, exist_ok=True)
         self._path_balanced_train = path_train_data.joinpath('train_balanced.txt')
-        self._path_batches_wiki = self._config["path_wiki_train_batches"]
+        self._path_batches_wiki = self.config["path_wiki_train_batches"]
 
 
 
@@ -67,15 +65,15 @@ class ModelDataManager:
         # старые модальности - вытащить из модели
         # новые - из конфига
 
-        all_modalities_train = {**self._config["MODALITIES_TRAIN"],
-                                **self._config["LANGUAGES_TRAIN"]}
-        self._class_ids = all_modalities_train
+        all_modalities_train = {**self.config["MODALITIES_TRAIN"],
+                                **self.config["LANGUAGES_TRAIN"]}
+        self.class_ids = all_modalities_train
 
         self.average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
         logging.info('Balanced learning is used: at each epoch' +
                      'rubric-balanced documents are sampled from the training data.')
         logging.info(f'Each epoch uses {self.average_rubric_size} documents ' +
-                     f'for each of {self._config["num_rubric"]} rubrics.')
+                     f'for each of {self.config["num_rubric"]} rubrics.')
         # self._class_ids_path = os.path.join(data_dir, "classes.yaml")
         # with open(self._class_ids_path, "r") as file:
         #     self._class_ids = yaml.safe_load(file)
@@ -111,11 +109,11 @@ class ModelDataManager:
         train_grnti: dict
             dict where keys - document ids, value - number of GRNTI rubric of document.
         """
-        with open(self._config["path_articles_rubrics_train_grnti"]) as file:
+        with open(self.config["path_articles_rubrics_train_grnti"]) as file:
             articles_grnti_with_no = json.load(file)
-        with open(self._config["path_elib_train_rubrics_grnti"]) as file:
+        with open(self.config["path_elib_train_rubrics_grnti"]) as file:
             elib_grnti_to_fix_with_no = json.load(file)
-        with open(self._config["path_grnti_mapping"]) as file:
+        with open(self.config["path_grnti_mapping"]) as file:
             grnti_to_number = json.load(file)
 
         articles_grnti = {doc_id: rubric
@@ -263,7 +261,7 @@ class ModelDataManager:
         :return:
         """
         # генерирую сбалансированные данные
-        if self._config.get("need_augmentation", None):
+        if self.config.get("need_augmentation", None):
             balanced_doc_ids = self._get_balanced_doc_ids_with_augmentation()
         else:
             balanced_doc_ids = self._get_balanced_doc_ids()
@@ -367,7 +365,7 @@ class ModelDataManager:
     def write_new_docs(self, vw, docs):
         if not all(
                 [
-                    any([f"{lang}" in self._class_ids for lang in doc])
+                    any([f"{lang}" in self.class_ids for lang in doc])
                     for doc in docs.values()
                 ]
         ):
@@ -407,8 +405,6 @@ class ModelDataManager:
     #     return dictionary
 ############
 
-
-
     def _get_modality_distribution(self) -> typing.Dict[str, int]:
         """
         Возвращает количество документов кажджой модальности из self.class_ids для тренировочных данных.
@@ -416,15 +412,15 @@ class ModelDataManager:
         :return: modality_distribution_all
             словарь, ключ - модальность, значение - количество документов с такой модальностью
         """
-        with open(self._config["train_vw_path"]) as file:
+        with open(self.config["train_vw_path"]) as file:
             train_data = file.read()
         modality_distribution = {
             mod: train_data.count(f'|@{mod}')
-            for mod in self._class_ids
+            for mod in self.class_ids
         }
 
         # add wiki part of train data
-        path_modality_distribution_wiki = self._config.get("path_modality_distribution_wiki", None)
+        path_modality_distribution_wiki = self.config.get("path_modality_distribution_wiki", None)
         if path_modality_distribution_wiki:
             with open(path_modality_distribution_wiki) as file:
                 modality_distribution_wiki = yaml.load(file)
@@ -505,9 +501,8 @@ class ModelDataManager:
     #             filtered.filter(max_dictionary_size=max_dictionary_size)
     #         filtered.save_text(os.path.join(directory, f"{cls_id[1:]}.txt"))
 
-
     def update_config(self, config: str):
-        self._config = yaml.safe_load(config)
+        self.config = yaml.safe_load(config)
 
         with open(self._config_path, "w") as file:
-            yaml.safe_dump(self._config)
+            yaml.safe_dump(self.config)
