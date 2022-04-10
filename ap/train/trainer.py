@@ -61,8 +61,10 @@ class ModelTrainer:
         # train_type - list
         # StartTrainTopicModelRequest.TrainType.FULL - int
         # как так?
-        print('type(train_type): ', train_type)
-        print('type(StartTrainTopicModelRequest.TrainType.FULL): ', StartTrainTopicModelRequest.TrainType.FULL)
+        print('type(train_type): ', type(train_type))
+        print('train_type: ', train_type)
+        print('type(StartTrainTopicModelRequest.TrainType.FULL): ', type(StartTrainTopicModelRequest.TrainType.FULL))
+        print('StartTrainTopicModelRequest.TrainType.FULL: ', StartTrainTopicModelRequest.TrainType.FULL)
         print(current_models)
         if (
                 train_type == StartTrainTopicModelRequest.TrainType.FULL
