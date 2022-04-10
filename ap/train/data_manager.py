@@ -157,7 +157,6 @@ class ModelDataManager:
         average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
         balanced_doc_ids = []
         for rubric in set(self.train_grnti.values()):
-            print(self._docs_of_rubrics[rubric])
             doc_ids_rubric = np.random.choice(self._docs_of_rubrics[rubric], average_rubric_size)
             balanced_doc_ids.extend(doc_ids_rubric)
 

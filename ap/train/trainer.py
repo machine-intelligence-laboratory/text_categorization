@@ -98,8 +98,10 @@ class ModelTrainer:
                 artm_model_params["NUM_TOPICS"] - artm_model_params["num_bcg_topic"])
         ]
 
-        modalities_with_weight = {f'@{lang}': weight for lang, weight in self._data_manager.class_ids.items()}
-        languages_with_weight = {f'@{lang}': weight for lang, weight in self._data_manager.config["LANGUAGES_TRAIN"].items()}
+        modalities_with_weight = {f'@{lang}': weight
+                                  for lang, weight in self._data_manager.class_ids.items()}
+        languages_with_weight = {f'@{lang}': weight
+                                 for lang, weight in self._data_manager.config["LANGUAGES_TRAIN"].items()}
         model = artm.ARTM(num_topics=artm_model_params["NUM_TOPICS"],
                           theta_columns_naming='title',
                           class_ids=modalities_with_weight,
