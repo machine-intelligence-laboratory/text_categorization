@@ -10,6 +10,7 @@ from prometheus_client import Gauge, start_http_server
 from tqdm import tqdm
 from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
+from ap.train.metrics import set_metric
 from ap.utils.general import ensure_directory, recursively_unlink
 
 class ModelTrainer:
@@ -18,34 +19,20 @@ class ModelTrainer:
             data_manager: ModelDataManager,
             models_dir: str,
     ):
-        from prometheus_client import Gauge
-        #
-        # """
-        # Initialize a model trainer.
-        #
-        # Parameters
-        # ----------
-        # data_manager - data manager
-        # conf - training configuration dict
-        # models_dir - a path to store new models
-        # """
-        # self._conf = conf
-        self._data_manager = data_manager
-        #
-        #
+        """
+        Initialize a model trainer.
 
+        Parameters
+        ----------
+        data_manager - data manager
+        conf - training configuration dict
+        models_dir - a path to store new models
+        """
+        self._data_manager = data_manager
         self._models_dir = ensure_directory(models_dir)
         model_name = self.generate_model_name()
         self._path_to_dump_model = Path(self._data_manager._config["path_experiment"]).joinpath(model_name)
 
-    def _init_metrics(self):
-        start_http_server(8001, addr='0.0.0.0')
-        self._iteration = Gauge('training_iteration', 'Current training iteration')
-        self._average_rubric_size = Gauge('average_rubric_size', 'Average rubric size')
-        self._num_rubric = Gauge('num_rubric', 'Number of rubrics')
-
-        self._average_rubric_size.set(self._data_manager.average_rubric_size)
-        self._num_rubric.set(self._data_manager._config["num_rubric"])
 
     def _load_model(self, train_type):
         import artm
@@ -231,12 +218,11 @@ class ModelTrainer:
         main_info = self.model_main_info()
         # Здесь можно визуализировать основную информацию о модели main_info
         logging.info("Start model training")
-        self._init_metrics()
         self._load_model(train_type)
         self._data_manager.load_train_data()
         for epoch in range(self._data_manager._config['artm_model_params']["num_collection_passes"]):
             logging.info('Training epoch %i', epoch)
-            self._iteration.set(epoch+1)
+            set_metric('training_iteration', epoch+1)
             self._train_epoch()
 
             # тут нужно визуализировать epoch

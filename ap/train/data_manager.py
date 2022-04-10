@@ -11,6 +11,7 @@ import json
 import typing
 from pathlib import Path
 
+from ap.train.metrics import set_metric
 from ap.utils.bpe import load_bpe_models
 from ap.utils.general import recursively_unlink
 from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
@@ -76,6 +77,10 @@ class ModelDataManager:
                      'rubric-balanced documents are sampled from the training data.')
         logging.info(f'Each epoch uses {self.average_rubric_size} documents ' +
                      f'for each of {self._config["num_rubric"]} rubrics.')
+
+        set_metric('average_rubric_size', self.average_rubric_size)
+        set_metric('num_rubric', self._config["num_rubric"])
+
         # self._class_ids_path = os.path.join(data_dir, "classes.yaml")
         # with open(self._class_ids_path, "r") as file:
         #     self._class_ids = yaml.safe_load(file)

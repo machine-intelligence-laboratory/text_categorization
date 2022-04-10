@@ -52,13 +52,13 @@ if __name__ == "__main__":
     parallel_docs = [
         ParallelDocIds(Ids=[DocId(Lo=0, Hi=1), DocId(Lo=0, Hi=0)])
     ]
-    # resp = grpc_stub.AddDocumentsToModel(
-    #     AddDocumentsToModelRequest(
-    #         Collection=DocumentPack(Documents=docs), ParallelDocuments=parallel_docs
-    #     )
-    # )
-    #
-    # print(resp)
+    resp = grpc_stub.AddDocumentsToModel(
+        AddDocumentsToModelRequest(
+            Collection=DocumentPack(Documents=docs), ParallelDocuments=parallel_docs
+        )
+    )
+
+    print(resp)
 
     print('before')
     resp = grpc_stub.StartTrainTopicModel(
