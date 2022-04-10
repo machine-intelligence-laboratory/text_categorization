@@ -70,7 +70,7 @@ class ModelDataManager:
         self.class_ids = all_modalities_train
 
         self.average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
-        logging.info('Balanced learning is used: at each epoch' +
+        logging.info('Balanced learning is used: at each epoch ' +
                      'rubric-balanced documents are sampled from the training data.')
         logging.info(f'Each epoch uses {self.average_rubric_size} documents ' +
                      f'for each of {self.config["num_rubric"]} rubrics.')
@@ -287,10 +287,10 @@ class ModelDataManager:
         # TODO: при ошибках добавить
         import artm
         try:
+            self._path_to_batches.mkdir(parents=True, exist_ok=True)
             self._generate_vw_file_balanced_by_rubric()
 
             # строю батчи по сбалансированным данным
-            self._path_to_batches.mkdir(parents=True, exist_ok=True)
             batches_list = list(self._path_to_batches.iterdir())
             if batches_list:
                 for batch in batches_list:
@@ -362,7 +362,7 @@ class ModelDataManager:
     # #         self._close_current()
     # #
     # #     return self._current_vw_name
-    #
+
     def write_new_docs(self, vw, docs):
         if not all(
                 [
