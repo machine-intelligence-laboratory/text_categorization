@@ -60,11 +60,9 @@ if __name__ == "__main__":
 
     print(resp)
 
-    print('before')
     resp = grpc_stub.StartTrainTopicModel(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.FULL)
     )
-    print('after')
 
     while (
         grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status

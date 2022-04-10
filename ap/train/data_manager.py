@@ -52,7 +52,7 @@ class ModelDataManager:
         self._path_to_batches = path_train_data.joinpath('batches_balanced')
         self._path_to_batches.mkdir(parents=True, exist_ok=True)
         self._path_balanced_train = path_train_data.joinpath('train_balanced.txt')
-        self._path_batches_wiki = self.config["path_wiki_train_batches"]
+        self._path_batches_wiki = self.config.get("path_wiki_train_batches", None)
 
 
 
@@ -421,7 +421,7 @@ class ModelDataManager:
 
         # add wiki part of train data
         path_modality_distribution_wiki = self.config.get("path_modality_distribution_wiki", None)
-        if path_modality_distribution_wiki:
+        if self.path_wiki_train_batches and path_modality_distribution_wiki:
             with open(path_modality_distribution_wiki) as file:
                 modality_distribution_wiki = yaml.load(file)
             logging.info("Training data includes Wikipedia articles.")
