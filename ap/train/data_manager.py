@@ -50,7 +50,7 @@ class ModelDataManager:
         path_experiment.mkdir(parents=True, exist_ok=True)
         path_train_data = path_experiment.joinpath('train_data')
         self._path_to_batches = path_train_data.joinpath('batches_balanced')
-        self._path_to_batches.mkdir(parents=True, exist_ok=True)
+        # self._path_to_batches.mkdir(parents=True, exist_ok=True)
         self._path_balanced_train = path_train_data.joinpath('train_balanced.txt')
         self._path_batches_wiki = self.config.get("path_wiki_train_batches", None)
 
@@ -290,6 +290,7 @@ class ModelDataManager:
             self._generate_vw_file_balanced_by_rubric()
 
             # строю батчи по сбалансированным данным
+            self._path_to_batches.mkdir(parents=True, exist_ok=True)
             batches_list = list(self._path_to_batches.iterdir())
             if batches_list:
                 for batch in batches_list:

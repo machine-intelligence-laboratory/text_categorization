@@ -61,9 +61,12 @@ class ModelTrainer:
         # train_type - list
         # StartTrainTopicModelRequest.TrainType.FULL - int
         # как так?
+        print('type(train_type): ', train_type)
+        print('type(StartTrainTopicModelRequest.TrainType.FULL): ', StartTrainTopicModelRequest.TrainType.FULL)
+        print(current_models)
         if (
-                train_type[0] == StartTrainTopicModelRequest.TrainType.FULL
-                # or len(current_models) == 0
+                train_type == StartTrainTopicModelRequest.TrainType.FULL
+                or len(current_models) == 0
         ):
             logging.info("Start full training")
             self.model = self._create_initial_model()
