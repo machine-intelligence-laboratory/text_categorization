@@ -19,6 +19,7 @@ jobs:
           pip install -U sphinx
           pip install -r requirements.txt
           ./generate.sh
+          cd ./ap/topic_model/v1 && ls -la
 
       - name: Build Docs
         run: |
