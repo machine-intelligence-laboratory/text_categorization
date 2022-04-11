@@ -56,16 +56,6 @@ class ModelTrainer:
         # new_modalities = list(config["LANGUAGES_ALL"]).extend(list(config["MODALITIES_TRAIN"]))
         # if not set(new_modalities).issubset(set(self._class_ids))
 
-
-
-        # train_type - list
-        # StartTrainTopicModelRequest.TrainType.FULL - int
-        # как так?
-        print('type(train_type): ', type(train_type))
-        print('train_type: ', train_type)
-        print('type(StartTrainTopicModelRequest.TrainType.FULL): ', type(StartTrainTopicModelRequest.TrainType.FULL))
-        print('StartTrainTopicModelRequest.TrainType.FULL: ', StartTrainTopicModelRequest.TrainType.FULL)
-        print(current_models)
         if (
                 train_type == StartTrainTopicModelRequest.TrainType.FULL
                 or len(current_models) == 0
@@ -258,6 +248,8 @@ class ModelTrainer:
             # тут можно визуализировать скоры модели scores_value
             if "PerlexityScore_@ru" in scores_value:
                 logging.info(f"PerlexityScore_@ru: {scores_value['PerlexityScore_@ru']}")
+            if "PerlexityScore_@en" in scores_value:
+                logging.info(f"PerlexityScore_@en: {scores_value['PerlexityScore_@en']}")
             if self._path_to_dump_model.exists():
                 recursively_unlink(self._path_to_dump_model)
             self.model.dump_artm_model(str(self._path_to_dump_model))
