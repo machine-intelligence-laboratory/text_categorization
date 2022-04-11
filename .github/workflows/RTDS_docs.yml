@@ -1,9 +1,9 @@
 name: Docs
-on: [push, release]
+on: [push, pull_request]
 
 jobs:
-  notebooks:
-    name: "Build the notebooks for the docs"
+  build_documentation:
+    name: "Build documentations on readthedocs.org"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,18 +18,17 @@ jobs:
           python -m pip install -U pip
           pip install -U sphinx
           pip install -r requirements.txt
+
+      - name: Install Local Dependencies
+        run: |
           ./generate.sh
+          cd ./ap/topic_model/v1 && ls -la
 
       - name: Build Docs
         run: |
           cd ./docs
           make clean html
           cd ./build/html && ls -la
-
-#       - uses: actions/upload-artifact@v2
-#         with:
-#           name: notebooks-for-${{ github.sha }}
-#           path: docs/tutorials
 
       - name: Trigger RTDs build
         uses: dfm/rtds-action@v1
