@@ -21,6 +21,11 @@ jobs:
           ./generate.sh
           cd ./ap/topic_model/v1 && ls -la
 
+      - name: Install Local Dependencies
+        run: |
+          ./generate.sh
+          cd ./ap/topic_model/v1 && ls -la
+
       - name: Build Docs
         run: |
           cd ./docs
