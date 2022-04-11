@@ -6,7 +6,7 @@ from ap.topic_model.v1.TopicModelBase_pb2 import (
     DocId,
     Document,
     DocumentPack,
-    ParallelDocIds,
+    ParallelDocIds, Modality,
 )
 from ap.topic_model.v1.TopicModelTrain_pb2 import (
     AddDocumentsToModelRequest,
@@ -26,40 +26,38 @@ if __name__ == "__main__":
         Document(
             Id=DocId(Lo=0, Hi=0),
             Tokens=[
-                "introductorio",
-                "proporciona",
-                "rasfondo",
-                "histórico",
-                "sobr",
-                "seguida",
+                "документ",
+                "слово",
+                "научный",
+                "ответ",
+                "еще",
+                "что-то",
             ],
-            Language="es",
+            Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'), Modality(Key="GRNTI", Value='11806946'),],
         ),
         Document(
             Id=DocId(Lo=0, Hi=1),
             Tokens=[
-                "bevat",
-                "meer",
-                "dan",
+                "другой",
+                "документ",
+                "русский",
                 "500",
-                "analoog",
-                "gestructureerde",
-                "coherente",
-                "ook",
+                "язык",
+                "наука",
+                "ок"
             ],
-            Language="nl",
+            Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'), Modality(Key="GRNTI", Value='11806946'),],
         ),
     ]
     parallel_docs = [
-        ParallelDocIds(Ids=[DocId(Lo=0, Hi=1)]),
-        ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)]),
+        ParallelDocIds(Ids=[DocId(Lo=0, Hi=1), DocId(Lo=0, Hi=0)])
     ]
     # resp = grpc_stub.AddDocumentsToModel(
     #     AddDocumentsToModelRequest(
     #         Collection=DocumentPack(Documents=docs), ParallelDocuments=parallel_docs
     #     )
     # )
-
+    #
     # print(resp)
 
     print('before')

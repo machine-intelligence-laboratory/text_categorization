@@ -23,7 +23,7 @@ class VowpalWabbitBPE:
         self.punctuation = punctuation + hanzi.punctuation
 
     def save_docs(
-        self, target_file: typing.Dict[str, str], doc: typing.Dict[str, typing.Dict[str, str]]
+        self, target_file: str, doc: typing.Dict[str, typing.Dict[str, str]]
     ):
         """
         Конвертирует документы в BOW и сохраняет их.
@@ -36,7 +36,7 @@ class VowpalWabbitBPE:
 
     def save_bow(
         self,
-        target_file: typing.Dict[str, str],
+        target_file: str,
         sessions_bow_messages: typing.Dict[
             str, typing.Dict[str, typing.Union[str, typing.Counter]]
         ],
@@ -65,7 +65,11 @@ class VowpalWabbitBPE:
                 else:
                     modality_content = sessions_bow_messages[key][modality]
                 new_message_str_format += " |@{} {}".format(modality, modality_content)
-                target_file[str(key).replace(" ", "_")] = new_message_str_format
+                with open(target_file, 'a') as f:
+                    f.write(new_message_str_format)
+                    f.write('\n')
+
+
 
     def convert_to_bow(
         self, data: typing.Dict[str, typing.Dict[str, str]]
@@ -102,10 +106,12 @@ class VowpalWabbitBPE:
         for modality, mod_elem in doc.items():
             print(modality)
             tokens = " ".join(self._token_filtration(mod_elem))
-            if modality not in ['@UDK', '@GRNTI']:
+            if modality not in ['UDK', 'GRNTI']:
                 tokens = self._bpe_models[modality].encode(
                     tokens, output_type=yttm.OutputType.SUBWORD
                 )
+            else:
+                tokens=[tokens]
             res[modality] = Counter(tokens)
 
         return res

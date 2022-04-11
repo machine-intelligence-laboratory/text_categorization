@@ -1,6 +1,6 @@
 import os
 
-from ap.utils.vowpal_wabbit import VowpalWabbit
+from arch.utils import VowpalWabbit
 
 
 def test_convert_doc_plain():

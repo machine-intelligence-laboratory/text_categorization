@@ -2,25 +2,18 @@
 Модуль для поддержания работы с данными
 """
 
-import json
-import itertools
 import logging
-import os
-# import shutil
-# import tempfile
-import typing
-# import uuid
-
 from collections import Counter
-from pathlib import Path
-
-import artm
-import joblib
 import numpy as np
 import yaml
 
-# from ap.utils.general import batch_names, ensure_directory
+import json
+import typing
+from pathlib import Path
+
+from ap.utils.bpe import load_bpe_models
 from ap.utils.general import recursively_unlink
+from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
 class NoTranslationException(Exception):
@@ -34,7 +27,7 @@ class ModelDataManager:
     # MAX_FILE_SIZE = 512 * 1024 ^ 2
     # BATCH_SIZE = 10000
 
-    def __init__(self, data_dir, experiment_config):
+    def __init__(self, data_dir: str, experiment_config: str):
         """
         Создает дата менеджер.
 
@@ -44,15 +37,14 @@ class ModelDataManager:
 
         Returns:
         """
-        # self._train_conf = train_conf
-        self._config = experiment_config
+        self._config_path = experiment_config
+        with open(self._config_path, "r") as file:
+            self._config = yaml.safe_load(file)
 
-        # self._data_dir = data_dir
+        self._data_dir = data_dir
+
         self.train_grnti: typing.Dict[str, str] = self._get_rubric_of_train_docs()
-        # self.train_dict: typing.Dict[str, str] = joblib.load(self._config["train_dict_path"])
-        with open(self._config["train_vw_path"]) as file:
-            train_vw = file.readlines()
-        self.train_dict = {line.split()[0]: line for line in train_vw}
+        self.train_path = self._config["train_vw_path"]
 
         path_experiment = Path(self._config["path_experiment"])
         path_experiment.mkdir(parents=True, exist_ok=True)
@@ -61,12 +53,6 @@ class ModelDataManager:
         self._path_to_batches.mkdir(parents=True, exist_ok=True)
         self._path_balanced_train = path_train_data.joinpath('train_balanced.txt')
         self._path_batches_wiki = self._config["path_wiki_train_batches"]
-
-        docs_of_rubrics = {rubric: [] for rubric in set(self.train_grnti.values())}
-        for doc_id, rubric in self.train_grnti.items():
-            if doc_id in self.train_dict:
-                docs_of_rubrics[rubric].append(doc_id)
-        self._docs_of_rubrics: typing.Dict[str, list] = docs_of_rubrics
 
         # self._batches_dir = ensure_directory(os.path.join(data_dir, "batches"))
         # self._new_batches_dir = ensure_directory(os.path.join(data_dir, "batches_balanced"))
@@ -77,16 +63,15 @@ class ModelDataManager:
         # старые модальности - вытащить из модели
         # новые - из конфига
 
-        # TODO: изменить создание словаря
-        all_modalities_train = {**experiment_config["MODALITIES_TRAIN"],
-                                **experiment_config["LANGUAGES_TRAIN"]}
+        all_modalities_train = {**self._config["MODALITIES_TRAIN"],
+                                **self._config["LANGUAGES_TRAIN"]}
         self._class_ids = all_modalities_train
 
-        average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
+        self.average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
         logging.info('Balanced learning is used: at each epoch' +
                      'rubric-balanced documents are sampled from the training data.')
-        logging.info(f'Each epoch uses {average_rubric_size} documents ' +
-                     f'for each of {experiment_config["num_rubric"]} rubrics.')
+        logging.info(f'Each epoch uses {self.average_rubric_size} documents ' +
+                     f'for each of {self._config["num_rubric"]} rubrics.')
         # self._class_ids_path = os.path.join(data_dir, "classes.yaml")
         # with open(self._class_ids_path, "r") as file:
         #     self._class_ids = yaml.safe_load(file)
@@ -98,44 +83,18 @@ class ModelDataManager:
         # else:
         #     self._new_class_ids = {class_id: val for class_id, val in self._class_ids.items()}
 
-        self._vw_dict = joblib.load(os.path.join(data_dir, "train_dict.joblib"), mmap_mode='r+')
+    def load_train_data(self):
+        with open(self.train_path, encoding='utf-8') as file:
+            train_vw = file.readlines()
 
-    # def prepare_batches(self):
-    #     """
-    #     Досоздает батчи из новых данных и возвращает батч векторайзер.
-    #
-    #     Returns
-    #     -------
-    #     artm.BatchVectorizer
-    #     """
-    #     import artm
-    #
-    #     logging.info("Preparing batches")
-    #
-    #     train_grnti = self.get_rubric_of_train_docs()
-    #     docs_of_rubrics = {rubric: [] for rubric in set(train_grnti.values())}
-    #
-    #     for doc_id, rubric in train_grnti.items():
-    #         if doc_id in self._vw_dict:
-    #             docs_of_rubrics[rubric].append(doc_id)
-    #
-    #     balanced_doc_ids, _ = self.get_balanced_doc_ids(
-    #         self._vw_dict, train_grnti, docs_of_rubrics
-    #     )
-    #
-    #     with open(self._current_vw_name, 'w') as file:
-    #         file.writelines([self._vw_dict[doc_id].strip() + '\n'
-    #                          for doc_id in balanced_doc_ids])
-    #
-    #     _ = artm.BatchVectorizer(
-    #         data_path=str(self._current_vw_name),
-    #         data_format="vowpal_wabbit",
-    #         target_folder=str(self._new_batches_dir),
-    #     )
-    #
-    #     logging.info("Creating batch vectorizer")
-    #     return artm.BatchVectorizer(data_path=[self._new_batches_dir, self._batches_dir],
-    #                                 data_weight=[1, 1])
+        self.train_dict = {line.split()[0]: line for line in train_vw}
+
+        docs_of_rubrics = {rubric: [] for rubric in set(self.train_grnti.values())}
+        for doc_id, rubric in self.train_grnti.items():
+            if doc_id in self.train_dict:
+                docs_of_rubrics[rubric].append(doc_id)
+
+        self._docs_of_rubrics: typing.Dict[str, list] = docs_of_rubrics
 
     def _get_rubric_of_train_docs(self):
         """
@@ -293,7 +252,7 @@ class ModelDataManager:
             file.writelines([self.train_dict[doc_id].strip() + '\n'
                              for doc_id in balanced_doc_ids])
 
-    def generate_batches_balanced_by_rubric(self) -> artm.BatchVectorizer:
+    def generate_batches_balanced_by_rubric(self):
         """
         Возвращает artm.BatchVectorizer, построенный на сбалансированных батчах.
 
@@ -312,119 +271,113 @@ class ModelDataManager:
             batch_vectorizer (artm.BatchVectorizer): artm.BatchVectorizer, построенный на сбалансированных батчах.
         """
         # TODO: при ошибках добавить
-        # import artm
-        self._generate_vw_file_balanced_by_rubric()
-
-        batches_list = list(self._path_to_batches.iterdir())
-        if batches_list:
-            for batch in batches_list:
-                if batch.is_file():
-                    batch.unlink()
-                else:
-                    recursively_unlink(batch)
-        _ = artm.BatchVectorizer(
-            data_path=str(self._path_balanced_train),
-            data_format="vowpal_wabbit",
-            target_folder=str(self._path_to_batches),
-        )
-
-        if self._path_batches_wiki:
-            batch_vectorizer = artm.BatchVectorizer(
-                data_path=[self._path_to_batches, self._path_batches_wiki],
-                data_weight=[1, 1]
-            )
-            logging.info('Built batches with wiki')
-        else:
-            batch_vectorizer = artm.BatchVectorizer(
-                data_path=self._path_to_batches
-            )
-            logging.info('Built batches without wiki')
-        return batch_vectorizer
-
-    # def _merge_batches(self):
-    #     logging.info("Merging batches")
-    #     old_batches = os.listdir(self._batches_dir)
-    #     if len(old_batches) == 0:
-    #         for new_batch in os.listdir(self._new_batches_dir):
-    #             shutil.move(
-    #                 os.path.join(self._new_batches_dir, new_batch),
-    #                 os.path.join(self._batches_dir, new_batch),
-    #             )
-    #
-    #     else:
-    #         new_batches = sorted(os.listdir(self._new_batches_dir))
-    #
-    #         for new_batch, new_batch_name in zip(
-    #                 new_batches,
-    #                 batch_names(os.path.splitext(max(old_batches))[0], len(new_batches)),
-    #         ):
-    #             shutil.move(
-    #                 os.path.join(self._new_batches_dir, new_batch),
-    #                 os.path.join(self._batches_dir, f"{new_batch_name}.batch"),
-    #             )
-
-    # def get_current_vw(self):
-    #     """
-    #     Возвращает текущий VopakWabbit файл.
-    #
-    #     Returns
-    #     -------
-    #     Путь
-    #     """
-    #     if (
-    #         os.path.exists(self._current_vw_name)
-    #         and os.path.getsize(self._current_vw_name) > self.MAX_FILE_SIZE
-    #     ):
-    #         self._close_current()
-    #
-    #     return self._current_vw_name
-
-    def write_new_docs(self, vw_writer, docs):
-        """
-        TODO
-
-        Args:
-            vw_writer (TODO): TODO
-            docs (TODO): TODO
-        """
-        if not all(
-                [
-                    any([f"@{lang}" in self._class_ids for lang in doc])
-                    for doc in docs.values()
-                ]
-        ):
-            raise NoTranslationException()
-
-        vw_writer.save_docs(self._vw_dict, docs)
-
-    # def _close_current(self):
-    #     shutil.move(
-    #         self._current_vw_name, os.path.join(self._new_vw_dir, f"{uuid.uuid4()}.txt")
-    #     )
-
-    @property
-    def class_ids(self):
-        """
-        Словарь class ids с весами.
-
-        Returns:
-            (dict) : Словарь class ids с весами.
-        """
-        return self._class_ids
-
-    @property
-    def dictionary(self):
-        """
-        Возвращает словарь, которым инициализировалась модель.
-
-        Returns:
-            dictionary (artm.Dictionary) : словарь, которым инициализировалась модель
-        """
         import artm
 
-        dictionary = artm.Dictionary("main_dict")
-        dictionary.load_text(self._config["dictionary_path"])
-        return dictionary
+        try:
+            self._generate_vw_file_balanced_by_rubric()
+
+            batches_list = list(self._path_to_batches.iterdir())
+            if batches_list:
+                for batch in batches_list:
+                    if batch.is_file():
+                        batch.unlink()
+                    else:
+                        recursively_unlink(batch)
+
+            logging.info('Calling artm')
+
+            _ = artm.BatchVectorizer(
+                data_path=str(self._path_balanced_train),
+                data_format="vowpal_wabbit",
+                target_folder=str(self._path_to_batches),
+            )
+
+            logging.info('Calling artm 2nd time')
+
+            if self._path_batches_wiki:
+                batch_vectorizer = artm.BatchVectorizer(
+                    data_path=[self._path_to_batches, self._path_batches_wiki],
+                    data_weight=[1, 1]
+                )
+                logging.info('Built batches with wiki')
+            else:
+                batch_vectorizer = artm.BatchVectorizer(
+                    data_path=self._path_to_batches
+                )
+                logging.info('Built batches without wiki')
+            return batch_vectorizer
+        except Exception as e:
+            logging.exception(e)
+            raise e
+    #
+    # # def _merge_batches(self):
+    # #     logging.info("Merging batches")
+    # #     old_batches = os.listdir(self._batches_dir)
+    # #     if len(old_batches) == 0:
+    # #         for new_batch in os.listdir(self._new_batches_dir):
+    # #             shutil.move(
+    # #                 os.path.join(self._new_batches_dir, new_batch),
+    # #                 os.path.join(self._batches_dir, new_batch),
+    # #             )
+    # #
+    # #     else:
+    # #         new_batches = sorted(os.listdir(self._new_batches_dir))
+    # #
+    # #         for new_batch, new_batch_name in zip(
+    # #                 new_batches,
+    # #                 batch_names(os.path.splitext(max(old_batches))[0], len(new_batches)),
+    # #         ):
+    # #             shutil.move(
+    # #                 os.path.join(self._new_batches_dir, new_batch),
+    # #                 os.path.join(self._batches_dir, f"{new_batch_name}.batch"),
+    # #             )
+    #
+    #     return self._current_vw_name
+    #
+    # # def get_current_vw(self):
+    # #     """
+    # #     Возвращает текущий Vowpal Wabbit файл.
+    # #
+    # #     Returns
+    # #     -------
+    # #     Путь
+    # #     """
+    # #     if (
+    # #         os.path.exists(self._current_vw_name)
+    # #         and os.path.getsize(self._current_vw_name) > self.MAX_FILE_SIZE
+    # #     ):
+    # #         self._close_current()
+    # #
+    # #     return self._current_vw_name
+    #
+    # # def _close_current(self):
+    # #     shutil.move(
+    # #         self._current_vw_name, os.path.join(self._new_vw_dir, f"{uuid.uuid4()}.txt")
+    # #     )
+    #
+    # @property
+    # def class_ids(self):
+    #     """
+    #     Словарь class ids с весами.
+    #
+    #     Returns:
+    #         (dict) : Словарь class ids с весами.
+    #     """
+    #     return self._class_ids
+    #
+    # @property
+    # def dictionary(self):
+    #     """
+    #     Возвращает словарь, которым инициализировалась модель.
+    #
+    #     Returns:
+    #         dictionary (artm.Dictionary) : словарь, которым инициализировалась модель
+    #     """
+    #     import artm
+    #
+    #     dictionary = artm.Dictionary("main_dict")
+    #     dictionary.load_text(self._config["dictionary_path"])
+    #     return dictionary
 
     def _get_modality_distribution(self) -> typing.Dict[str, int]:
         """
@@ -442,7 +395,7 @@ class ModelDataManager:
             train_data = file.read()
         modality_distribution = {
             mod: train_data.count(f'|@{mod}')
-            for mod in self.class_ids
+            for mod in self._class_ids
         }
 
         # add wiki part of train data
@@ -515,7 +468,7 @@ class ModelDataManager:
     #             file.write("".join(res))
     #
     #         self._class_ids = {clsid: val for clsid, val in self._new_class_ids.items()}
-
+    #
     # # TODO: @staticmethod ?
     # def _decompose_dicts(self, directory, cls_ids, dictionary, max_dictionary_size=None):
     #     for cls_id in cls_ids:
@@ -533,3 +486,9 @@ class ModelDataManager:
     #         if max_dictionary_size is not None:
     #             filtered.filter(max_dictionary_size=max_dictionary_size)
     #         filtered.save_text(os.path.join(directory, f"{cls_id[1:]}.txt"))
+
+    def update_config(self, config: str):
+        self._config = yaml.safe_load(config)
+
+        with open(self._config_path, "w") as file:
+            yaml.safe_dump(self._config)
