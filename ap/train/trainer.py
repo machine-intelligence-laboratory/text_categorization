@@ -180,7 +180,7 @@ class ModelTrainer:
         artm.scores.Scores
             список скоров тематической модели
         """
-        return self.model.scores
+        return list(self.model.score_tracker.keys())
 
     @property
     def model_scores_value(self) -> dict:
@@ -193,7 +193,7 @@ class ModelTrainer:
         """
 
         scores_value = {score: self.model.score_tracker[score].value[-1]
-                        for score in self.model.scores}
+                        for score in self.model_scores}
         return scores_value
 
     @property
