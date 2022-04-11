@@ -239,8 +239,8 @@ class ModelTrainer:
         self._load_model(train_type)
         self._data_manager.load_train_data()
         for epoch in range(self._data_manager.config['artm_model_params']["num_collection_passes"]):
-            logging.info('Training epoch %i', epoch)
-            self._iteration.set(epoch+1)
+            logging.info(f'Training epoch {epoch}')
+            self._iteration.set(epoch + 1)
             self._train_epoch()
 
             # тут нужно визуализировать epoch

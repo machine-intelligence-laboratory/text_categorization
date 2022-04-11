@@ -405,7 +405,7 @@ class ModelDataManager:
     #     return dictionary
 ############
 
-    def _get_modality_distribution(self) -> typing.Dict[str, int]:
+    def get_modality_distribution(self) -> typing.Dict[str, int]:
         """
         Возвращает количество документов кажджой модальности из self.class_ids для тренировочных данных.
 
