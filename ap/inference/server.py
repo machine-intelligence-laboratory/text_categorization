@@ -21,9 +21,9 @@ from ap.topic_model.v1.TopicModelInference_pb2_grpc import (
     TopicModelInferenceServiceServicer,
     add_TopicModelInferenceServiceServicer_to_server,
 )
-from utils import load_bpe_models
-from utils import id_to_str
-from utils import VowpalWabbitBPE
+from ap.utils.bpe import load_bpe_models
+from ap.utils.general import id_to_str
+from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
 class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
