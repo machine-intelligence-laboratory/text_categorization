@@ -42,7 +42,6 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
         self._work_dir = work_dir
         self._rubric_dir = rubric_dir
 
-    # TODO: может стоит испортировать? дублируется с ap/train/data_manager.py
     def get_rubric_of_train_docs(self):
         """
         Get dict where keys - document ids, value - number of GRNTI rubric of document.
