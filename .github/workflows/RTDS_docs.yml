@@ -33,7 +33,7 @@ jobs:
         with:
             name: my-artifact
             path: |
-               docs/
+               docs/*
                ap/topic_model/v1/TopicModelBase_pb2.py
                ap/topic_model/v1/TopicModelBase_pb2_grpc.py
                ap/topic_model/v1/TopicModelInference_pb2.py
