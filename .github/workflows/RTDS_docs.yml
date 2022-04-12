@@ -29,7 +29,7 @@ jobs:
         run: |
           sphinx-build -b html ./docs/source/ public
 
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
             name: my-artifact
             path: |
@@ -43,7 +43,7 @@ jobs:
                ap/topic_model/v1/__init__.py
 
       - name: Trigger RTDs build
-        uses: dfm/rtds-action@v1
+        uses: dfm/rtds-action@v2
         with:
           webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
           webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
