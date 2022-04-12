@@ -1,6 +1,7 @@
 joblib
 matplotlib
 numpy
+wheel
 topicnet
 tqdm
 grpcio==1.31.0
