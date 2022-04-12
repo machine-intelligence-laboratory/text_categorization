@@ -28,7 +28,7 @@ jobs:
       - name: Build Docs
         run: |
           cd ./docs
-          make clean html
+          sphinx-build -b html ./doc/source/ public
 
       - name: Trigger RTDs build
         uses: dfm/rtds-action@v1
