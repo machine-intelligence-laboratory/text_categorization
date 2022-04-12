@@ -64,7 +64,7 @@ message AddDocumentsToModelResponse {
 }
 
 message StartTrainTopicModelResponse {
-    // статус операции дообучения модели
+    // статус операции дообучения модели 
     // Предполагается, что статуы будут добавляться по мере уточнения кодов ошибки
     enum StartTrainTopicModelStatus {
         OK = 0;
