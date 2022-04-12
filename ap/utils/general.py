@@ -3,8 +3,6 @@ import typing
 
 from pathlib import Path
 
-from ap.topic_model.v1.TopicModelBase_pb2 import DocId, DocumentPack
-
 
 def id_to_str(id) -> str:
     """
@@ -31,12 +29,12 @@ def get_modalities(doc):
     return res
 
 
-def docs_from_pack(pack: DocumentPack) -> typing.Dict[str, typing.Dict[str, str]]:
+def docs_from_pack(pack) -> typing.Dict[str, typing.Dict[str, str]]:
     """
-    Создает dict документов из DocumentPack.
+    Создает dict документов из pack.
 
     Args:
-        pack (DocumentPack): TODO
+        pack (ap.topic_model.v1.TopicModelBase_pb2.DocumentPack): TODO
 
     Returns:
         dict из документов
