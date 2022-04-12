@@ -27,7 +27,7 @@ jobs:
 
       - name: Build Docs
         run: |
-          sphinx-build -b html ./docs/source/ public
+          make clean html
 
       - uses: actions/upload-artifact@v3
         with:
