@@ -6,10 +6,10 @@ jobs:
     name: "Build documentations on readthedocs.org"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: 3.8
 
@@ -29,7 +29,7 @@ jobs:
         run: |
           sphinx-build -b html ./docs/source/ public
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v1
         with:
             name: my-artifact
             path: |
