@@ -22,7 +22,7 @@ jobs:
       - name: Install Local Dependencies
         run: |
           ./generate.sh
-          ls -la ./ap/topic_model/v1
+          ls -la ap/topic_model/v1
           pwd
 
       - name: Build Docs
