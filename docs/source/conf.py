@@ -34,7 +34,7 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'rtds_action']
 
 rtds_action_github_repo = "machine-intelligence-laboratory/text_categorization"
 
-rtds_action_github_token = os.environ["GITHUB_TOKEN"]
+rtds_action_github_token = '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'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
