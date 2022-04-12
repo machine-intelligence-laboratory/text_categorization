@@ -25,6 +25,19 @@ jobs:
           ls -la ap/topic_model/v1
           pwd
 
+
+      - uses: actions/upload-artifact@v3
+        with:
+            name: my-artifact
+            path: |
+               ./ap/topic_model/v1/TopicModelBase_pb2.py
+               ./ap/topic_model/v1/TopicModelBase_pb2_grpc.py
+               ./ap/topic_model/v1/TopicModelInference_pb2.py
+               ./ap/topic_model/v1/TopicModelInference_pb2_grpc.py
+               ./ap/topic_model/v1/TopicModelTrain_pb2.py
+               ./ap/topic_model/v1/TopicModelTrain_pb2_grpc.py
+               ./ap/topic_model/v1/__init__.py
+
       - name: Build Docs
         run: |
           sphinx-build -b html ./docs/source/ public
@@ -34,13 +47,13 @@ jobs:
             name: my-artifact
             path: |
                ./docs/*
-               ap/topic_model/v1/TopicModelBase_pb2.py
-               ap/topic_model/v1/TopicModelBase_pb2_grpc.py
-               ap/topic_model/v1/TopicModelInference_pb2.py
-               ap/topic_model/v1/TopicModelInference_pb2_grpc.py
-               ap/topic_model/v1/TopicModelTrain_pb2.py
-               ap/topic_model/v1/TopicModelTrain_pb2_grpc.py
-               ap/topic_model/v1/__init__.py
+               ./ap/topic_model/v1/TopicModelBase_pb2.py
+               ./ap/topic_model/v1/TopicModelBase_pb2_grpc.py
+               ./ap/topic_model/v1/TopicModelInference_pb2.py
+               ./ap/topic_model/v1/TopicModelInference_pb2_grpc.py
+               ./ap/topic_model/v1/TopicModelTrain_pb2.py
+               ./ap/topic_model/v1/TopicModelTrain_pb2_grpc.py
+               ./ap/topic_model/v1/__init__.py
 
       - name: Trigger RTDs build
         uses: dfm/rtds-action@v1
