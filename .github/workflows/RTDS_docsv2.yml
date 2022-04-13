@@ -27,7 +27,7 @@ jobs:
 
       - name: Build Docs
         run: |
-          make clean html
+           make clean html
 
       - uses: actions/upload-artifact@v3
         with:
