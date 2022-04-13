@@ -197,7 +197,7 @@ def serve(models, config, data):
     )
     server.add_insecure_port("[::]:50051")
     server.start()
-    start_http_server(8000, addr='0.0.0.0')
+    # start_http_server(8000, addr='0.0.0.0')
     logging.info("Server started")
     server.wait_for_termination()
 

@@ -39,20 +39,19 @@ class ModelDataManager:
         """
         self._config_path = experiment_config
         with open(self._config_path, "r") as file:
-            self._config = yaml.safe_load(file)
+            self.config = yaml.safe_load(file)
 
         self._data_dir = data_dir
 
         self.train_grnti: typing.Dict[str, str] = self._get_rubric_of_train_docs()
-        self.train_path = self._config["train_vw_path"]
+        self.train_path = self.config["train_vw_path"]
 
-        path_experiment = Path(self._config["path_experiment"])
+        path_experiment = Path(self.config["path_experiment"])
         path_experiment.mkdir(parents=True, exist_ok=True)
         path_train_data = path_experiment.joinpath('train_data')
         self._path_to_batches = path_train_data.joinpath('batches_balanced')
-        self._path_to_batches.mkdir(parents=True, exist_ok=True)
         self._path_balanced_train = path_train_data.joinpath('train_balanced.txt')
-        self._path_batches_wiki = self._config["path_wiki_train_batches"]
+        self._path_batches_wiki = self.config.get("path_wiki_train_batches", None)
 
         # self._batches_dir = ensure_directory(os.path.join(data_dir, "batches"))
         # self._new_batches_dir = ensure_directory(os.path.join(data_dir, "batches_balanced"))
@@ -63,15 +62,15 @@ class ModelDataManager:
         # старые модальности - вытащить из модели
         # новые - из конфига
 
-        all_modalities_train = {**self._config["MODALITIES_TRAIN"],
-                                **self._config["LANGUAGES_TRAIN"]}
-        self._class_ids = all_modalities_train
+        all_modalities_train = {**self.config["MODALITIES_TRAIN"],
+                                **self.config["LANGUAGES_TRAIN"]}
+        self.class_ids = all_modalities_train
 
         self.average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
-        logging.info('Balanced learning is used: at each epoch' +
+        logging.info('Balanced learning is used: at each epoch ' +
                      'rubric-balanced documents are sampled from the training data.')
         logging.info(f'Each epoch uses {self.average_rubric_size} documents ' +
-                     f'for each of {self._config["num_rubric"]} rubrics.')
+                     f'for each of {self.config["num_rubric"]} rubrics.')
         # self._class_ids_path = os.path.join(data_dir, "classes.yaml")
         # with open(self._class_ids_path, "r") as file:
         #     self._class_ids = yaml.safe_load(file)
@@ -104,11 +103,11 @@ class ModelDataManager:
         Returns:
             train_grnti (dict): словарь, где ключ - id документа, значение - номер рубрики ГРНТИ этого документа.
         """
-        with open(self._config["path_articles_rubrics_train_grnti"]) as file:
+        with open(self.config["path_articles_rubrics_train_grnti"]) as file:
             articles_grnti_with_no = json.load(file)
-        with open(self._config["path_elib_train_rubrics_grnti"]) as file:
+        with open(self.config["path_elib_train_rubrics_grnti"]) as file:
             elib_grnti_to_fix_with_no = json.load(file)
-        with open(self._config["path_grnti_mapping"]) as file:
+        with open(self.config["path_grnti_mapping"]) as file:
             grnti_to_number = json.load(file)
 
         articles_grnti = {doc_id: rubric
@@ -225,7 +224,7 @@ class ModelDataManager:
                             line_unique_dict[lang] = new_line
                         else:
                             line_lang_dict = {token_and_count.split(':')[0]: str(
-                                int(self._config["aug_proportion"] *
+                                int(self.config["aug_proportion"] *
                                     int(token_and_count.split(':')[1])))
                                 for token_and_count in line_lang.split()[1:]}
                             new_line = ' '.join([':'.join([token, count])
@@ -244,7 +243,7 @@ class ModelDataManager:
         """
         Генерирует vw файл, где данные сбалансирваны по рубрикам ГРНТИ.
         """
-        if self._config.get("need_augmentation", None):
+        if self.config.get("need_augmentation", None):
             balanced_doc_ids = self._get_balanced_doc_ids_with_augmentation()
         else:
             balanced_doc_ids = self._get_balanced_doc_ids()
@@ -274,6 +273,7 @@ class ModelDataManager:
         import artm
 
         try:
+            self._path_to_batches.mkdir(parents=True, exist_ok=True)
             self._generate_vw_file_balanced_by_rubric()
 
             batches_list = list(self._path_to_batches.iterdir())
@@ -309,6 +309,91 @@ class ModelDataManager:
         except Exception as e:
             logging.exception(e)
             raise e
+
+
+    def write_new_docs(self, vw, docs):
+        """
+        TODO
+
+        Args:
+            vw (TODO): TODO
+            docs (TODO): TODO
+        """
+        if not all(
+                [
+                    any([f"{lang}" in self.class_ids for lang in doc])
+                    for doc in docs.values()
+                ]
+        ):
+            raise NoTranslationException()
+
+        vw.save_docs(self.train_path, docs)
+
+
+    def get_modality_distribution(self) -> typing.Dict[str, int]:
+        """
+        Возвращает количество документов каждой модальности из self.class_ids для тренировочных данных.
+
+        Если в конфиге для обучения модели self.config передан путь до словаря,
+        содержащего количество документов Wikipedia по модальностям, эти данные учитываются для
+        оценки всего тренировочного датасета.
+
+        Args:
+            modality_distribution_all (dict): словарь, ключ - модальность,
+                значение - количество документов с такой модальностью
+        """
+        with open(self.config["train_vw_path"]) as file:
+            train_data = file.read()
+        modality_distribution = {
+            mod: train_data.count(f'|@{mod}')
+            for mod in self.class_ids
+        }
+
+        # add wiki part of train data
+        path_modality_distribution_wiki = self.config.get("path_modality_distribution_wiki", None)
+        if self._path_batches_wiki and path_modality_distribution_wiki:
+            with open(path_modality_distribution_wiki) as file:
+                modality_distribution_wiki = yaml.load(file)
+            logging.info("Training data includes Wikipedia articles.")
+        else:
+            modality_distribution_wiki = dict()
+            logging.info("Training data DOES NOT includes Wikipedia articles.")
+
+        modality_distribution_all = dict()
+        for mod in modality_distribution:
+            modality_distribution_all[mod] = modality_distribution[mod]
+        for mod in modality_distribution_wiki:
+            if mod in modality_distribution_all:
+                modality_distribution_all[mod] += modality_distribution_wiki[mod]
+            else:
+                modality_distribution_all[mod] = modality_distribution_wiki[mod]
+
+        return modality_distribution_all
+
+    def _recursively_unlink(self, path: Path):
+        """
+        Рекурсивно удаляет все данные, расположенные по пути path.
+
+        Args:
+            path (Path): путь до данных, которые нужно удалить
+        """
+        for child in path.iterdir():
+            if child.is_file():
+                child.unlink()
+            else:
+                self._recursively_unlink(child)
+        path.rmdir()
+
+    def update_config(self, config: str):
+        """
+        TODO
+
+        Args:
+            config (TODO): TODO
+        """
+        self.config = yaml.safe_load(config)
+        with open(self._config_path, "w") as file:
+            yaml.safe_dump(self.config)
     #
     # # def _merge_batches(self):
     # #     logging.info("Merging batches")
@@ -378,67 +463,7 @@ class ModelDataManager:
     #     dictionary = artm.Dictionary("main_dict")
     #     dictionary.load_text(self._config["dictionary_path"])
     #     return dictionary
-
-    def _get_modality_distribution(self) -> typing.Dict[str, int]:
-        """
-        Возвращает количество документов каждой модальности из self.class_ids для тренировочных данных.
-
-        Если в конфиге для обучения модели self._config передан путь до словаря,
-        содержащего количество документов Wikipedia по модальностям, эти данные учитываются для
-        оценки всего тренировочного датасета.
-
-        Returns:
-            modality_distribution_all (dict): словарь, ключ - модальность,
-                значение - количество документов с такой модальностью
-        """
-        with open(self._config["train_vw_path"]) as file:
-            train_data = file.read()
-        modality_distribution = {
-            mod: train_data.count(f'|@{mod}')
-            for mod in self._class_ids
-        }
-
-        # add wiki part of train data
-        path_modality_distribution_wiki = self._config.get("path_modality_distribution_wiki", None)
-        if path_modality_distribution_wiki:
-            with open(path_modality_distribution_wiki) as file:
-                modality_distribution_wiki = yaml.load(file)
-            logging.info("Training data includes Wikipedia articles.")
-        else:
-            modality_distribution_wiki = dict()
-            logging.info("Training data DOES NOT includes Wikipedia articles.")
-
-        modality_distribution_all = dict()
-        for mod in modality_distribution:
-            modality_distribution_all[mod] = modality_distribution[mod]
-        for mod in modality_distribution_wiki:
-            if mod in modality_distribution_all:
-                modality_distribution_all[mod] += modality_distribution_wiki[mod]
-            else:
-                modality_distribution_all[mod] = modality_distribution_wiki[mod]
-
-        return modality_distribution_all
-
-    def _recursively_unlink(self, path: Path):
-        """
-        Рекурсивно удаляет все данные, расположенные по пути path.
-
-        Args:
-            path (Path): путь до данных, которые нужно удалить
-        """
-        for child in path.iterdir():
-            if child.is_file():
-                child.unlink()
-            else:
-                self._recursively_unlink(child)
-        path.rmdir()
-
-    def update_config(self, config: str):
-        self._config = yaml.safe_load(config)
-
-        with open(self._config_path, "w") as file:
-            yaml.safe_dump(self._config)
-
+    #
     # def _update_classes(self, new_classes):
     #     for cls in new_classes:
     #         self._new_class_ids[f"@{cls}"] = 1
