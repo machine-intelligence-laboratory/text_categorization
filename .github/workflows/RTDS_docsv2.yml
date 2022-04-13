@@ -32,7 +32,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-            name: my-artifact
+            name: my-artifact-${{ github.sha }}
             path: |
                ./docs/*
                ./ap/topic_model/v1/TopicModelBase_pb2.py
