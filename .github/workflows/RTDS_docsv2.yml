@@ -1,6 +1,9 @@
 name: Docs
 on: [push, pull_request]
 
+env:
+   MY_TOKEN: ${{secrets.MY_TOKEN}}
+
 jobs:
   build_documentation:
     name: "Build documentations on readthedocs.org"
