@@ -33,7 +33,6 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
             self,
             train_conf: str,
             models_dir: str,
-            data_dir: str
     ):
         from prometheus_client import Gauge
         """
@@ -51,7 +50,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         bpe_models = load_bpe_models(self._config["BPE_models"])
         self._vw = VowpalWabbitBPE(bpe_models)
 
-        self._data_manager = ModelDataManager(data_dir, train_conf)
+        self._data_manager = ModelDataManager(train_conf)
         self._trainer = ModelTrainer(self._data_manager, models_dir)
 
         self._executor = concurrent.futures.ProcessPoolExecutor(max_workers=2)
@@ -178,10 +177,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
 @click.option(
     "--models", help="A path to store trained bigARTM models",
 )
-@click.option(
-    "--data", help="A path to data directories",
-)
-def serve(models, config, data):
+def serve(models, config):
     """
     Запускает сервер.
 
@@ -198,7 +194,7 @@ def serve(models, config, data):
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_TopicModelTrainServiceServicer_to_server(
-        TopicModelTrainServiceImpl(config, models, data),
+        TopicModelTrainServiceImpl(config, models),
         server,
     )
     server.add_insecure_port("[::]:50051")

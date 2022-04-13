@@ -27,7 +27,7 @@ class ModelDataManager:
     # MAX_FILE_SIZE = 512 * 1024 ^ 2
     # BATCH_SIZE = 10000
 
-    def __init__(self, data_dir: str, experiment_config: str):
+    def __init__(self, experiment_config: str):
         """
         Создает дата менеджер.
 
@@ -40,8 +40,9 @@ class ModelDataManager:
         with open(self._config_path, "r") as file:
             self._config = yaml.safe_load(file)
 
+        with open(self._config_path, "r") as file:
+            self._supported_languages = yaml.safe_load(self._config["classes"])
 
-        self._data_dir = data_dir
 
         self.train_grnti: typing.Dict[str, str] = self._get_rubric_of_train_docs()
         self.train_path = self._config["train_vw_path"]
