@@ -13,6 +13,7 @@ from ap.train.data_manager import ModelDataManager
 from ap.train.metrics import set_metric
 from ap.utils.general import ensure_directory, recursively_unlink
 
+
 class ModelTrainer:
     def __init__(
             self,
@@ -31,7 +32,7 @@ class ModelTrainer:
         self._data_manager = data_manager
         self._models_dir = ensure_directory(models_dir)
         model_name = self.generate_model_name()
-        self._path_to_dump_model = Path(self._data_manager._config["path_experiment"]).joinpath(model_name)
+        self._path_to_dump_model = Path(self._data_manager.config["path_experiment"]).joinpath(model_name)
 
 
     def _load_model(self, train_type):
@@ -41,6 +42,7 @@ class ModelTrainer:
         # добавить условие: есть язык не из 100 языков
         # new_modalities = list(config["LANGUAGES_ALL"]).extend(list(config["MODALITIES_TRAIN"]))
         # if not set(new_modalities).issubset(set(self._class_ids))
+
         if (
                 train_type == StartTrainTopicModelRequest.TrainType.FULL
                 or len(current_models) == 0
@@ -66,10 +68,10 @@ class ModelTrainer:
         import artm
         from topicnet.cooking_machine import rel_toolbox_lite
 
-        artm_model_params = self._data_manager._config["artm_model_params"]
+        artm_model_params = self._data_manager.config["artm_model_params"]
 
         dictionary = artm.Dictionary()
-        dictionary.load_text(self._data_manager._config["dictionary_path"])
+        dictionary.load_text(self._data_manager.config["dictionary_path"])
 
         background_topic_list = [f'topic_{i}' for i in range(artm_model_params["num_bcg_topic"])]
         subject_topic_list = [
@@ -78,8 +80,10 @@ class ModelTrainer:
                 artm_model_params["NUM_TOPICS"] - artm_model_params["num_bcg_topic"])
         ]
 
-        modalities_with_weight = {f'@{lang}': weight for lang, weight in self._data_manager.class_ids.items()}
-        languages_with_weight = {f'@{lang}': weight for lang, weight in self._data_manager._config["LANGUAGES_TRAIN"].items()}
+        modalities_with_weight = {f'@{lang}': weight
+                                  for lang, weight in self._data_manager.class_ids.items()}
+        languages_with_weight = {f'@{lang}': weight
+                                 for lang, weight in self._data_manager.config["LANGUAGES_TRAIN"].items()}
         model = artm.ARTM(num_topics=artm_model_params["NUM_TOPICS"],
                           theta_columns_naming='title',
                           class_ids=modalities_with_weight,
@@ -153,7 +157,7 @@ class ModelTrainer:
         artm.scores.Scores
             список скоров тематической модели
         """
-        return self.model.scores
+        return list(self.model.score_tracker.keys())
 
     @property
     def model_scores_value(self) -> dict:
@@ -166,7 +170,7 @@ class ModelTrainer:
         """
 
         scores_value = {score: self.model.score_tracker[score].value[-1]
-                        for score in self.model.scores}
+                        for score in self.model_scores}
         return scores_value
 
     @property
@@ -191,14 +195,14 @@ class ModelTrainer:
         Возвращает основную информацию о модели
         :return:
         """
-        info = self._data_manager._config["artm_model_params"]
-        info["Модальности"] = self._data_manager._class_ids
-        info["need_augmentation"] = self._data_manager._config.get("need_augmentation", False)
+        info = self._data_manager.config["artm_model_params"]
+        info["Модальности"] = self._data_manager.class_ids
+        info["need_augmentation"] = self._data_manager.config.get("need_augmentation", False)
         if info["need_augmentation"]:
-            info["aug_proportion"] = self._data_manager._config.get("aug_proportion")
-        info["metrics_to_calculate"] = self._data_manager._config["metrics_to_calculate"]
+            info["aug_proportion"] = self._data_manager.config.get("aug_proportion")
+        info["metrics_to_calculate"] = self._data_manager.config["metrics_to_calculate"]
         info["num_modalities"] = len(info["Модальности"])
-        info["dictionary_path"] = self._data_manager._config["dictionary_path"]
+        info["dictionary_path"] = self._data_manager.config["dictionary_path"]
 
         return info # параметры,
 
@@ -220,8 +224,8 @@ class ModelTrainer:
         logging.info("Start model training")
         self._load_model(train_type)
         self._data_manager.load_train_data()
-        for epoch in range(self._data_manager._config['artm_model_params']["num_collection_passes"]):
-            logging.info('Training epoch %i', epoch)
+        for epoch in range(self._data_manager.config['artm_model_params']["num_collection_passes"]):
+            logging.info(f'Training epoch {epoch}')
             set_metric('training_iteration', epoch+1)
             self._train_epoch()
 
@@ -230,6 +234,8 @@ class ModelTrainer:
             # тут можно визуализировать скоры модели scores_value
             if "PerlexityScore_@ru" in scores_value:
                 logging.info(f"PerlexityScore_@ru: {scores_value['PerlexityScore_@ru']}")
+            if "PerlexityScore_@en" in scores_value:
+                logging.info(f"PerlexityScore_@en: {scores_value['PerlexityScore_@en']}")
             if self._path_to_dump_model.exists():
                 recursively_unlink(self._path_to_dump_model)
             self.model.dump_artm_model(str(self._path_to_dump_model))
