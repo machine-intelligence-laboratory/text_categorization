@@ -16,6 +16,14 @@ warnings.filterwarnings('ignore')
 
 
 def dump_train_centroids(model_path, bcg_topic_list, path_train_centroids):
+    """
+    TODO
+
+    Args:
+        model_path:
+        bcg_topic_list:
+        path_train_centroids:
+    """
     path_train_centroids = Path(path_train_centroids)
     model = artm.load_artm_model(model_path)
     sbj_topic_list = [topic for topic in model.topic_names
@@ -46,6 +54,12 @@ def dump_train_centroids(model_path, bcg_topic_list, path_train_centroids):
 
 
 def calculate_search_quality(config_experiment):
+    """
+    TODO
+
+    Args:
+         config_experiment:  TODO
+    """
     path_model = Path(config_experiment['path_model'])
     model_name = str(path_model.name)
     path_experiment_result = Path(config_experiment['path_results'])

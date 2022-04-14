@@ -181,13 +181,9 @@ def get_mean_classes_intersection(path_models, save_path, path_categories):
     Function to evaluate classes intersection.
 
     Args:
-
-    path_models (str):
-        a path with artm models
-    save_path (str):
-        a path for save theta matrices
-    path_categories (str):
-        a path with classes (json)
+        path_models (str): a path with artm models
+        save_path (str): a path for save theta matrices
+        path_categories (str): a path with classes (json)
 
     Returns:
         (pd.DataFrame): DataFrame with evaluation of classes intersection
@@ -212,11 +208,8 @@ def get_analogy_distribution(path_models, save_path):
     Function to get analogy distribution for models.
 
     Args:
-
-    path_models  (str):
-        a path with artm models
-    save_path (str):
-        a path for save theta matrices
+        path_models  (str): a path with artm models
+        save_path (str): a path for save theta matrices
 
     Returns:
         pair_analogy (dict): dict with distribution of analogy measure
@@ -243,12 +236,9 @@ def get_cos_distribution(path_models, save_path, path_categories):
     Function to get cosine distribution in classes for models.
 
     Args:
-        path_models (str):
-            a path with artm models
-        save_path (str):
-            a path for save theta matrices
-        path_categories (str):
-            a path with classes (json)
+        path_models (str): a path with artm models
+        save_path (str): a path for save theta matrices
+        path_categories (str): a path with classes (json)
 
     Returns:
         pair_cos (dict): dict with distribution of cosine measure for classes

@@ -1,13 +1,10 @@
 import datetime
 import logging
 import os
-import typing
 
 from pathlib import Path
-from time import sleep
 
 from prometheus_client import Gauge, start_http_server
-from tqdm import tqdm
 from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
 from ap.train.metrics import set_metric
@@ -212,7 +209,7 @@ class ModelTrainer:
         """
         Функция обучения тематической модели.
 
-        Parameters:
+        Args:
             train_type (StartTrainTopicModelRequest.TrainType):
                 full for full train from scratch, update to get the latest model and train it.
         """

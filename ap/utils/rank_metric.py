@@ -22,18 +22,16 @@ class RankingByModel:
         """
         Class for ranking document search between language pairs.
 
-        Parameters:
-            bcg_topic_list: list
-                backgroung topics of a topic model
-            metrics_to_calculate: list of str ('analogy', 'eucl')
+        Args:
+            bcg_topic_list (list): backgroung topics of a topic model
+            metrics_to_calculate (list of str ('analogy', 'eucl')):
                 list of names of proximity measures to use in ranking
-            model_path: str
-                a path to the artm model directory
-            matrix_norm_metric: callable
+            model_path (str): a path to the artm model directory
+            matrix_norm_metric (callable):
                 a way to measure norm of a matrix of vectors
                 for example init as:
                 matrix_norm_metric = np.linalg.norm
-            path_subsamples: str
+            path_subsamples (str):
                 path to file in json format that contains subsamples of documents indices
                 for which will be searched
         """
@@ -52,6 +50,15 @@ class RankingByModel:
         self._mode = mode
 
     def get_thetas(self, path_test, path_thetas, current_languages, recalculate_test_thetas=True):
+        """
+        TODO
+
+        Args:
+            path_test: TODO
+            path_thetas: TODO
+            current_languages: TODO
+            recalculate_test_thetas: TODO
+        """
         if not recalculate_test_thetas and path_thetas.exists():
             theta_lang = joblib.load(path_thetas)
             print('Existing thetas of test data were loaded.')
@@ -181,20 +188,15 @@ class RankingByModel:
         """
         Function returning average position of search documents in the other language.
 
-        Parameters:
-            path_train_lang: str
-                path to train thetas by languages
-            lang_one: str
-                name of the first language
-            lang_two: str
-                name of the second language
-            data_lang_one: str
-                path to folder with batches or path to vw file
-            data_lang_two: str
-                path to folder with batches or path to vw file
+        Args:
+            path_train_lang (str): path to train thetas by languages
+            lang_one (str): name of the first language
+            lang_two (str): name of the second language
+            data_lang_one (str): path to folder with batches or path to vw file
+            data_lang_two (str): path to folder with batches or path to vw file
 
         Returns:
-            metrics
+            metrics: TODO
             len(search_indices)
         """
         if isinstance(data_lang_one, pd.DataFrame):
@@ -243,6 +245,9 @@ class RankingByModel:
 
     def metrics_to_df(self, path_train_lang, path_experiment_result,
                       current_languages, theta_lang, rbm):
+        """
+        TODO
+        """
         percent = dict()
         frequency = dict()
         for metric in self._metrics_to_calculate:
@@ -338,7 +343,6 @@ def quality_of_models(path_train_lang, bcg_topic_list,
         path_train_lang, path_model_result, current_languages, theta_lang, rbm
     )
 
-    # Вычисляю значения метрик
     for metric in metrics_to_calculate:
         average_frequency = frequency[metric].sum().sum() / frequency[metric].count().sum()
         average_percent = percent[metric].sum().sum() / percent[metric].count().sum()

@@ -25,8 +25,6 @@ class ModelDataManager:
     """
     Класс для поддержания работы с данными
     """
-    # MAX_FILE_SIZE = 512 * 1024 ^ 2
-    # BATCH_SIZE = 10000
 
     def __init__(self, data_dir: str, experiment_config: str):
         """
@@ -52,11 +50,6 @@ class ModelDataManager:
         self._path_balanced_train = path_train_data.joinpath('train_balanced.txt')
         self._path_batches_wiki = self.config.get("path_wiki_train_batches", None)
 
-        # self._batches_dir = ensure_directory(os.path.join(data_dir, "batches"))
-        # self._new_batches_dir = ensure_directory(os.path.join(data_dir, "batches_balanced"))
-
-        # self._current_vw_name = os.path.join(data_dir, "train_balanced.txt")
-
         # TODO: в добучении
         # старые модальности - вытащить из модели
         # новые - из конфига
@@ -73,17 +66,6 @@ class ModelDataManager:
 
         set_metric('average_rubric_size', self.average_rubric_size)
         set_metric('num_rubric', self.config["num_rubric"])
-
-        # self._class_ids_path = os.path.join(data_dir, "classes.yaml")
-        # with open(self._class_ids_path, "r") as file:
-        #     self._class_ids = yaml.safe_load(file)
-
-        # self._new_class_ids_path = os.path.join(data_dir, "classes_new.yaml")
-        # if os.path.exists(self._new_class_ids_path):
-        #     with open(self._new_class_ids_path, "r") as file:
-        #         self._new_class_ids = yaml.safe_load(file)
-        # else:
-        #     self._new_class_ids = {class_id: val for class_id, val in self._class_ids.items()}
 
     def load_train_data(self):
         with open(self.train_path, encoding='utf-8') as file:
@@ -314,7 +296,6 @@ class ModelDataManager:
             logging.exception(e)
             raise e
 
-
     def write_new_docs(self, vw, docs):
         """
         TODO
@@ -332,7 +313,6 @@ class ModelDataManager:
             raise NoTranslationException()
 
         vw.save_docs(self.train_path, docs)
-
 
     def get_modality_distribution(self) -> typing.Dict[str, int]:
         """
@@ -353,7 +333,6 @@ class ModelDataManager:
             for mod in self.class_ids
         }
 
-        # add wiki part of train data
         path_modality_distribution_wiki = self.config.get("path_modality_distribution_wiki", None)
         if self._path_batches_wiki and path_modality_distribution_wiki:
             with open(path_modality_distribution_wiki) as file:
@@ -398,125 +377,3 @@ class ModelDataManager:
         self.config = yaml.safe_load(config)
         with open(self._config_path, "w") as file:
             yaml.safe_dump(self.config)
-    #
-    # # def _merge_batches(self):
-    # #     logging.info("Merging batches")
-    # #     old_batches = os.listdir(self._batches_dir)
-    # #     if len(old_batches) == 0:
-    # #         for new_batch in os.listdir(self._new_batches_dir):
-    # #             shutil.move(
-    # #                 os.path.join(self._new_batches_dir, new_batch),
-    # #                 os.path.join(self._batches_dir, new_batch),
-    # #             )
-    # #
-    # #     else:
-    # #         new_batches = sorted(os.listdir(self._new_batches_dir))
-    # #
-    # #         for new_batch, new_batch_name in zip(
-    # #                 new_batches,
-    # #                 batch_names(os.path.splitext(max(old_batches))[0], len(new_batches)),
-    # #         ):
-    # #             shutil.move(
-    # #                 os.path.join(self._new_batches_dir, new_batch),
-    # #                 os.path.join(self._batches_dir, f"{new_batch_name}.batch"),
-    # #             )
-    #
-    #     return self._current_vw_name
-    #
-    # # def get_current_vw(self):
-    # #     """
-    # #     Возвращает текущий Vowpal Wabbit файл.
-    # #
-    # #     Returns
-    # #     -------
-    # #     Путь
-    # #     """
-    # #     if (
-    # #         os.path.exists(self._current_vw_name)
-    # #         and os.path.getsize(self._current_vw_name) > self.MAX_FILE_SIZE
-    # #     ):
-    # #         self._close_current()
-    # #
-    # #     return self._current_vw_name
-    #
-    # # def _close_current(self):
-    # #     shutil.move(
-    # #         self._current_vw_name, os.path.join(self._new_vw_dir, f"{uuid.uuid4()}.txt")
-    # #     )
-    #
-    # @property
-    # def class_ids(self):
-    #     """
-    #     Словарь class ids с весами.
-    #
-    #     Returns:
-    #         (dict) : Словарь class ids с весами.
-    #     """
-    #     return self._class_ids
-    #
-    # @property
-    # def dictionary(self):
-    #     """
-    #     Возвращает словарь, которым инициализировалась модель.
-    #
-    #     Returns:
-    #         dictionary (artm.Dictionary) : словарь, которым инициализировалась модель
-    #     """
-    #     import artm
-    #
-    #     dictionary = artm.Dictionary("main_dict")
-    #     dictionary.load_text(self._config["dictionary_path"])
-    #     return dictionary
-    #
-    # def _update_classes(self, new_classes):
-    #     for cls in new_classes:
-    #         self._new_class_ids[f"@{cls}"] = 1
-    #
-    #     with open(self._new_class_ids_path, "w") as file:
-    #         yaml.dump(self._new_class_ids, file)
-
-    # def _update_dictionary(self, new_dictionary):
-    #     with tempfile.TemporaryDirectory(dir=self._data_dir) as tmp_dir:
-    #         new_dict_dir = ensure_directory(os.path.join(tmp_dir, "new_dicts"))
-    #         old_dict_dir = ensure_directory(os.path.join(tmp_dir, "old_dicts"))
-    #
-    #         self._decompose_dicts(
-    #             new_dict_dir,
-    #             self._new_class_ids,
-    #             new_dictionary,
-    #             max_dictionary_size=self._config["max_dictionary_size"],
-    #         )
-    #         self._decompose_dicts(old_dict_dir, self._class_ids, self.dictionary)
-    #
-    #         for cls_id in self._class_ids:
-    #             shutil.copy(
-    #                 os.path.join(old_dict_dir, f"{cls_id[1:]}.txt"),
-    #                 os.path.join(new_dict_dir, f"{cls_id[1:]}.txt"),
-    #             )
-    #
-    #         res = []
-    #         for cls_id in self._new_class_ids:
-    #             with open(os.path.join(new_dict_dir, f"{cls_id[1:]}.txt")) as file:
-    #                 res.extend(file.readlines()[2:] if len(res) > 0 else file.readlines())
-    #
-    #         with open(os.path.join(self._data_dir, "dictionary.txt"), "w") as file:
-    #             file.write("".join(res))
-    #
-    #         self._class_ids = {clsid: val for clsid, val in self._new_class_ids.items()}
-    #
-    # def _decompose_dicts(self, directory, cls_ids, dictionary, max_dictionary_size=None):
-    #     for cls_id in cls_ids:
-    #         filtered = dictionary
-    #         inplace = False
-    #         for other_id in cls_ids:
-    #             if other_id != cls_id:
-    #                 filtered = filtered.filter(
-    #                     class_id=other_id,
-    #                     max_df_rate=0.4,
-    #                     min_df_rate=0.5,
-    #                     inplace=inplace,
-    #                 )
-    #                 inplace = True
-    #         if max_dictionary_size is not None:
-    #             filtered.filter(max_dictionary_size=max_dictionary_size)
-    #         filtered.save_text(os.path.join(directory, f"{cls_id[1:]}.txt"))

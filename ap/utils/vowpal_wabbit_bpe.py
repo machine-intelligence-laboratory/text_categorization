@@ -14,7 +14,7 @@ class VowpalWabbitBPE:
         """
         Создает класс сохранения VW файлов с BPE преобразованием.
 
-        Parameters:
+        Args:
             bpe_models: TODO.
             use_counters: признак использования каунтеров.
         """
@@ -28,7 +28,7 @@ class VowpalWabbitBPE:
         """
         Конвертирует документы в BOW и сохраняет их.
 
-        Parameters:
+        Args:
             target_file: путь к файлу.
             doc: сырые документы.
         """
@@ -44,7 +44,7 @@ class VowpalWabbitBPE:
         """
         Сохраняет BOW представление документов.
 
-        Parameters:
+        Args:
             target_file: словарь с vw.
             sessions_bow_messages: документы в формате BOW.
         """
@@ -69,15 +69,13 @@ class VowpalWabbitBPE:
                     f.write(new_message_str_format)
                     f.write('\n')
 
-
-
     def convert_to_bow(
         self, data: typing.Dict[str, typing.Dict[str, str]]
     ) -> typing.Dict[str, typing.Dict[str, typing.Union[str, typing.Counter]]]:
         """
         Конвертирует набор документов в BOW представление (см. VowpalWabbit.convet_doct).
 
-        Parameters:
+        Args:
             data: словарь айди документа->документ.
 
         Returns:
@@ -94,7 +92,7 @@ class VowpalWabbitBPE:
         """
         Конвертирует исходный документ в формат BOW.
 
-        Parameters:
+        Args:
             doc словарь язык->текст документа.
 
         Returns:
