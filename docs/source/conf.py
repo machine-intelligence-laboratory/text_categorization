@@ -30,13 +30,7 @@ release = '0.1.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'rtds_action']
-
-rtds_action_github_repo = "machine-intelligence-laboratory/text_categorization"
-rtds_action_path = 'ap/'
-rtds_action_artifact_prefix = "my-artifact-"
-rtds_action_github_token = os.environ["MY_TOKEN"]
-rtds_action_error_if_missing = False
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

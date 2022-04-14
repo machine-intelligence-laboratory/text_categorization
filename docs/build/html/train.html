@@ -77,6 +77,21 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.get_modality_distribution">
+<span class="sig-name descname"><span class="pre">get_modality_distribution</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.get_modality_distribution" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает количество документов каждой модальности из self.class_ids для тренировочных данных.</p>
+<p>Если в конфиге для обучения модели self.config передан путь до словаря,
+содержащего количество документов Wikipedia по модальностям, эти данные учитываются для
+оценки всего тренировочного датасета.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>modality_distribution_all</strong> (<em>dict</em>) – словарь, ключ - модальность,
+значение - количество документов с такой модальностью</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.load_train_data">
 <span class="sig-name descname"><span class="pre">load_train_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.load_train_data" title="Ссылка на это определение">¶</a></dt>
 <dd></dd></dl>
@@ -84,7 +99,27 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.update_config">
 <span class="sig-name descname"><span class="pre">update_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.update_config" title="Ссылка на это определение">¶</a></dt>
-<dd></dd></dl>
+<dd><p>TODO</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>TODO</em>) – TODO</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.write_new_docs">
+<span class="sig-name descname"><span class="pre">write_new_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.write_new_docs" title="Ссылка на это определение">¶</a></dt>
+<dd><p>TODO</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vw</strong> (<em>TODO</em>) – TODO</p></li>
+<li><p><strong>docs</strong> (<em>TODO</em>) – TODO</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -241,9 +276,8 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.train_model">
-<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f5fc84c24c0&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.train_model" title="Ссылка на это определение">¶</a></dt>
-<dd><p># TODO: обновить док-стринг
-Train model synchronously. Save trained model to a new subfolder of self._models_dir.</p>
+<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f038ccde610&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.train_model" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Функция обучения тематической модели.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры</dt>
 <dd class="field-odd"><p><strong>train_type</strong> (<em>StartTrainTopicModelRequest.TrainType</em>) – full for full train from scratch, update to get the latest model and train it.</p>
