@@ -1,3 +1,7 @@
+"""
+Файл с путями до различных данных.
+"""
+
 data_path = '/data/datasets/Antiplagiat/'
 
 # rubrics

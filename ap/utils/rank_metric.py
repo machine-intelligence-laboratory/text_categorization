@@ -22,21 +22,20 @@ class RankingByModel:
         """
         Class for ranking document search between language pairs.
 
-        Parameters
-        ----------
-        bcg_topic_list: list
-            backgroung topics of a topic model
-        metrics_to_calculate: list of str ('analogy', 'eucl')
-            list of names of proximity measures to use in ranking
-        model_path: str
-            a path to the artm model directory
-        matrix_norm_metric: callable
-            a way to measure norm of a matrix of vectors
-            for example init as:
-            matrix_norm_metric = np.linalg.norm
-        path_subsamples: str
-            path to file in json format that contains subsamples of documents indices
-            for which will be searched
+        Parameters:
+            bcg_topic_list: list
+                backgroung topics of a topic model
+            metrics_to_calculate: list of str ('analogy', 'eucl')
+                list of names of proximity measures to use in ranking
+            model_path: str
+                a path to the artm model directory
+            matrix_norm_metric: callable
+                a way to measure norm of a matrix of vectors
+                for example init as:
+                matrix_norm_metric = np.linalg.norm
+            path_subsamples: str
+                path to file in json format that contains subsamples of documents indices
+                for which will be searched
         """
         self._model = artm.load_artm_model(model_path)
         self._metrics_to_calculate = metrics_to_calculate
@@ -182,22 +181,21 @@ class RankingByModel:
         """
         Function returning average position of search documents in the other language.
 
-        Parameters
-        ----------
-        path_train_lang: str
-            path to train thetas by languages
-        lang_one: str
-            name of the first language
-        lang_two: str
-            name of the second language
-        data_lang_one: str
-            path to folder with batches or path to vw file
-        data_lang_two: str
-            path to folder with batches or path to vw file
+        Parameters:
+            path_train_lang: str
+                path to train thetas by languages
+            lang_one: str
+                name of the first language
+            lang_two: str
+                name of the second language
+            data_lang_one: str
+                path to folder with batches or path to vw file
+            data_lang_two: str
+                path to folder with batches or path to vw file
 
-        Returns
-        -------
-
+        Returns:
+            metrics
+            len(search_indices)
         """
         if isinstance(data_lang_one, pd.DataFrame):
             idx_one, theta_one = data_lang_one.columns, data_lang_one
@@ -291,38 +289,38 @@ def quality_of_models(path_train_lang, bcg_topic_list,
     """
     Function to calculate quality of models.
 
-    Parameters
-    ----------
-    path_train_lang: str
-        path to train thetas by languages
-    bcg_topic_list: list of str
-        backgroung topics of a topic model
-        for example init as:
-        bcg_topic_list = ['topic_0']
-    metrics_to_calculate: list of str ('analogy', 'eucl')
-        list of names of proximity measures to use in ranking
-    path_model: str
-        path to models
-    path_experiment_result: pathlib.Path
-        path to the folder to save results of models
-    matrix_norm_metric: callable
-        a way to measure norm of a matrix of vectors
-        for example init as:
-        matrix_norm_metric = np.linalg.norm
-    path_subsamples: str
-        path to folder with subsemples of different languages in json format
-    path_rubrics: str
-        path to file with rubrics of documents in json format
-    path_test: str
-        path to folder with txt files for calculate metrics
-    current_languages: list of str
-        names of languages to use to calculate metrics
-    recalculate_test_thetas: bool
-        True means rebuild thetas
-        False means load existing thetas
-    Returns
-    -------
+    Args:
+        path_train_lang (str):
+            path to train thetas by languages
+        bcg_topic_list (list of str):
+            backgroung topics of a topic model
+            for example init as:
+            bcg_topic_list = ['topic_0']
+        metrics_to_calculate (list of str ('analogy', 'eucl')):
+            list of names of proximity measures to use in ranking
+        path_model (str):
+            path to models
+        path_experiment_result (pathlib.Path):
+            path to the folder to save results of models
+        matrix_norm_metric (callable):
+            a way to measure norm of a matrix of vectors
+            for example init as:
+            matrix_norm_metric = np.linalg.norm
+        path_subsamples (str):
+            path to folder with subsemples of different languages in json format
+        path_rubrics (str):
+            path to file with rubrics of documents in json format
+        path_test (str):
+            path to folder with txt files for calculate metrics
+        current_languages (list of str):
+            names of languages to use to calculate metrics
+        recalculate_test_thetas (bool):
+            True means rebuild thetas
+            False means load existing thetas
 
+    Returns:
+        quality_experiment (dict): словарь словарей - по имени модели хранятся названия метрик,
+                                    по названиям метрик хранятся значения метрик этих моделей
     """
     quality_experiment = dict()
     quality_experiment[path_model.name] = dict()

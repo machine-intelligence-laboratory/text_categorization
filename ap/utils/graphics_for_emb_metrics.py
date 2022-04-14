@@ -2,7 +2,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 
-import config
+import ap.utils.config as config
 
 
 def show_cos_distribution(cos_distribution, path_save_figs, rubrics, lang, n_bins):
