@@ -10,6 +10,7 @@ from prometheus_client import Gauge, start_http_server
 from tqdm import tqdm
 from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
+from ap.train.metrics import set_metric
 from ap.utils.general import ensure_directory, recursively_unlink
 
 
@@ -22,31 +23,18 @@ class ModelTrainer:
         """
         Initialize a model trainer.
 
-        Parameters:
-            train_type (StartTrainTopicModelRequest.TrainType): TODO
+        Args:
             data_manager (ModelDataManager): data manager
-            conf (typing.Dict[str, typing.Any]): training configuration dict
             models_dir (str): a path to store new models
         """
 
         from prometheus_client import Gauge
-        # self._conf = conf
-        self._data_manager = data_manager
-        #
-        #
 
+        self._data_manager = data_manager
         self._models_dir = ensure_directory(models_dir)
         model_name = self.generate_model_name()
         self._path_to_dump_model = Path(self._data_manager.config["path_experiment"]).joinpath(model_name)
 
-    def _init_metrics(self):
-        # start_http_server(8001, addr='0.0.0.0')
-        self._iteration = Gauge('training_iteration', 'Current training iteration')
-        self._average_rubric_size = Gauge('average_rubric_size', 'Average rubric size')
-        self._num_rubric = Gauge('num_rubric', 'Number of rubrics')
-
-        self._average_rubric_size.set(self._data_manager.average_rubric_size)
-        self._num_rubric.set(self._data_manager.config["num_rubric"])
 
     def _load_model(self, train_type):
         import artm
@@ -72,10 +60,6 @@ class ModelTrainer:
     def _create_initial_model(self):
         """
         Creating an initial topic model.
-
-        Returns:
-            model (artm.ARTM):
-                initial artm topic model with parameters from experiment_config
         """
         import artm
         from topicnet.cooking_machine import rel_toolbox_lite
@@ -226,8 +210,7 @@ class ModelTrainer:
 
     def train_model(self, train_type: StartTrainTopicModelRequest.TrainType):
         """
-        # TODO: обновить док-стринг
-        Train model synchronously. Save trained model to a new subfolder of self._models_dir.
+        Функция обучения тематической модели.
 
         Parameters:
             train_type (StartTrainTopicModelRequest.TrainType):
@@ -236,15 +219,13 @@ class ModelTrainer:
         main_info = self.model_main_info()
         # Здесь можно визуализировать основную информацию о модели main_info
         logging.info("Start model training")
-        self._init_metrics()
         self._load_model(train_type)
         self._data_manager.load_train_data()
         for epoch in range(self._data_manager.config['artm_model_params']["num_collection_passes"]):
             logging.info(f'Training epoch {epoch}')
-            self._iteration.set(epoch + 1)
+            set_metric('training_iteration', epoch+1)
             self._train_epoch()
 
-            # тут нужно визуализировать epoch
             scores_value = self.model_scores_value
             # тут можно визуализировать скоры модели scores_value
             if "PerlexityScore_@ru" in scores_value:

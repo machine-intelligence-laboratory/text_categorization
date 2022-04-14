@@ -21,6 +21,7 @@ from ap.topic_model.v1.TopicModelTrain_pb2_grpc import (
     add_TopicModelTrainServiceServicer_to_server,
 )
 from ap.train.data_manager import ModelDataManager, NoTranslationException
+from ap.train.metrics import send_metric, run_metrics_server, inc_metric
 
 from ap.train.trainer import ModelTrainer
 from ap.utils.bpe import load_bpe_models
@@ -35,7 +36,6 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
             models_dir: str,
             data_dir: str
     ):
-        from prometheus_client import Gauge
         """
         Инициализирует сервер.
 
@@ -45,6 +45,10 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
             models_dir (str): путь к директория сохранения файлов
             data_dir (str): путь к директории с данными
         """
+        self._executor = concurrent.futures.ProcessPoolExecutor(max_workers=3)
+        self._training_future = None
+
+        self._executor.submit(run_metrics_server)
 
         with open(train_conf, "r") as file:
             self._config = yaml.safe_load(file)
@@ -53,11 +57,6 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
 
         self._data_manager = ModelDataManager(data_dir, train_conf)
         self._trainer = ModelTrainer(self._data_manager, models_dir)
-
-        self._executor = concurrent.futures.ProcessPoolExecutor(max_workers=2)
-        self._training_future = None
-
-        self._docs = Gauge('added_docs', 'Number of added documents')
 
     def AddDocumentsToModel(
             self, request: AddDocumentsToModelRequest, context
@@ -84,7 +83,8 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
                     grouped_docs[base_id].update(docs[id_to_str(parallel_docs.Ids[i])])
 
             self._data_manager.write_new_docs(self._vw, grouped_docs)
-            self._docs.inc(len(grouped_docs))
+
+            inc_metric('added_docs', len(grouped_docs))
         except NoTranslationException:
             return AddDocumentsToModelResponse(
                 Status=AddDocumentsToModelResponse.AddDocumentsStatus.NO_TRANSLATION
@@ -158,12 +158,14 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
                 Status=TrainTopicModelStatusResponse.TrainTopicModelStatus.ABORTED
             )
 
-
-    def UpdateModelConfiguration(self, request: UpdateModelConfigurationRequest, context) -> UpdateModelConfigurationResponse:
+    def UpdateModelConfiguration(self, request: UpdateModelConfigurationRequest,
+                                 context) -> UpdateModelConfigurationResponse:
         """обновление конфигурации обучения
         """
         self._data_manager.update_config(request.Configuration)
-        return UpdateModelConfigurationResponse(Status=UpdateModelConfigurationResponse.UpdateModelConfigurationStatus.OK)
+        return UpdateModelConfigurationResponse(
+            Status=UpdateModelConfigurationResponse.UpdateModelConfigurationStatus.OK)
+
 
 @click.command()
 @click.option(
@@ -186,7 +188,6 @@ def serve(models, config, data):
     """
     from prometheus_client import start_http_server
 
-
     # TODO: дообучение:
     # если пути config["BPE_models"] нет - не надо загружать модели
     logging.basicConfig(level=logging.DEBUG)
@@ -197,7 +198,6 @@ def serve(models, config, data):
     )
     server.add_insecure_port("[::]:50051")
     server.start()
-    # start_http_server(8000, addr='0.0.0.0')
     logging.info("Server started")
     server.wait_for_termination()
 

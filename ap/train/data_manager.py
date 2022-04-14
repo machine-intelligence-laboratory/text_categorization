@@ -11,6 +11,7 @@ import json
 import typing
 from pathlib import Path
 
+from ap.train.metrics import set_metric
 from ap.utils.bpe import load_bpe_models
 from ap.utils.general import recursively_unlink
 from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
@@ -34,8 +35,6 @@ class ModelDataManager:
         Args:
             data_dir (str): директория для хранения данных
             experiment_config (dict): конфиг для обучения модели
-
-        Returns:
         """
         self._config_path = experiment_config
         with open(self._config_path, "r") as file:
@@ -71,6 +70,10 @@ class ModelDataManager:
                      'rubric-balanced documents are sampled from the training data.')
         logging.info(f'Each epoch uses {self.average_rubric_size} documents ' +
                      f'for each of {self.config["num_rubric"]} rubrics.')
+
+        set_metric('average_rubric_size', self.average_rubric_size)
+        set_metric('num_rubric', self.config["num_rubric"])
+
         # self._class_ids_path = os.path.join(data_dir, "classes.yaml")
         # with open(self._class_ids_path, "r") as file:
         #     self._class_ids = yaml.safe_load(file)
@@ -133,6 +136,7 @@ class ModelDataManager:
 
         Возвращает balance_doc_ids — список идентификаторов документов, сбалансированных по рубрикам.
         Документы всех рубрик встречаются в balance_doc_ids одинаковое количество раз, равное среднему размеру рубрики.
+
         # TODO: а это точно не вызывает проблем?
         Функция изменяет self.train_dict, умноженая счетчики токенов на
         количество вхождений id документа в balance_doc_ids.
@@ -500,7 +504,6 @@ class ModelDataManager:
     #
     #         self._class_ids = {clsid: val for clsid, val in self._new_class_ids.items()}
     #
-    # # TODO: @staticmethod ?
     # def _decompose_dicts(self, directory, cls_ids, dictionary, max_dictionary_size=None):
     #     for cls_id in cls_ids:
     #         filtered = dictionary
