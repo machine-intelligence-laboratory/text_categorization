@@ -19,16 +19,16 @@ message Modality {
   string Value = 2;
 }
 
-// документ 
+// документ
 message Document {
-    DocId Id = 1; // идентификатор документа 
+    DocId Id = 1; // идентификатор документа
     repeated string Tokens = 2; // токены документа
     repeated Modality Modalities = 3; // модальности документа, язык и другие. Предполагается подавать код в формате ISO (2 или 3 символа)
 }
 
-// набор документов 
+// набор документов
 message DocumentPack {
-    repeated Document Documents = 1;    
+    repeated Document Documents = 1;
 }
 
 // идентификаторы параллельных документов внутри набора

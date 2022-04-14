@@ -19,17 +19,17 @@ class ModelTrainer:
             data_manager: ModelDataManager,
             models_dir: str,
     ):
+        """
+        Initialize a model trainer.
+
+        Parameters:
+            train_type (StartTrainTopicModelRequest.TrainType): TODO
+            data_manager (ModelDataManager): data manager
+            conf (typing.Dict[str, typing.Any]): training configuration dict
+            models_dir (str): a path to store new models
+        """
+
         from prometheus_client import Gauge
-        #
-        # """
-        # Initialize a model trainer.
-        #
-        # Parameters
-        # ----------
-        # data_manager - data manager
-        # conf - training configuration dict
-        # models_dir - a path to store new models
-        # """
         # self._conf = conf
         self._data_manager = data_manager
         #
@@ -73,10 +73,9 @@ class ModelTrainer:
         """
         Creating an initial topic model.
 
-        Returns
-        -------
-        model: artm.ARTM
-            initial artm topic model with parameters from experiment_config
+        Returns:
+            model (artm.ARTM):
+                initial artm topic model with parameters from experiment_config
         """
         import artm
         from topicnet.cooking_machine import rel_toolbox_lite
@@ -166,9 +165,8 @@ class ModelTrainer:
         """
         Возвращает все скоры тематической модели
 
-        :return:
-        artm.scores.Scores
-            список скоров тематической модели
+        Returns:
+            (artm.scores.Scores): список скоров тематической модели
         """
         return list(self.model.score_tracker.keys())
 
@@ -177,9 +175,8 @@ class ModelTrainer:
         """
         Возвращает значения всех скоров тематической модели на текущей эпохе
 
-        :return:
-        scores_value
-            значения всех скоров тематической модели на текущей эпохе
+        Returns:
+            scores_value (dict): значения всех скоров тематической модели на текущей эпохе
         """
 
         scores_value = {score: self.model.score_tracker[score].value[-1]
@@ -198,7 +195,9 @@ class ModelTrainer:
         - метрики
         - информация о регуляризаторах
         - другое
-        :return:
+
+        Returns:
+            характеристики модели
         """
 
         return self.model.info
@@ -206,7 +205,9 @@ class ModelTrainer:
     def model_main_info(self):
         """
         Возвращает основную информацию о модели
-        :return:
+
+        Returns:
+            info: основная информация о модели
         """
         info = self._data_manager.config["artm_model_params"]
         info["Модальности"] = self._data_manager.class_ids
@@ -217,7 +218,7 @@ class ModelTrainer:
         info["num_modalities"] = len(info["Модальности"])
         info["dictionary_path"] = self._data_manager.config["dictionary_path"]
 
-        return info # параметры,
+        return info
 
     def _train_epoch(self):
         batch_vectorizer = self._data_manager.generate_batches_balanced_by_rubric()
@@ -228,9 +229,9 @@ class ModelTrainer:
         # TODO: обновить док-стринг
         Train model synchronously. Save trained model to a new subfolder of self._models_dir.
 
-        Parameters
-        ----------
-        train_type - full for full train from scratch, update to get the latest model and train it.
+        Parameters:
+            train_type (StartTrainTopicModelRequest.TrainType):
+                full for full train from scratch, update to get the latest model and train it.
         """
         main_info = self.model_main_info()
         # Здесь можно визуализировать основную информацию о модели main_info
@@ -259,8 +260,7 @@ class ModelTrainer:
         """
         Генерирует новое имя для модели.
 
-        Returns
-        -------
-        Новое имя для модели
+        Returns:
+            Новое имя для модели
         """
         return datetime.datetime.now().strftime("%Y%m%d_%H%M%S")

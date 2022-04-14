@@ -3,20 +3,16 @@ import typing
 
 from pathlib import Path
 
-from ap.topic_model.v1.TopicModelBase_pb2 import DocId, DocumentPack
 
-
-def id_to_str(id: DocId) -> str:
+def id_to_str(id) -> str:
     """
     Конвертирует DocId в строку.
 
-    Parameters
-    ----------
-    id - DocId
+    Args:
+        id (DocId): id документа
 
-    Returns
-    -------
-    Строка из DocId
+    Returns:
+        Строка из DocId
     """
     return f"{id.Hi}_{id.Lo}"
 
@@ -33,17 +29,15 @@ def get_modalities(doc):
     return res
 
 
-def docs_from_pack(pack: DocumentPack) -> typing.Dict[str, typing.Dict[str, str]]:
+def docs_from_pack(pack) -> typing.Dict[str, typing.Dict[str, str]]:
     """
-    Создает dict документов из DocumentPack.
+    Создает dict документов из pack.
 
-    Parameters
-    ----------
-    pack - DocumentPack
+    Args:
+        pack (ap.topic_model.v1.TopicModelBase_pb2.DocumentPack): TODO
 
-    Returns
-    -------
-    dict из документов
+    Returns:
+        dict из документов
     """
 
 
@@ -57,13 +51,11 @@ def ensure_directory(path: str) -> str:
     """
     Создает директорию, если ее нет, и возвращает path.
 
-    Parameters
-    ----------
-    path - путь к директории
+    Args:
+        path (str): путь к директории
 
-    Returns
-    -------
-    path
+    Returns:
+        path
     """
     if not os.path.exists(path):
         os.makedirs(path)
@@ -75,14 +67,12 @@ def batch_names(starts_from, count) -> typing.Generator[str, None, None]:
     """
     Генерирует названия батчей в соответствие с форматом BatchVectorizer.
 
-    Parameters
-    ----------
-    starts_from - название файла последнего батча в директории
-    count - количество батчей
+    Args:
+        starts_from: название файла последнего батча в директории
+        count: количество батчей
 
-    Returns
-    -------
-    Генератор имен батчей
+    Returns:
+        (typing.Generator[str, None, None]): Генератор имен батчей
     """
     orda = ord("a")
     letters = 26
@@ -101,9 +91,10 @@ def batch_names(starts_from, count) -> typing.Generator[str, None, None]:
 
 def recursively_unlink(path: Path):
     """
-    Рекурсивное удаление файлов и директорий
-    :param path:
-    :return:
+    Рекурсивное удаление файлов и директорий.
+
+    Args:
+        path (Path): путь, по которому необходимо удалить все файлы.
     """
     for child in path.iterdir():
         if child.is_file():
@@ -111,5 +102,3 @@ def recursively_unlink(path: Path):
         else:
             recursively_unlink(child)
     path.rmdir()
-
-batch_names("aaaacw.batch", 10)
