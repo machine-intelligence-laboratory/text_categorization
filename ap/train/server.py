@@ -3,6 +3,7 @@ import logging
 import typing
 
 from concurrent import futures
+from time import sleep
 
 import click
 import grpc
@@ -49,6 +50,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         self._training_future = None
 
         self._executor.submit(run_metrics_server)
+        sleep(10)
 
         with open(train_conf, "r") as file:
             self._config = yaml.safe_load(file)
@@ -85,6 +87,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
             self._data_manager.write_new_docs(self._vw, grouped_docs)
 
             inc_metric('added_docs', len(grouped_docs))
+            self._data_manager.update_ds_metrics()
         except NoTranslationException:
             return AddDocumentsToModelResponse(
                 Status=AddDocumentsToModelResponse.AddDocumentsStatus.NO_TRANSLATION

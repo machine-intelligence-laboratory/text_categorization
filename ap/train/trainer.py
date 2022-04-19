@@ -57,6 +57,9 @@ class ModelTrainer:
 
             self.model = artm.load_artm_model(os.path.join(self._models_dir, last_model))
 
+        set_metric('num_topics', self._data_manager.config["artm_model_params"]["NUM_TOPICS"])
+        set_metric('num_bcg_topics', self._data_manager.config["artm_model_params"]["num_bcg_topic"])
+
     def _create_initial_model(self):
         """
         Creating an initial topic model.
@@ -230,8 +233,10 @@ class ModelTrainer:
             # тут можно визуализировать скоры модели scores_value
             if "PerlexityScore_@ru" in scores_value:
                 logging.info(f"PerlexityScore_@ru: {scores_value['PerlexityScore_@ru']}")
+                set_metric("perlexity_score_ru", scores_value['PerlexityScore_@ru'])
             if "PerlexityScore_@en" in scores_value:
                 logging.info(f"PerlexityScore_@en: {scores_value['PerlexityScore_@en']}")
+                set_metric("perlexity_score_en", scores_value['PerlexityScore_@en'])
             if self._path_to_dump_model.exists():
                 recursively_unlink(self._path_to_dump_model)
             self.model.dump_artm_model(str(self._path_to_dump_model))
