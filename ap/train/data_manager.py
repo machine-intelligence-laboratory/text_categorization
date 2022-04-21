@@ -354,7 +354,7 @@ class ModelDataManager:
             modality_distribution_all (dict): словарь, ключ - модальность,
                 значение - количество документов с такой модальностью
         """
-        with open(self.config["train_vw_path"]) as file:
+        with open(self.config["train_vw_path"], encoding='utf-8') as file:
             train_data = file.read()
         modality_distribution = {
             mod: train_data.count(f'|@{mod}')

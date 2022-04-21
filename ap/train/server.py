@@ -49,11 +49,13 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         self._executor = concurrent.futures.ProcessPoolExecutor(max_workers=3)
         self._training_future = None
 
-        self._executor.submit(run_metrics_server)
-        sleep(10)
-
         with open(train_conf, "r") as file:
             self._config = yaml.safe_load(file)
+
+        self._executor.submit(run_metrics_server, self._config)
+        sleep(10)
+
+
         bpe_models = load_bpe_models(self._config["BPE_models"])
         self._vw = VowpalWabbitBPE(bpe_models)
 

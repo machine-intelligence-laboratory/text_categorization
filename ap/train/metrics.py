@@ -1,3 +1,4 @@
+import itertools
 import json
 import logging
 
@@ -25,11 +26,11 @@ def inc_metric(key, value):
 async def handle(request):
     data = await request.json()
     logging.debug(json.dumps(data))
-    getattr(METRICS[data['key']], data['action'])(data['value'])
+    metric = METRICS.get(data['key'])
     return web.Response()
 
 
-def run_metrics_server():
+def run_metrics_server(config):
     try:
         from prometheus_client import Gauge
 
@@ -47,7 +48,18 @@ def run_metrics_server():
             'perlexity_score_ru': Gauge('perlexity_score_ru', 'Perplexity score russian'),
             'num_topics': Gauge('num_topics', 'Number of topics'),
             'num_bcg_topics': Gauge('num_bcg_topics', 'Number of background topics'),
+            'need_augmentation': Gauge('need_augmentation', 'Need augmentation'),
+            'aug_proportion': Gauge('aug_proportion', 'Augmentation proportion'),
+            'metrics_to_calculate': Gauge('metrics_to_calculate', 'Me'),
+            'num_modalities': Gauge('num_modalities', 'Number of background topics'),
+            'num_collection_passes': Gauge('num_collection_passes', 'Number of background topics'),
+            'tau_DecorrelatorPhi': Gauge('tau_DecorrelatorPhi', 'tau DecorrelatorPhi'),
+            'tau_SmoothTheta': Gauge('tau_SmoothTheta', 'tau SmoothTheta'),
+            'tau_SparseTheta': Gauge('tau_SparseTheta', 'tau SparseTheta'),
         })
+
+        for modality in itertools.chain(config["MODALITIES_TRAIN"].keys(), config["LANGUAGES_TRAIN"].keys()):
+            METRICS[f'modality_distribution_{modality}'] = Gauge(f'modality_distribution_{modality}', f'Modality distribution {modality}')
 
         app = web.Application()
         app.add_routes([web.post('/set', handle)])
