@@ -235,10 +235,10 @@ class ModelTrainer:
             # тут можно визуализировать скоры модели scores_value
             if "PerlexityScore_@ru" in scores_value:
                 logging.info(f"PerlexityScore_@ru: {scores_value['PerlexityScore_@ru']}")
-                set_metric("perlexity_score_ru", 0 if math.isnan(scores_value['PerlexityScore_@ru']) else scores_value['PerlexityScore_@ru'])
+                set_metric("perlexity_score_ru", -1 if math.isnan(scores_value['PerlexityScore_@ru']) else scores_value['PerlexityScore_@ru'])
             if "PerlexityScore_@en" in scores_value:
                 logging.info(f"PerlexityScore_@en: {scores_value['PerlexityScore_@en']}")
-                set_metric("perlexity_score_en",  0 if math.isnan(scores_value['PerlexityScore_@en']) else scores_value['PerlexityScore_@en'])
+                set_metric("perlexity_score_en",  -1 if math.isnan(scores_value['PerlexityScore_@en']) else scores_value['PerlexityScore_@en'])
             if self._path_to_dump_model.exists():
                 recursively_unlink(self._path_to_dump_model)
             self.model.dump_artm_model(str(self._path_to_dump_model))
