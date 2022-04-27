@@ -50,7 +50,6 @@ def run_metrics_server(config):
             'num_bcg_topics': Gauge('num_bcg_topics', 'Number of background topics'),
             'need_augmentation': Gauge('need_augmentation', 'Need augmentation'),
             'aug_proportion': Gauge('aug_proportion', 'Augmentation proportion'),
-            'metrics_to_calculate': Gauge('metrics_to_calculate', 'Me'),
             'num_modalities': Gauge('num_modalities', 'Number of background topics'),
             'num_collection_passes': Gauge('num_collection_passes', 'Number of background topics'),
             'tau_DecorrelatorPhi': Gauge('tau_DecorrelatorPhi', 'tau DecorrelatorPhi'),
