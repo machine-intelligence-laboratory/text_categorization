@@ -3,6 +3,7 @@
 """
 
 import logging
+import os
 from collections import Counter
 import numpy as np
 import yaml
@@ -74,6 +75,7 @@ class ModelDataManager:
         set_metric('average_rubric_size', self.average_rubric_size)
         set_metric('num_rubric', self.config["num_rubric"])
 
+        self.update_ds_metrics()
         # self._class_ids_path = os.path.join(data_dir, "classes.yaml")
         # with open(self._class_ids_path, "r") as file:
         #     self._class_ids = yaml.safe_load(file)
@@ -84,6 +86,12 @@ class ModelDataManager:
         #         self._new_class_ids = yaml.safe_load(file)
         # else:
         #     self._new_class_ids = {class_id: val for class_id, val in self._class_ids.items()}
+
+    def update_ds_metrics(self):
+        set_metric('train_size_bytes', os.path.getsize(self.train_path))
+        with open(self.train_path, encoding='utf-8') as file:
+            train_vw = file.readlines()
+            set_metric('train_size_docs', len(train_vw))
 
     def load_train_data(self):
         with open(self.train_path, encoding='utf-8') as file:
@@ -346,7 +354,7 @@ class ModelDataManager:
             modality_distribution_all (dict): словарь, ключ - модальность,
                 значение - количество документов с такой модальностью
         """
-        with open(self.config["train_vw_path"]) as file:
+        with open(self.config["train_vw_path"], encoding='utf-8') as file:
             train_data = file.read()
         modality_distribution = {
             mod: train_data.count(f'|@{mod}')
