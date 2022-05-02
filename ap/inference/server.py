@@ -15,7 +15,7 @@ import pandas as pd
 from ap.topic_model.v1.TopicModelBase_pb2 import Embedding
 from ap.topic_model.v1.TopicModelInference_pb2 import (
     GetDocumentsEmbeddingRequest,
-    GetDocumentsEmbeddingResponse,
+    GetDocumentsEmbeddingResponse, GetTopicExplanationRequest, GetTopicExplanationResponse,
 )
 from ap.topic_model.v1.TopicModelInference_pb2_grpc import (
     TopicModelInferenceServiceServicer,
@@ -181,6 +181,9 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
         return GetDocumentsEmbeddingResponse(
             Embeddings=emb_doc
         )
+
+    def GetTopicExplanation(self, request: GetTopicExplanationRequest, context) -> GetTopicExplanationResponse:
+        raise NotImplementedError
 
 
 @click.command()
