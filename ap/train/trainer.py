@@ -43,11 +43,13 @@ class ModelTrainer:
 
         if (
                 train_type == StartTrainTopicModelRequest.TrainType.FULL
-                or len(current_models) == 0
         ):
             logging.info("Start full training")
             self.model = self._create_initial_model()
         else:
+            if len(current_models) == 0:
+                raise Exception("Can't update a model - no models found")
+
             # TODO: загрузить модель для дообучения
             last_model = max(current_models)
             logging.info("Start training based on %s model", last_model)

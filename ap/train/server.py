@@ -124,7 +124,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
             )
 
         self._training_future = self._executor.submit(
-            self._trainer.train_model, [request.Type]
+            self._trainer.train_model, request.Type
         )
 
         return StartTrainTopicModelResponse(
@@ -156,7 +156,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
             )
         elif (
                 self._training_future.cancelled()
-                or logging.error(self._training_future.exception()) is not None
+                or self._training_future.exception() is not None
         ):
             logging.error(str(self._training_future.exception()))
             return TrainTopicModelStatusResponse(

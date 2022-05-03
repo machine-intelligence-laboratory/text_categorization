@@ -22,7 +22,7 @@ from ap.topic_model.v1.TopicModelInference_pb2_grpc import (
     add_TopicModelInferenceServiceServicer_to_server,
 )
 from ap.utils.bpe import load_bpe_models
-from ap.utils.general import id_to_str
+from ap.utils.general import id_to_str, get_modalities
 from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
@@ -75,6 +75,13 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
             train_grnti[doc_id] = rubric
         return train_grnti
 
+    def _get_lang(self, doc):
+        for modality in doc.Modalities:
+            if modality.Key == 'lang':
+                return modality.Value
+
+        raise Exception("No language")
+
     def _create_batches(self, dock_pack, batches_dir):
         with open(os.path.join(self._rubric_dir, 'udk_codes.json'), "r") as file:
             udk_codes = json.loads(file.read())
@@ -85,10 +92,11 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
         vocab = set()
 
         for doc in dock_pack.Documents:
-            modality = ["@" + doc.Language]
+            lang = self._get_lang(doc)
+            modality = ["@" + lang]
             doc_id = id_to_str(doc.Id)
 
-            doc_vw_dict = {doc.Language: " ".join(doc.Tokens)}
+            doc_vw_dict = {lang: " ".join(doc.Tokens)}
             if doc_id in udk_codes:
                 modality += ["@UDK"]
                 doc_vw_dict.update({"@UDK": udk_codes[doc_id]})
