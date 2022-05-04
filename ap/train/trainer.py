@@ -36,7 +36,6 @@ class ModelTrainer:
         model_name = self.generate_model_name()
         self._path_to_dump_model = Path(self._data_manager.config["path_experiment"]).joinpath(model_name)
 
-
     def _load_model(self, train_type):
         import artm
         current_models = os.listdir(self._models_dir)
@@ -197,14 +196,12 @@ class ModelTrainer:
         Returns:
             info: основная информация о модели
         """
-        set_metric('need_augmentation', 1 if self._data_manager.config.get("need_augmentation", False) else 0)
         set_metric('aug_proportion', self._data_manager.config.get("aug_proportion", 0))
         set_metric('num_modalities', len(self._data_manager.class_ids))
 
         set_metric('tau_DecorrelatorPhi', self._data_manager.config["artm_model_params"]['tau_DecorrelatorPhi'])
         set_metric('tau_SmoothTheta', self._data_manager.config["artm_model_params"]['tau_SmoothTheta'])
         set_metric('tau_SparseTheta', self._data_manager.config["artm_model_params"]['tau_SparseTheta'])
-
 
         for mod, val in self._data_manager.get_modality_distribution().items():
             set_metric(f'modality_distribution_{mod}', val)
@@ -221,24 +218,24 @@ class ModelTrainer:
             train_type (StartTrainTopicModelRequest.TrainType):
                 full for full train from scratch, update to get the latest model and train it.
         """
-        # Здесь можно визуализировать основную информацию о модели main_info
         logging.info("Start model training")
         self.set_metrics()
         self._load_model(train_type)
         self._data_manager.load_train_data()
         for epoch in range(self._data_manager.config['artm_model_params']["num_collection_passes"]):
             logging.info(f'Training epoch {epoch}')
-            set_metric('training_iteration', epoch+1)
+            set_metric('training_iteration', epoch + 1)
             self._train_epoch()
 
             scores_value = self.model_scores_value
-            # тут можно визуализировать скоры модели scores_value
             if "PerlexityScore_@ru" in scores_value:
                 logging.info(f"PerlexityScore_@ru: {scores_value['PerlexityScore_@ru']}")
-                set_metric("perlexity_score_ru", -1 if math.isnan(scores_value['PerlexityScore_@ru']) else scores_value['PerlexityScore_@ru'])
+                set_metric("perlexity_score_ru",
+                           -1 if math.isnan(scores_value['PerlexityScore_@ru']) else scores_value['PerlexityScore_@ru'])
             if "PerlexityScore_@en" in scores_value:
                 logging.info(f"PerlexityScore_@en: {scores_value['PerlexityScore_@en']}")
-                set_metric("perlexity_score_en",  -1 if math.isnan(scores_value['PerlexityScore_@en']) else scores_value['PerlexityScore_@en'])
+                set_metric("perlexity_score_en",
+                           -1 if math.isnan(scores_value['PerlexityScore_@en']) else scores_value['PerlexityScore_@en'])
             if self._path_to_dump_model.exists():
                 recursively_unlink(self._path_to_dump_model)
             self.model.dump_artm_model(str(self._path_to_dump_model))

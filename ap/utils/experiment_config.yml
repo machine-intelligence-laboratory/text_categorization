@@ -11,9 +11,6 @@ path_articles_rubrics_train_grnti: '/data/datasets/Antiplagiat/grnti_codes.json'
 path_elib_train_rubrics_grnti: '/data/datasets/Antiplagiat/articles_train_val2/data_train/elib_train_grnti_codes.json'
 path_grnti_mapping: '/data/datasets/Antiplagiat/grnti_to_number.json'
 
-need_augmentation: False
-aug_proportion: 0.2
-
 # metrics parameters
 metrics_to_calculate: ['analogy']
 recalculate_train_centroids: True
