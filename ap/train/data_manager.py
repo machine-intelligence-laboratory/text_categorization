@@ -26,6 +26,7 @@ class ModelDataManager:
     """
     Класс для поддержания работы с данными
     """
+
     # MAX_FILE_SIZE = 512 * 1024 ^ 2
     # BATCH_SIZE = 10000
 
@@ -138,9 +139,9 @@ class ModelDataManager:
             train_grnti[doc_id] = rubric
         return train_grnti
 
-    def _get_balanced_doc_ids(self) -> list:
+    def _generate_vw_file_balanced_by_rubric(self):
         """
-        Создаёт тренировочные данные, сбалансированные относительно рубрик ГРНТИ.
+        Генерирует vw файл, где данные сбалансирваны по рубрикам ГРНТИ.
 
         Возвращает balance_doc_ids — список идентификаторов документов, сбалансированных по рубрикам.
         Документы всех рубрик встречаются в balance_doc_ids одинаковое количество раз, равное среднему размеру рубрики.
@@ -148,43 +149,42 @@ class ModelDataManager:
         # TODO: а это точно не вызывает проблем?
         Функция изменяет self.train_dict, умноженая счетчики токенов на
         количество вхождений id документа в balance_doc_ids.
-
-        Returns:
-            balanced_doc_ids (list): список id документов, сбанасированный относительно рубрик ГРНТИ
         """
         average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
-        balanced_doc_ids = []
-        for rubric in set(self.train_grnti.values()):
-            doc_ids_rubric = np.random.choice(self._docs_of_rubrics[rubric], average_rubric_size)
-            balanced_doc_ids.extend(doc_ids_rubric)
-
-            doc_ids_count = Counter(doc_ids_rubric)
-            for doc_id, count in doc_ids_count.items():
-                if count > 1:
-                    new_line_dict = dict()
-                    for line_lang in self.train_dict[doc_id].split(' |@')[1:]:
-                        lang = line_lang.split()[0]
-                        line_lang_dict = {
-                            token_with_count.split(':')[0]: count *
-                                                            int(token_with_count.split(':')[1])
-                            for token_with_count in line_lang.split()[1:]
-                        }
-                        new_line_lang = ' '.join([lang] +
-                                                 [':'.join([token, str(count)])
-                                                  for token, count in line_lang_dict.items()])
-                        new_line_dict[lang] = new_line_lang
-                    new_line = ' |@'.join([doc_id] + list(new_line_dict.values()))
-                    self.train_dict[doc_id] = new_line
-        return balanced_doc_ids
-
-    def _generate_vw_file_balanced_by_rubric(self):
-        """
-        Генерирует vw файл, где данные сбалансирваны по рубрикам ГРНТИ.
-        """
-        balanced_doc_ids = self._get_balanced_doc_ids()
+        # balanced_doc_ids = []
         with open(self._path_balanced_train, 'w') as file:
-            file.writelines([self.train_dict[doc_id].strip() + '\n'
-                             for doc_id in balanced_doc_ids])
+            for rubric in set(self.train_grnti.values()):
+                doc_ids_rubric = np.random.choice(self._docs_of_rubrics[rubric], average_rubric_size)
+                # balanced_doc_ids.extend(doc_ids_rubric)
+
+                doc_ids_count = Counter(doc_ids_rubric)
+                for doc_id, count in doc_ids_count.items():
+                    if count > 1:
+                        new_line_dict = dict()
+                        for line_lang in self.train_dict[doc_id].split(' |@')[1:]:
+                            lang = line_lang.split()[0]
+                            line_lang_dict = {
+                                token_with_count.split(':')[0]: count *
+                                                                int(token_with_count.split(':')[1])
+                                for token_with_count in line_lang.split()[1:]
+                            }
+                            new_line_lang = ' '.join([lang] +
+                                                     [':'.join([token, str(count)])
+                                                      for token, count in line_lang_dict.items()])
+                            new_line_dict[lang] = new_line_lang
+                        new_line = ' |@'.join([doc_id] + list(new_line_dict.values()))
+                        file.write(new_line + '\n')
+                        # self.train_dict[doc_id] = new_line
+        # return balanced_doc_ids
+
+    # def _generate_vw_file_balanced_by_rubric(self):
+    #     """
+    #     Генерирует vw файл, где данные сбалансирваны по рубрикам ГРНТИ.
+    #     """
+    #     balanced_doc_ids = self._get_balanced_doc_ids()
+    #     with open(self._path_balanced_train, 'w') as file:
+    #         file.writelines([self.train_dict[doc_id].strip() + '\n'
+    #                          for doc_id in balanced_doc_ids])
 
     def generate_batches_balanced_by_rubric(self):
         """
@@ -244,7 +244,6 @@ class ModelDataManager:
             logging.exception(e)
             raise e
 
-
     def write_new_docs(self, vw, docs):
         """
         TODO
@@ -262,7 +261,6 @@ class ModelDataManager:
             raise NoTranslationException()
 
         vw.save_docs(self.train_path, docs)
-
 
     def get_modality_distribution(self) -> typing.Dict[str, int]:
         """
