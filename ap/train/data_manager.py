@@ -6,6 +6,7 @@ import logging
 import os
 from collections import Counter
 import numpy as np
+import shutil
 import yaml
 
 import json
@@ -13,9 +14,7 @@ import typing
 from pathlib import Path
 
 from ap.train.metrics import set_metric
-from ap.utils.bpe import load_bpe_models
 from ap.utils.general import recursively_unlink
-from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
 class NoTranslationException(Exception):
@@ -26,9 +25,6 @@ class ModelDataManager:
     """
     Класс для поддержания работы с данными
     """
-
-    # MAX_FILE_SIZE = 512 * 1024 ^ 2
-    # BATCH_SIZE = 10000
 
     def __init__(self, data_dir: str, experiment_config: str):
         """
@@ -41,6 +37,7 @@ class ModelDataManager:
         self._config_path = experiment_config
         with open(self._config_path, "r") as file:
             self.config = yaml.safe_load(file)
+        np.random.seed(seed=self.config.get('seed', 42))
 
         self._data_dir = data_dir
 
@@ -107,10 +104,9 @@ class ModelDataManager:
         Функция изменяет vw-документы, умноженая счетчики токенов на
         количество вхождений id документа в doc_ids_rubric.
         """
-        average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
         with open(self._path_balanced_train, 'w') as file:
             for rubric in set(self.train_grnti.values()):
-                doc_ids_rubric = np.random.choice(self._docs_of_rubrics[rubric], average_rubric_size)
+                doc_ids_rubric = np.random.choice(self._docs_of_rubrics[rubric], self.average_rubric_size)
 
                 doc_ids_count = Counter(doc_ids_rubric)
                 for doc_id, count in doc_ids_count.items():
@@ -173,16 +169,18 @@ class ModelDataManager:
             logging.info('Calling artm 2nd time')
 
             if self._path_batches_wiki:
-                batch_vectorizer = artm.BatchVectorizer(
-                    data_path=[self._path_to_batches, self._path_batches_wiki],
-                    data_weight=[1, 1]
-                )
+                # // 1000, т.к. в 1 батче Википедии 1000 документов.
+                wiki_batches_amount = self.average_rubric_size // 1000 + 1
+                wiki_batch_subsample = np.random.choice(
+                    list(Path(self._path_batches_wiki).iterdir()), wiki_batches_amount)
+                for batch in wiki_batch_subsample:
+                    shutil.copy(batch, self._path_to_batches)
                 logging.info('Built batches with wiki')
             else:
-                batch_vectorizer = artm.BatchVectorizer(
-                    data_path=self._path_to_batches
-                )
                 logging.info('Built batches without wiki')
+            batch_vectorizer = artm.BatchVectorizer(
+                data_path=self._path_to_batches
+            )
             return batch_vectorizer
         except Exception as e:
             logging.exception(e)
