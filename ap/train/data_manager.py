@@ -44,7 +44,9 @@ class ModelDataManager:
 
         self._data_dir = data_dir
 
-        self.train_grnti: typing.Dict[str, str] = self._get_rubric_of_train_docs()
+        with open(self.config.get['rubrics_train']) as file:
+            self.train_grnti: typing.Dict[str, str] = json.load(file)
+
         self.train_path = self.config["train_vw_path"]
 
         path_experiment = Path(self.config["path_experiment"])
@@ -53,6 +55,7 @@ class ModelDataManager:
         self._path_to_batches = path_train_data.joinpath('batches_balanced')
         self._path_balanced_train = path_train_data.joinpath('train_balanced.txt')
         self._path_batches_wiki = self.config.get("path_wiki_train_batches", None)
+        self._balancing_modality = self.config.get("balancing_modality", 'GRNTI')
 
         # self._batches_dir = ensure_directory(os.path.join(data_dir, "batches"))
         # self._new_batches_dir = ensure_directory(os.path.join(data_dir, "batches_balanced"))
@@ -68,13 +71,14 @@ class ModelDataManager:
         self.class_ids = all_modalities_train
 
         self.average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
+        num_rubric = set(self.train_grnti.values())
         logging.info('Balanced learning is used: at each epoch ' +
                      'rubric-balanced documents are sampled from the training data.')
         logging.info(f'Each epoch uses {self.average_rubric_size} documents ' +
-                     f'for each of {self.config["num_rubric"]} rubrics.')
+                     f'for each of {num_rubric} rubrics.')
 
         set_metric('average_rubric_size', self.average_rubric_size)
-        set_metric('num_rubric', self.config["num_rubric"])
+        set_metric('num_rubric', num_rubric)
 
         self.update_ds_metrics()
         # self._class_ids_path = os.path.join(data_dir, "classes.yaml")
@@ -106,38 +110,6 @@ class ModelDataManager:
                 docs_of_rubrics[rubric].append(doc_id)
 
         self._docs_of_rubrics: typing.Dict[str, list] = docs_of_rubrics
-
-    def _get_rubric_of_train_docs(self):
-        """
-        Возвращает словарь, где ключ - id документа, значение - номер рубрики ГРНТИ этого документа.
-        Рубрики не включают рубрику "нет".
-
-        Returns:
-            train_grnti (dict): словарь, где ключ - id документа, значение - номер рубрики ГРНТИ этого документа.
-        """
-        with open(self.config["path_articles_rubrics_train_grnti"]) as file:
-            articles_grnti_with_no = json.load(file)
-        with open(self.config["path_elib_train_rubrics_grnti"]) as file:
-            elib_grnti_to_fix_with_no = json.load(file)
-        with open(self.config["path_grnti_mapping"]) as file:
-            grnti_to_number = json.load(file)
-
-        articles_grnti = {doc_id: rubric
-                          for doc_id, rubric in articles_grnti_with_no.items()
-                          if rubric != 'нет'}
-
-        elib_grnti = {doc_id[:-len('.txt')]: rubric
-                      for doc_id, rubric in elib_grnti_to_fix_with_no.items()
-                      if rubric != 'нет'}
-
-        train_grnti = dict()
-        for doc_id in articles_grnti:
-            rubric = str(grnti_to_number[articles_grnti[doc_id]])
-            train_grnti[doc_id] = rubric
-        for doc_id in elib_grnti:
-            rubric = str(grnti_to_number[elib_grnti[doc_id]])
-            train_grnti[doc_id] = rubric
-        return train_grnti
 
     def _generate_vw_file_balanced_by_rubric(self):
         """
