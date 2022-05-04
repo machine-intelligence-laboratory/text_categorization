@@ -86,7 +86,7 @@ class ModelTrainer:
         model = artm.ARTM(num_topics=artm_model_params["NUM_TOPICS"],
                           theta_columns_naming='title',
                           class_ids=modalities_with_weight,
-                          show_progress_bars=False,
+                          show_progress_bars=True,
                           dictionary=dictionary)
 
         model.scores.add(artm.SparsityThetaScore(name='SparsityThetaScore',
