@@ -71,7 +71,7 @@ class ModelDataManager:
         self.class_ids = all_modalities_train
 
         self.average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
-        num_rubric = set(self.train_grnti.values())
+        num_rubric = len(set(self.train_grnti.values()))
         logging.info('Balanced learning is used: at each epoch ' +
                      'rubric-balanced documents are sampled from the training data.')
         logging.info(f'Each epoch uses {self.average_rubric_size} documents ' +
