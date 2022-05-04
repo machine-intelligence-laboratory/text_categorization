@@ -45,6 +45,7 @@ class ModelDataManager:
         self._data_dir = data_dir
 
         with open(self.config['rubrics_train']) as file:
+            # TODO: change variable name
             self.train_grnti: typing.Dict[str, str] = json.load(file)
 
         self.train_path = self.config["train_vw_path"]
@@ -56,11 +57,6 @@ class ModelDataManager:
         self._path_balanced_train = path_train_data.joinpath('train_balanced.txt')
         self._path_batches_wiki = self.config.get("path_wiki_train_batches", None)
         self._balancing_modality = self.config.get("balancing_modality", 'GRNTI')
-
-        # self._batches_dir = ensure_directory(os.path.join(data_dir, "batches"))
-        # self._new_batches_dir = ensure_directory(os.path.join(data_dir, "batches_balanced"))
-
-        # self._current_vw_name = os.path.join(data_dir, "train_balanced.txt")
 
         # TODO: в добучении
         # старые модальности - вытащить из модели
@@ -81,16 +77,6 @@ class ModelDataManager:
         set_metric('num_rubric', num_rubric)
 
         self.update_ds_metrics()
-        # self._class_ids_path = os.path.join(data_dir, "classes.yaml")
-        # with open(self._class_ids_path, "r") as file:
-        #     self._class_ids = yaml.safe_load(file)
-
-        # self._new_class_ids_path = os.path.join(data_dir, "classes_new.yaml")
-        # if os.path.exists(self._new_class_ids_path):
-        #     with open(self._new_class_ids_path, "r") as file:
-        #         self._new_class_ids = yaml.safe_load(file)
-        # else:
-        #     self._new_class_ids = {class_id: val for class_id, val in self._class_ids.items()}
 
     def update_ds_metrics(self):
         set_metric('train_size_bytes', os.path.getsize(self.train_path))
@@ -113,21 +99,18 @@ class ModelDataManager:
 
     def _generate_vw_file_balanced_by_rubric(self):
         """
-        Генерирует vw файл, где данные сбалансирваны по рубрикам ГРНТИ.
+        Генерирует vw файл, где данные сбалансирваны по рубрикам из self.train_grnti.
 
         Возвращает balance_doc_ids — список идентификаторов документов, сбалансированных по рубрикам.
         Документы всех рубрик встречаются в balance_doc_ids одинаковое количество раз, равное среднему размеру рубрики.
 
-        # TODO: а это точно не вызывает проблем?
-        Функция изменяет self.train_dict, умноженая счетчики токенов на
-        количество вхождений id документа в balance_doc_ids.
+        Функция изменяет vw-документы, умноженая счетчики токенов на
+        количество вхождений id документа в doc_ids_rubric.
         """
         average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
-        # balanced_doc_ids = []
         with open(self._path_balanced_train, 'w') as file:
             for rubric in set(self.train_grnti.values()):
                 doc_ids_rubric = np.random.choice(self._docs_of_rubrics[rubric], average_rubric_size)
-                # balanced_doc_ids.extend(doc_ids_rubric)
 
                 doc_ids_count = Counter(doc_ids_rubric)
                 for doc_id, count in doc_ids_count.items():
@@ -146,17 +129,6 @@ class ModelDataManager:
                             new_line_dict[lang] = new_line_lang
                         new_line = ' |@'.join([doc_id] + list(new_line_dict.values()))
                         file.write(new_line + '\n')
-                        # self.train_dict[doc_id] = new_line
-        # return balanced_doc_ids
-
-    # def _generate_vw_file_balanced_by_rubric(self):
-    #     """
-    #     Генерирует vw файл, где данные сбалансирваны по рубрикам ГРНТИ.
-    #     """
-    #     balanced_doc_ids = self._get_balanced_doc_ids()
-    #     with open(self._path_balanced_train, 'w') as file:
-    #         file.writelines([self.train_dict[doc_id].strip() + '\n'
-    #                          for doc_id in balanced_doc_ids])
 
     def generate_batches_balanced_by_rubric(self):
         """
