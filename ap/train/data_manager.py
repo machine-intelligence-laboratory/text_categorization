@@ -44,7 +44,7 @@ class ModelDataManager:
 
         self._data_dir = data_dir
 
-        with open(self.config.get['rubrics_train']) as file:
+        with open(self.config['rubrics_train']) as file:
             self.train_grnti: typing.Dict[str, str] = json.load(file)
 
         self.train_path = self.config["train_vw_path"]
