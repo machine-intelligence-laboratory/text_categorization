@@ -7,7 +7,7 @@ BPE_models: '/data/datasets/Antiplagiat/BPE_models'
 
 # rubrics
 # Путь json файлу, в котором dict. key (str) - id документа, value (str) - номер рубрики
-rubrics_train: '/data/datasets/Antiplagiat/rubrics_train_grnti.json'
+balancing_rubrics_train: '/data/datasets/Antiplagiat/rubrics_train_grnti.json'
 wiki_balancing: True
 seed: 1
 
