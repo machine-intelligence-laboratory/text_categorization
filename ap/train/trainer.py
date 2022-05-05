@@ -196,7 +196,6 @@ class ModelTrainer:
         Returns:
             info: основная информация о модели
         """
-        set_metric('aug_proportion', self._data_manager.config.get("aug_proportion", 0))
         set_metric('num_modalities', len(self._data_manager.class_ids))
 
         set_metric('tau_DecorrelatorPhi', self._data_manager.config["artm_model_params"]['tau_DecorrelatorPhi'])

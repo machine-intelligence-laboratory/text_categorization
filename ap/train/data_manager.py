@@ -42,8 +42,7 @@ class ModelDataManager:
         self._data_dir = data_dir
 
         with open(self.config['rubrics_train']) as file:
-            # TODO: change variable name
-            self.train_grnti: typing.Dict[str, str] = json.load(file)
+            self.rubrics_train: typing.Dict[str, str] = json.load(file)
 
         self.train_path = self.config["train_vw_path"]
 
@@ -63,8 +62,8 @@ class ModelDataManager:
                                 **self.config["LANGUAGES_TRAIN"]}
         self.class_ids = all_modalities_train
 
-        self.average_rubric_size = int(len(self.train_grnti) / len(set(self.train_grnti.values())))
-        num_rubric = len(set(self.train_grnti.values()))
+        self.average_rubric_size = int(len(self.rubrics_train) / len(set(self.rubrics_train.values())))
+        num_rubric = len(set(self.rubrics_train.values()))
         logging.info('Balanced learning is used: at each epoch ' +
                      'rubric-balanced documents are sampled from the training data.')
         logging.info(f'Each epoch uses {self.average_rubric_size} documents ' +
@@ -82,21 +81,24 @@ class ModelDataManager:
             set_metric('train_size_docs', len(train_vw))
 
     def load_train_data(self):
+        """
+        TODO
+        """
         with open(self.train_path, encoding='utf-8') as file:
             train_vw = file.readlines()
 
-        self.train_dict = {line.split()[0]: line for line in train_vw}
+        self.train_docs = {line.split()[0]: line for line in train_vw}
 
-        docs_of_rubrics = {rubric: [] for rubric in set(self.train_grnti.values())}
-        for doc_id, rubric in self.train_grnti.items():
-            if doc_id in self.train_dict:
+        docs_of_rubrics = {rubric: [] for rubric in set(self.rubrics_train.values())}
+        for doc_id, rubric in self.rubrics_train.items():
+            if doc_id in self.train_docs:
                 docs_of_rubrics[rubric].append(doc_id)
 
         self._docs_of_rubrics: typing.Dict[str, list] = docs_of_rubrics
 
     def _generate_vw_file_balanced_by_rubric(self):
         """
-        Генерирует vw файл, где данные сбалансирваны по рубрикам из self.train_grnti.
+        Генерирует vw файл, где данные сбалансирваны по рубрикам из self.rubrics_train.
 
         Возвращает balance_doc_ids — список идентификаторов документов, сбалансированных по рубрикам.
         Документы всех рубрик встречаются в balance_doc_ids одинаковое количество раз, равное среднему размеру рубрики.
@@ -105,14 +107,14 @@ class ModelDataManager:
         количество вхождений id документа в doc_ids_rubric.
         """
         with open(self._path_balanced_train, 'w') as file:
-            for rubric in set(self.train_grnti.values()):
+            for rubric in set(self.rubrics_train.values()):
                 doc_ids_rubric = np.random.choice(self._docs_of_rubrics[rubric], self.average_rubric_size)
 
                 doc_ids_count = Counter(doc_ids_rubric)
                 for doc_id, count in doc_ids_count.items():
                     if count > 1:
                         new_line_dict = dict()
-                        for line_lang in self.train_dict[doc_id].split(' |@')[1:]:
+                        for line_lang in self.train_docs[doc_id].split(' |@')[1:]:
                             lang = line_lang.split()[0]
                             line_lang_dict = {
                                 token_with_count.split(':')[0]: count *
@@ -221,7 +223,7 @@ class ModelDataManager:
         содержащего количество документов Wikipedia по модальностям, эти данные учитываются для
         оценки всего тренировочного датасета.
 
-        Args:
+        Returns:
             modality_distribution_all (dict): словарь, ключ - модальность,
                 значение - количество документов с такой модальностью
         """
