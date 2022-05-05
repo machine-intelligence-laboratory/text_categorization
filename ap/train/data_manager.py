@@ -169,18 +169,27 @@ class ModelDataManager:
             logging.info('Calling artm 2nd time')
 
             if self._path_batches_wiki:
-                # // 1000, т.к. в 1 батче Википедии 1000 документов.
-                wiki_batches_amount = self.average_rubric_size // 1000 + 1
-                wiki_batch_subsample = np.random.choice(
-                    list(Path(self._path_batches_wiki).iterdir()), wiki_batches_amount)
-                for batch in wiki_batch_subsample:
-                    shutil.copy(batch, self._path_to_batches)
+                if self.config.get('wiki_balancing', False):
+                    # // 1000, т.к. в 1 батче Википедии 1000 документов.
+                    wiki_batches_amount = self.average_rubric_size // 1000 + 1
+                    wiki_batch_subsample = np.random.choice(
+                        list(Path(self._path_batches_wiki).iterdir()), wiki_batches_amount)
+                    for batch in wiki_batch_subsample:
+                        shutil.copy(batch, self._path_to_batches)
+                    batch_vectorizer = artm.BatchVectorizer(
+                        data_path=self._path_to_batches
+                    )
+                else:
+                    batch_vectorizer = artm.BatchVectorizer(
+                        data_path=[self._path_to_batches, self._path_batches_wiki],
+                        data_weight=[1, 1]
+                    )
                 logging.info('Built batches with wiki')
             else:
+                batch_vectorizer = artm.BatchVectorizer(
+                    data_path=self._path_to_batches
+                )
                 logging.info('Built batches without wiki')
-            batch_vectorizer = artm.BatchVectorizer(
-                data_path=self._path_to_batches
-            )
             return batch_vectorizer
         except Exception as e:
             logging.exception(e)
