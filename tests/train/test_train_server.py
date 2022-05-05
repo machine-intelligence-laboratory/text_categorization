@@ -56,9 +56,6 @@ def data_dir(tmpdir_factory):
 @pytest.fixture(scope="module")
 def test_conf(data_dir):
     return os.path.join(data_dir, "test_config.yml")
-    # with open('tests/data/test_config.yml') as f:
-    #     return yaml.safe_load(f)
-
 
 @pytest.fixture(scope="module")
 def grpc_servicer(test_conf, models_dir, data_dir):
@@ -87,20 +84,16 @@ def clean_data(data_dir):
 
     with open(os.path.join(data_dir, "test_config.yml"), 'w') as f:
         yaml.safe_dump(c, f)
-    # vw_new = os.path.join(data_dir, "vw_new")
-    # for file in os.listdir(vw_new):
-    #     os.remove(os.path.join(vw_new, file))
-
 
 @pytest.mark.usefixtures("clean_data")
 def test_add_documents(models_dir, data_dir, grpc_stub):
     docs = [
         Document(Id=DocId(Lo=0, Hi=0), Tokens=["a", "b"],
                  Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'),
-                             Modality(Key="GRNTI", Value='11806946'), ]),
+                             Modality(Key="GRNTI", Value='1'), ]),
         Document(Id=DocId(Lo=0, Hi=1), Tokens=["c", "D"],
                  Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'),
-                             Modality(Key="GRNTI", Value='11806946'), ]),
+                             Modality(Key="GRNTI", Value='1'), ]),
     ]
     parallel_docs = ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)])
     resp = grpc_stub.AddDocumentsToModel(
@@ -121,7 +114,7 @@ def test_add_documents_new_lang_no_bpe(models_dir, data_dir, grpc_stub):
     docs = [
         Document(Id=DocId(Lo=0, Hi=0), Tokens=["a", "b"],
                  Modalities=[Modality(Key="lang", Value='de'), Modality(Key="UDK", Value='6'),
-                             Modality(Key="GRNTI", Value='11806946'), ]),
+                             Modality(Key="GRNTI", Value='1'), ]),
     ]
     parallel_docs = ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)])
     resp = grpc_stub.AddDocumentsToModel(
@@ -136,28 +129,6 @@ def test_add_documents_new_lang_no_bpe(models_dir, data_dir, grpc_stub):
         assert len(res) == 2
 
 def test_start_train(data_dir, grpc_stub):
-    # docs = [
-    #     Document(Id=DocId(Lo=0, Hi=0), Tokens=["a", "b"], Language="gf"),
-    #     Document(Id=DocId(Lo=0, Hi=1), Tokens=["c", "D"], Language="en"),
-    #     Document(Id=DocId(Lo=1, Hi=0), Tokens=["e", "f"], Language="gf"),
-    #     Document(Id=DocId(Lo=1, Hi=1), Tokens=["c", "b"], Language="en"),
-    #     Document(Id=DocId(Lo=2, Hi=0), Tokens=["a", "f"], Language="gf"),
-    #     Document(Id=DocId(Lo=2, Hi=1), Tokens=["a", "b"], Language="en"),
-    # ]
-    # parallel_docs = [
-    #     ParallelDocIds(Ids=[DocId(Lo=0, Hi=0), DocId(Lo=0, Hi=1)]),
-    #     ParallelDocIds(Ids=[DocId(Lo=1, Hi=0), DocId(Lo=1, Hi=1)]),
-    #     ParallelDocIds(Ids=[DocId(Lo=2, Hi=0), DocId(Lo=2, Hi=1)]),
-    # ]
-    #
-    # resp = grpc_stub.AddDocumentsToModel(
-    #     AddDocumentsToModelRequest(
-    #         Collection=DocumentPack(Documents=docs), ParallelDocuments=parallel_docs
-    #     )
-    # )
-    #
-    # assert resp.Status == AddDocumentsToModelResponse.AddDocumentsStatus.OK
-
     resp = grpc_stub.StartTrainTopicModel(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.FULL)
     )
