@@ -238,7 +238,6 @@ class ModelTrainer:
             if self._path_to_dump_model.exists():
                 recursively_unlink(self._path_to_dump_model)
             self.model.dump_artm_model(str(self._path_to_dump_model))
-    logging.info("EndTrainTopicModel")
 
     @staticmethod
     def generate_model_name() -> str:
