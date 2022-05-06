@@ -2,16 +2,17 @@
 Модуль для поддержания работы с данными
 """
 
+import json
 import logging
 import os
-from collections import Counter
-import numpy as np
-import shutil
-import yaml
-
-import json
 import typing
+import shutil
+
+from collections import Counter
 from pathlib import Path
+
+import numpy as np
+import yaml
 
 from ap.train.metrics import set_metric
 from ap.utils.general import recursively_unlink
@@ -241,10 +242,10 @@ class ModelDataManager:
                 modality_distribution_wiki = yaml.load(file)
             logging.info("Training data includes Wikipedia articles.")
         else:
-            modality_distribution_wiki = dict()
+            modality_distribution_wiki = {}
             logging.info("Training data DOES NOT includes Wikipedia articles.")
 
-        modality_distribution_all = dict()
+        modality_distribution_all = {}
         for mod in modality_distribution:
             modality_distribution_all[mod] = modality_distribution[mod]
         for mod in modality_distribution_wiki:
