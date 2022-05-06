@@ -2,13 +2,9 @@ import datetime
 import logging
 import math
 import os
-import typing
 
 from pathlib import Path
-from time import sleep
 
-from prometheus_client import Gauge, start_http_server
-from tqdm import tqdm
 from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
 from ap.train.metrics import set_metric
@@ -46,11 +42,13 @@ class ModelTrainer:
 
         if (
                 train_type == StartTrainTopicModelRequest.TrainType.FULL
-                or len(current_models) == 0
         ):
             logging.info("Start full training")
             self.model = self._create_initial_model()
         else:
+            if len(current_models) == 0:
+                raise Exception("Can't update a model - no models found")
+
             # TODO: загрузить модель для дообучения
             last_model = max(current_models)
             logging.info("Start training based on %s model", last_model)
