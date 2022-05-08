@@ -22,7 +22,7 @@ from ap.topic_model.v1.TopicModelInference_pb2_grpc import (
     add_TopicModelInferenceServiceServicer_to_server,
 )
 from ap.utils.bpe import load_bpe_models
-from ap.utils.general import id_to_str, get_modalities
+from ap.utils.general import id_to_str
 from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
@@ -42,39 +42,6 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
         self._work_dir = work_dir
         self._rubric_dir = rubric_dir
 
-    def get_rubric_of_train_docs(self):
-        """
-        Get dict where keys - document ids, value - number of GRNTI rubric of document.
-
-        Do not contains rubric 'нет'.
-
-        Returns:
-            train_grnti (dict): dict where keys - document ids, value - numer of GRNTI rubric of document.
-        """
-        with open(os.path.join(self._rubric_dir, 'grnti_codes.json')) as file:
-            articles_grnti_with_no = json.load(file)
-        with open(os.path.join(self._rubric_dir, "elib_train_grnti_codes.json")) as file:
-            elib_grnti_to_fix_with_no = json.load(file)
-        with open(os.path.join(self._rubric_dir, "grnti_to_number.json")) as file:
-            grnti_to_number = json.load(file)
-
-        articles_grnti = {doc_id: rubric
-                          for doc_id, rubric in articles_grnti_with_no.items()
-                          if rubric != 'нет'}
-
-        elib_grnti = {doc_id[:-len('.txt')]: rubric
-                      for doc_id, rubric in elib_grnti_to_fix_with_no.items()
-                      if rubric != 'нет'}
-
-        train_grnti = dict()
-        for doc_id in articles_grnti:
-            rubric = str(grnti_to_number[articles_grnti[doc_id]])
-            train_grnti[doc_id] = rubric
-        for doc_id in elib_grnti:
-            rubric = str(grnti_to_number[elib_grnti[doc_id]])
-            train_grnti[doc_id] = rubric
-        return train_grnti
-
     def _get_lang(self, doc):
         for modality in doc.Modalities:
             if modality.Key == 'lang':
@@ -86,7 +53,8 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
         with open(os.path.join(self._rubric_dir, 'udk_codes.json'), "r") as file:
             udk_codes = json.loads(file.read())
 
-        grnti_codes = self.get_rubric_of_train_docs()
+        with open(os.path.join(self._rubric_dir, 'rubrics_train_grnti.json'), "r") as file:
+            grnti_codes = json.load(file)
 
         documents = []
         vocab = set()

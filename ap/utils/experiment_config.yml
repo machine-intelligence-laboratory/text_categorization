@@ -6,13 +6,10 @@ dictionary_path: '/data/datasets/Antiplagiat/dictionaties/dictionary_train_BPE_w
 BPE_models: '/data/datasets/Antiplagiat/BPE_models'
 
 # rubrics
-num_rubric: 69
-path_articles_rubrics_train_grnti: '/data/datasets/Antiplagiat/grnti_codes.json'
-path_elib_train_rubrics_grnti: '/data/datasets/Antiplagiat/articles_train_val2/data_train/elib_train_grnti_codes.json'
-path_grnti_mapping: '/data/datasets/Antiplagiat/grnti_to_number.json'
-
-need_augmentation: False
-aug_proportion: 0.2
+# Путь json файлу, в котором dict. key (str) - id документа, value (str) - номер рубрики
+balancing_rubrics_train: '/data/datasets/Antiplagiat/rubrics_train_grnti.json'
+wiki_balancing: True
+seed: 1
 
 # metrics parameters
 metrics_to_calculate: ['analogy']
@@ -27,6 +24,8 @@ artm_model_params:
   tau_DecorrelatorPhi: 0.05
   tau_SmoothTheta: 0.025
   tau_SparseTheta: -0.1
+
+balancing_modality: 'GRNTI'
 
 MODALITIES_TRAIN:
   'GRNTI': 1
