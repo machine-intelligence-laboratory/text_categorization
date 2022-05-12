@@ -106,7 +106,7 @@ def test_add_documents(models_dir, data_dir, grpc_stub):
 
     with open(os.path.join(data_dir, "train.txt"), "r") as file:
         res = file.readlines()
-        assert len(res) == 4
+        assert len(res) == 32
 
 
 @pytest.mark.usefixtures("clean_data")
@@ -126,7 +126,7 @@ def test_add_documents_new_lang_no_bpe(models_dir, data_dir, grpc_stub):
     assert resp.Status == AddDocumentsToModelResponse.AddDocumentsStatus.EXCEPTION
     with open(os.path.join(data_dir, "train.txt"), "r") as file:
         res = file.readlines()
-        assert len(res) == 2
+        assert len(res) == 30
 
 def test_start_train(data_dir, grpc_stub):
     resp = grpc_stub.StartTrainTopicModel(
