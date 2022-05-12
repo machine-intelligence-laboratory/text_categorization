@@ -1,6 +1,5 @@
 path_experiment: 'tests/data/best_model'
 path_wiki_train_batches: 'tests/data/batches_train'
-#train_dict_path: '/data/datasets/Antiplagiat/train_with_combined_grnti_69_rubric_dict.joblib'
 train_vw_path: 'tests/data/train.txt'
 dictionary_path: 'tests/data/dictionary.txt'
 BPE_models: 'tests/data/bpe'
