@@ -6,13 +6,8 @@ dictionary_path: 'tests/data/dictionary.txt'
 BPE_models: 'tests/data/bpe'
 
 # rubrics
-num_rubric: 69
-path_articles_rubrics_train_grnti: 'tests/data/grnti_codes.json'
-path_elib_train_rubrics_grnti: 'tests/data/elib_train_grnti_codes.json'
-path_grnti_mapping: 'tests/data/grnti_to_number.json'
-
-need_augmentation: False
-aug_proportion: 0.2
+# Путь json файлу, в котором dict. key (str) - id документа, value (str) - номер рубрики
+balancing_rubrics_train: 'tests/data/rubrics_train_grnti.json'
 
 # metrics parameters
 metrics_to_calculate: ['analogy']
