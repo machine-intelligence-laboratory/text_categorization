@@ -93,7 +93,7 @@ class ModelTrainer:
             model.scores.add(artm.SparsityPhiScore(name=f'SparsityPhiScore_{lang}',
                                                    class_id=lang,
                                                    topic_names=subject_topic_list))
-            model.scores.add(artm.PerplexityScore(name=f'PerlexityScore_{lang}',
+            model.scores.add(artm.PerplexityScore(name=f'PerplexityScore_{lang}',
                                                   class_ids=lang,
                                                   dictionary=dictionary))
 
@@ -217,22 +217,23 @@ class ModelTrainer:
         """
         logging.info("Start model training")
         self.set_metrics()
+        logging.info("set_metrics before training")
         self._load_model(train_type)
         self._data_manager.load_train_data()
         for epoch in range(self._data_manager.config['artm_model_params']["num_collection_passes"]):
-            logging.info(f'Training epoch {epoch}')
+            logging.info(f'Training epoch {epoch + 1}')
             set_metric('training_iteration', epoch + 1)
             self._train_epoch()
 
             scores_value = self.model_scores_value
-            if "PerlexityScore_@ru" in scores_value:
-                logging.info(f"PerlexityScore_@ru: {scores_value['PerlexityScore_@ru']}")
-                set_metric("perlexity_score_ru",
-                           -1 if math.isnan(scores_value['PerlexityScore_@ru']) else scores_value['PerlexityScore_@ru'])
-            if "PerlexityScore_@en" in scores_value:
-                logging.info(f"PerlexityScore_@en: {scores_value['PerlexityScore_@en']}")
-                set_metric("perlexity_score_en",
-                           -1 if math.isnan(scores_value['PerlexityScore_@en']) else scores_value['PerlexityScore_@en'])
+            if "PerplexityScore_@ru" in scores_value:
+                logging.info(f"PerplexityScore_@ru: {scores_value['PerplexityScore_@ru']}")
+                set_metric("perplexity_score_ru",
+                           -1 if math.isnan(scores_value['PerplexityScore_@ru']) else scores_value['PerplexityScore_@ru'])
+            if "PerplexityScore_@en" in scores_value:
+                logging.info(f"PerplexityScore_@en: {scores_value['PerplexityScore_@en']}")
+                set_metric("perplexity_score_en",
+                           -1 if math.isnan(scores_value['PerplexityScore_@en']) else scores_value['PerplexityScore_@en'])
             if self._path_to_dump_model.exists():
                 recursively_unlink(self._path_to_dump_model)
             self.model.dump_artm_model(str(self._path_to_dump_model))
