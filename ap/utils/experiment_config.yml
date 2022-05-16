@@ -8,7 +8,8 @@ BPE_models: '/data/datasets/Antiplagiat/BPE_models'
 # rubrics
 # Путь json файлу, в котором dict. key (str) - id документа, value (str) - номер рубрики
 balancing_rubrics_train: '/data/datasets/Antiplagiat/rubrics_train_grnti.json'
-wiki_balancing: True
+# wiki_balancing_type: avr_rubric_size, wiki_unisize, False
+wiki_balancing_type: 'wiki_unisize'
 seed: 1
 
 # metrics parameters

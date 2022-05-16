@@ -52,8 +52,17 @@ class ModelDataManager:
         path_train_data = path_experiment.joinpath('train_data')
         self._path_to_batches = path_train_data.joinpath('batches_balanced')
         self._path_balanced_train = path_train_data.joinpath('train_balanced.txt')
-        self._path_batches_wiki = self.config.get("path_wiki_train_batches", None)
         self._balancing_modality = self.config.get("balancing_modality", 'GRNTI')
+        self._path_batches_wiki = self.config.get("path_wiki_train_batches", None)
+        if self._path_batches_wiki:
+            self.wiki_batches = list(Path(self._path_batches_wiki).iterdir())
+            self.wiki_balancing_type = self.config.get('wiki_balancing_type', False)
+            if self.wiki_balancing_type == 'avr_rubric_size':
+                # // 1000, т.к. в 1 батче Википедии 1000 документов.
+                self.wiki_batches_per_epoch = self.average_rubric_size // 1000 + 1
+            elif self.wiki_balancing_type == 'wiki_unisize':
+                self.wiki_batches_per_epoch = (len(self.wiki_batches) /
+                                               self.config['artm_model_params']["num_collection_passes"])
 
         # TODO: в добучении
         # старые модальности - вытащить из модели
@@ -172,25 +181,28 @@ class ModelDataManager:
             logging.info('Calling artm 2nd time')
 
             if self._path_batches_wiki:
-                if self.config.get('wiki_balancing', False):
-                    # // 1000, т.к. в 1 батче Википедии 1000 документов.
-                    wiki_batches_amount = self.average_rubric_size // 1000 + 1
+                if self.wiki_balancing_type == 'avr_rubric_size':
                     wiki_batch_subsample = np.random.choice(
-                        list(Path(self._path_batches_wiki).iterdir()), wiki_batches_amount)
+                        list(Path(self._path_batches_wiki).iterdir()), self.wiki_batches_per_epoch)
                     for batch in wiki_batch_subsample:
                         shutil.copy(batch, self._path_to_batches)
                     batch_vectorizer = artm.BatchVectorizer(
-                        data_path=self._path_to_batches
+                        data_path=str(self._path_to_batches)
                     )
+                elif self.wiki_balancing_type == 'wiki_unisize':
+                    sample = np.random.choice(self.wiki_batches, self.wiki_batches_per_epoch,
+                                              replace=False)
+                    for batch in sample:
+                        self.wiki_batches.remove(batch)
                 else:
                     batch_vectorizer = artm.BatchVectorizer(
-                        data_path=[self._path_to_batches, self._path_batches_wiki],
+                        data_path=[str(self._path_to_batches), self._path_batches_wiki],
                         data_weight=[1, 1]
                     )
                 logging.info('Built batches with wiki')
             else:
                 batch_vectorizer = artm.BatchVectorizer(
-                    data_path=self._path_to_batches
+                    data_path=str(self._path_to_batches)
                 )
                 logging.info('Built batches without wiki')
             return batch_vectorizer
