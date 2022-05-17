@@ -159,8 +159,15 @@ def _check_change(model, topics, need_change, changed, target_folder):
                         f'{text}: changed from {topic_from} to {topic_to}\n' +
                         f'Added: {", ".join(added)}\n' +
                         f'Removed: {", ".join(removed)}\n\n')
+                    interpretation_info = {
+                        'doc_id': text,
+                        'topic_from': topic_from,
+                        'topic_to': topic_to,
+                        'Added': added,
+                        'Removed': removed,
+                    }
 
-    return need_change, not True in need_change.values()
+    return interpretation_info, need_change, not True in need_change.values()
 
 
 def augment_text(model, input_text: str, target_folder: str, n: int, num_top_tokens: int = 5):
@@ -191,7 +198,6 @@ def augment_text(model, input_text: str, target_folder: str, n: int, num_top_tok
     change_topic = target_folder.joinpath('change_topic')
     change_topic.mkdir(exist_ok=True)
     tmp_file = str(change_topic.joinpath('tmp.txt'))
-    log_file = str(change_topic.joinpath('log.txt'))
     topics = _get_topics(vw_texts, theta, phi, n, tmp_file)
 
     with open(tmp_file) as file:
@@ -201,6 +207,6 @@ def augment_text(model, input_text: str, target_folder: str, n: int, num_top_tok
 
     for multiplier in np.logspace(-1.5, 0, 5):
         changed = _mutate_text(tmp_file, vw_texts, phi, topics, need_change, multiplier, num_top_tokens)
-        need_change, stop = _check_change(model, topics, need_change, changed, target_folder)
+        interpretation_info, need_change, stop = _check_change(model, topics, need_change, changed, target_folder)
         if stop:
-            break
+            return interpretation_info
