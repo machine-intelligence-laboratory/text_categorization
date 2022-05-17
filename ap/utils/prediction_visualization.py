@@ -182,7 +182,7 @@ def augment_text(model, input_text: str, target_folder: str, n: int, num_top_tok
 
     target_folder = Path(target_folder)
     tmp_batches = target_folder.joinpath('batches')
-    tmp_batches.mkdir(exist_ok=True)
+    tmp_batches.mkdir(exist_ok=True, parents=True)
     batch_vectorizer = artm.BatchVectorizer(data_path=input_text, data_format='vowpal_wabbit',
                                             target_folder=str(tmp_batches), batch_size=20)
 
