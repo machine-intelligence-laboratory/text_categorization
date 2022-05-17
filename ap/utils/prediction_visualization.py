@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import typing as tp
 
+from pathlib import Path
 from scipy.spatial.distance import cosine
 
 
@@ -37,7 +38,7 @@ def _get_text_tokens(tokens_with_counter: tp.List[str]):
     return res
 
 
-def _get_topics(vw_texts, theta, phi, n, tmp_file='data/change_topic/tmp.txt'):
+def _get_topics(vw_texts, theta, phi, n, tmp_file):
     cosines = []
     text_dists = _get_text_dist(vw_texts, phi)
 
@@ -76,7 +77,7 @@ def _get_topics(vw_texts, theta, phi, n, tmp_file='data/change_topic/tmp.txt'):
             if title in res:
                 file.write(vw_line)
 
-    return res, tmp_file
+    return res
 
 
 def _get_important_tokens(text_dist, num_top_tokens=5):
@@ -167,7 +168,7 @@ def augment_text(model, input_text: str, target_folder: str, n: int, num_top_tok
             model (artm.ARTM): путь до обученной модели
             input_text (str): путь до входного текста для визуализации предсказания модели
                 на ru языке в формате vowpal wabbit
-            target_folder (str): путь для временного хранения батчей
+            target_folder (str): путь для временного хранения даннных
             n (int): количество текстов для анализа
             num_top_tokens (int): максимальное число добавленных и удаленных топ-токенов
     """
@@ -176,15 +177,22 @@ def augment_text(model, input_text: str, target_folder: str, n: int, num_top_tok
         vw_texts = file.readlines()
     # TODO: заменить n на len(vw_texts) ?
 
+    target_folder = Path(target_folder)
+    target_folder.mkdir(exist_ok=True)
+    tmp_batches = target_folder.joinpath('batches')
+    tmp_batches.mkdir(exist_ok=True)
     batch_vectorizer = artm.BatchVectorizer(data_path=input_text, data_format='vowpal_wabbit',
-                                            target_folder=target_folder+'/batches', batch_size=20)
+                                            target_folder=str(tmp_batches), batch_size=20)
+    change_topic = target_folder.joinpath('change_topic')
+    change_topic.mkdir(exist_ok=True)
+    tmp_file = change_topic.joinpath('tmp.txt')
 
     # model = artm.load_artm_model(model_path)
 
     theta = model.transform(batch_vectorizer)
     phi = model.get_phi(class_ids="@ru")
 
-    topics, tmp_file = _get_topics(vw_texts, theta, phi, n)
+    topics = _get_topics(vw_texts, theta, phi, n, tmp_file)
 
     with open(tmp_file) as file:
         vw_texts = file.readlines()
