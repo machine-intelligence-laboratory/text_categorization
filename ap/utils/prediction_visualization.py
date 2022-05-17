@@ -165,7 +165,7 @@ def _check_change(model, topics, need_change, changed, target_folder):
                     'Removed': list(removed),
                 }
 
-    return interpretation_info, need_change, not True in need_change.values()
+    return interpretation_info, need_change, not (True in need_change.values())
 
 
 def augment_text(model, input_text: str, target_folder: str, num_top_tokens: int = 5):
