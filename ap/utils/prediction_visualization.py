@@ -144,7 +144,7 @@ def _check_change(model, topics, need_change, changed, target_folder):
     batches = target_folder.joinpath('batches_tmp2')
     batches.mkdir(exist_ok=True)
     batch_vectorizer = artm.BatchVectorizer(data_path=tmp_file, data_format='vowpal_wabbit',
-                                            target_folder=batches, batch_size=20)
+                                            target_folder=str(batches), batch_size=20)
     theta = model.transform(batch_vectorizer)
     texts = theta.columns
     with open(log_file, 'a') as log:
