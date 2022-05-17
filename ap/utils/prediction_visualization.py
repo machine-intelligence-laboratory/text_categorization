@@ -6,6 +6,8 @@ import typing as tp
 from pathlib import Path
 from scipy.spatial.distance import cosine
 
+from ap.utils.general import recursively_unlink
+
 
 def _get_text_dist(vw_texts, phi):
     text_dists = []
@@ -38,7 +40,7 @@ def _get_text_tokens(tokens_with_counter: tp.List[str]):
     return res
 
 
-def _get_topics(vw_texts, theta, phi, n, tmp_file):
+def _get_topics(vw_texts, theta, phi, tmp_file):
     cosines = []
     text_dists = _get_text_dist(vw_texts, phi)
 
@@ -62,6 +64,7 @@ def _get_topics(vw_texts, theta, phi, n, tmp_file):
 
         topics[text] = [topic_from, topic_to]
 
+    n = len(vw_texts)
     cosines = np.array(cosines)
     max_cosines_ind = np.argpartition(cosines, -n)[-n:]
     texts = theta.columns[max_cosines_ind]
@@ -140,32 +143,27 @@ def _mutate_text(tmp_file, vw_texts, phi, topics, need_change, multiplier, num_t
 
 def _check_change(model, topics, need_change, changed, target_folder):
     tmp_file = str(target_folder.joinpath('change_topic', 'tmp.txt'))
-    log_file = str(target_folder.joinpath('change_topic', 'log.txt'))
     batches = target_folder.joinpath('batches_tmp2')
     batches.mkdir(exist_ok=True)
+    recursively_unlink(batches)
     batch_vectorizer = artm.BatchVectorizer(data_path=tmp_file, data_format='vowpal_wabbit',
                                             target_folder=str(batches), batch_size=20)
     theta = model.transform(batch_vectorizer)
     texts = theta.columns
     interpretation_info = dict()
-    with open(log_file, 'a') as log:
-        for text in texts:
-            if need_change[text]:
-                top_topic = f'topic_{theta[text].argmax()}'
-                topic_from, topic_to = topics[text]
-                if top_topic == topic_to:
-                    need_change[text] = False
-                    added, removed = changed[text]
-                    log.write(
-                        f'{text}: changed from {topic_from} to {topic_to}\n' +
-                        f'Added: {", ".join(added)}\n' +
-                        f'Removed: {", ".join(removed)}\n\n')
-                    interpretation_info[text] = {
-                        'topic_from': topic_from,
-                        'topic_to': topic_to,
-                        'Added': added,
-                        'Removed': removed,
-                    }
+    for text in texts:
+        if need_change[text]:
+            top_topic = f'topic_{theta[text].argmax()}'
+            topic_from, topic_to = topics[text]
+            if top_topic == topic_to:
+                need_change[text] = False
+                added, removed = changed[text]
+                interpretation_info[text] = {
+                    'topic_from': topic_from,
+                    'topic_to': topic_to,
+                    'Added': list(added),
+                    'Removed': list(removed),
+                }
 
     return interpretation_info, need_change, not True in need_change.values()
 
@@ -184,11 +182,11 @@ def augment_text(model, input_text: str, target_folder: str, num_top_tokens: int
 
     with open(input_text) as file:
         vw_texts = file.readlines()
-    n = len(vw_texts)
 
     target_folder = Path(target_folder)
     tmp_batches = target_folder.joinpath('batches')
     tmp_batches.mkdir(exist_ok=True, parents=True)
+    recursively_unlink(tmp_batches)
     batch_vectorizer = artm.BatchVectorizer(data_path=input_text, data_format='vowpal_wabbit',
                                             target_folder=str(tmp_batches), batch_size=20)
 
@@ -197,7 +195,7 @@ def augment_text(model, input_text: str, target_folder: str, num_top_tokens: int
     change_topic = target_folder.joinpath('change_topic')
     change_topic.mkdir(exist_ok=True)
     tmp_file = str(change_topic.joinpath('tmp.txt'))
-    topics = _get_topics(vw_texts, theta, phi, n, tmp_file)
+    topics = _get_topics(vw_texts, theta, phi, tmp_file)
 
     with open(tmp_file) as file:
         vw_texts = file.readlines()
