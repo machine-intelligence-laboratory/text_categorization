@@ -159,12 +159,12 @@ def _check_change(model, topics, need_change, changed, tmp_file, log_file='data/
     return need_change, not True in need_change.values()
 
 
-def augment_text(model_path: str, input_text: str, target_folder: str, n: int, num_top_tokens: int = 5):
+def augment_text(model, input_text: str, target_folder: str, n: int, num_top_tokens: int = 5):
     """
     Визуализация предсказаний обученной модели.
 
         Args:
-            model_path (str): путь до обученной модели
+            model (artm.ARTM): путь до обученной модели
             input_text (str): путь до входного текста для визуализации предсказания модели
                 на ru языке в формате vowpal wabbit
             target_folder (str): путь для временного хранения батчей
@@ -179,7 +179,7 @@ def augment_text(model_path: str, input_text: str, target_folder: str, n: int, n
     batch_vectorizer = artm.BatchVectorizer(data_path=input_text, data_format='vowpal_wabbit',
                                             target_folder=target_folder+'/batches', batch_size=20)
 
-    model = artm.load_artm_model(model_path)
+    # model = artm.load_artm_model(model_path)
 
     theta = model.transform(batch_vectorizer)
     phi = model.get_phi(class_ids="@ru")
