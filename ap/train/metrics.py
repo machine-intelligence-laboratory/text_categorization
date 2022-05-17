@@ -56,7 +56,8 @@ def run_metrics_server(config):
         })
 
         for modality in itertools.chain(config["MODALITIES_TRAIN"].keys(), config["LANGUAGES_TRAIN"].keys()):
-            METRICS[f'modality_distribution_{modality}'] = Gauge(f'modality_distribution_{modality}', f'Modality distribution {modality}')
+            METRICS[f'modality_distribution_{modality}'] = Gauge(f'modality_distribution_{modality}',
+                                                                 f'Modality distribution {modality}')
 
         app = web.Application()
         app.add_routes([web.post('/set', handle)])

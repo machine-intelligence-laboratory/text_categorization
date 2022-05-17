@@ -16,12 +16,10 @@ from ap.topic_model.v1.TopicModelTrain_pb2 import (
 )
 from ap.topic_model.v1.TopicModelTrain_pb2_grpc import TopicModelTrainServiceStub
 
-
 if __name__ == "__main__":
 
     channel = grpc.insecure_channel("localhost:50051")
     grpc_stub = TopicModelTrainServiceStub(channel)
-
 
     docs = [
         Document(
@@ -35,7 +33,7 @@ if __name__ == "__main__":
                 "что-то",
             ],
             Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'),
-                        Modality(Key="GRNTI", Value='11806946'),],
+                        Modality(Key="GRNTI", Value='11806946'), ],
         ),
         Document(
             Id=DocId(Lo=0, Hi=1),
@@ -48,7 +46,8 @@ if __name__ == "__main__":
                 "наука",
                 "ок"
             ],
-            Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'), Modality(Key="GRNTI", Value='11806946'),],
+            Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'),
+                        Modality(Key="GRNTI", Value='11806946'), ],
         ),
     ]
     parallel_docs = [
@@ -67,8 +66,8 @@ if __name__ == "__main__":
     )
 
     while (
-        grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
-        == TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
+            grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
+            == TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
     ):
         sleep(1)
 
@@ -79,7 +78,7 @@ if __name__ == "__main__":
     # )
 
     while (
-        grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
-        == TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
+            grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
+            == TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
     ):
         sleep(1)
