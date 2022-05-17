@@ -15,7 +15,7 @@ path_train_thetas: 'tests/data/train_by_lang'
 recalculate_test_thetas: True
 
 artm_model_params:
-  num_collection_passes: 25
+  num_collection_passes: 5
   NUM_TOPICS: 125
   num_bcg_topic: 1
   tau_DecorrelatorPhi: 0.05

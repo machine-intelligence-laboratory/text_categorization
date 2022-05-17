@@ -41,7 +41,6 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         Инициализирует сервер.
 
         Args:
-            bpe_models (typing.Dict[str, typing.Any]): TODO
             train_conf (typing.Dict[str, typing.Any]): словарь с конфигурацией обучения
             models_dir (str): путь к директория сохранения файлов
             data_dir (str): путь к директории с данными

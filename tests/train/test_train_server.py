@@ -57,6 +57,7 @@ def data_dir(tmpdir_factory):
 def test_conf(data_dir):
     return os.path.join(data_dir, "test_config.yml")
 
+
 @pytest.fixture(scope="module")
 def grpc_servicer(test_conf, models_dir, data_dir):
     from ap.train.server import TopicModelTrainServiceImpl
@@ -84,6 +85,7 @@ def clean_data(data_dir):
 
     with open(os.path.join(data_dir, "test_config.yml"), 'w') as f:
         yaml.safe_dump(c, f)
+
 
 @pytest.mark.usefixtures("clean_data")
 def test_add_documents(models_dir, data_dir, grpc_stub):
