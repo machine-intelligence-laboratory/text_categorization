@@ -87,10 +87,10 @@ class RankingByModel:
         return theta.columns, theta
 
     def _metrics_on_analogy_similarity(
-        self, theta_original,
-        doc_id, top_10_percent,
-        a_train, a_z_train,
-        subsample_for_doc_id, vectors_source
+            self, theta_original,
+            doc_id, top_10_percent,
+            a_train, a_z_train,
+            subsample_for_doc_id, vectors_source
     ):
 
         b = theta_original[doc_id].values
@@ -108,9 +108,9 @@ class RankingByModel:
         return percent_same_rubric, count
 
     def _metrics_on_eucl_similarity(
-        self,
-        search_num, search_indices, doc_id, top_10_percent,
-        subsample_for_doc_id, vectors_original, vectors_source
+            self,
+            search_num, search_indices, doc_id, top_10_percent,
+            subsample_for_doc_id, vectors_original, vectors_source
     ):
         difference = vectors_source - vectors_original[search_num]
         vectors_norm = self._matrix_norm_metric(difference, self._axis)
@@ -118,7 +118,7 @@ class RankingByModel:
         rating = subsample_for_doc_id[np.argsort(vectors_norm)]
         top_rating = rating[:len(top_10_percent)]
         num_same_rubric = sum([self._rubrics[current_id] == self._rubrics[doc_id]
-                              for current_id in top_rating])
+                               for current_id in top_rating])
         percent_same_rubric = num_same_rubric / len(top_10_percent)
         position = np.argwhere(rating == search_indices[search_num])[0][0]
         count = 1 if position < len(top_10_percent) else 0

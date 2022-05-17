@@ -163,4 +163,3 @@ def test_start_train(data_dir, grpc_stub):
             grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
             == TrainTopicModelStatusResponse.TrainTopicModelStatus.COMPLETE
     )
-
