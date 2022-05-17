@@ -230,13 +230,13 @@ class ModelTrainer:
             if "PerplexityScore_@ru" in scores_value:
                 logging.info(f"PerplexityScore_@ru: {scores_value['PerplexityScore_@ru']}")
                 set_metric("perplexity_score_ru",
-                           -1 if math.isnan(scores_value['PerplexityScore_@ru']) else scores_value[
-                               'PerplexityScore_@ru'])
+                           -1 if math.isnan(scores_value['PerplexityScore_@ru']) else
+                           scores_value['PerplexityScore_@ru'])
             if "PerplexityScore_@en" in scores_value:
                 logging.info(f"PerplexityScore_@en: {scores_value['PerplexityScore_@en']}")
                 set_metric("perplexity_score_en",
-                           -1 if math.isnan(scores_value['PerplexityScore_@en']) else scores_value[
-                               'PerplexityScore_@en'])
+                           -1 if math.isnan(scores_value['PerplexityScore_@en']) else
+                           scores_value['PerplexityScore_@en'])
             if self._path_to_dump_model.exists():
                 recursively_unlink(self._path_to_dump_model)
             self.model.dump_artm_model(str(self._path_to_dump_model))
