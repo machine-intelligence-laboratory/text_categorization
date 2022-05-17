@@ -147,6 +147,7 @@ def _check_change(model, topics, need_change, changed, target_folder):
                                             target_folder=str(batches), batch_size=20)
     theta = model.transform(batch_vectorizer)
     texts = theta.columns
+    interpretation_info = dict()
     with open(log_file, 'a') as log:
         for text in texts:
             if need_change[text]:
@@ -159,8 +160,7 @@ def _check_change(model, topics, need_change, changed, target_folder):
                         f'{text}: changed from {topic_from} to {topic_to}\n' +
                         f'Added: {", ".join(added)}\n' +
                         f'Removed: {", ".join(removed)}\n\n')
-                    interpretation_info = {
-                        'doc_id': text,
+                    interpretation_info[text] = {
                         'topic_from': topic_from,
                         'topic_to': topic_to,
                         'Added': added,
@@ -170,7 +170,7 @@ def _check_change(model, topics, need_change, changed, target_folder):
     return interpretation_info, need_change, not True in need_change.values()
 
 
-def augment_text(model, input_text: str, target_folder: str, n: int, num_top_tokens: int = 5):
+def augment_text(model, input_text: str, target_folder: str, num_top_tokens: int = 5):
     """
     Визуализация предсказаний обученной модели.
 
@@ -179,13 +179,12 @@ def augment_text(model, input_text: str, target_folder: str, n: int, num_top_tok
             input_text (str): путь до входного текста для визуализации предсказания модели
                 на ru языке в формате vowpal wabbit
             target_folder (str): путь для временного хранения даннных
-            n (int): количество текстов для анализа
             num_top_tokens (int): максимальное число добавленных и удаленных топ-токенов
     """
 
     with open(input_text) as file:
         vw_texts = file.readlines()
-    # TODO: заменить n на len(vw_texts) ?
+    n = len(vw_texts)
 
     target_folder = Path(target_folder)
     tmp_batches = target_folder.joinpath('batches')
