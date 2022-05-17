@@ -59,10 +59,10 @@ def test_conf(data_dir):
 
 
 @pytest.fixture(scope="module")
-def grpc_servicer(test_conf, models_dir, data_dir):
+def grpc_servicer(test_conf, data_dir):
     from ap.train.server import TopicModelTrainServiceImpl
 
-    return TopicModelTrainServiceImpl(test_conf, models_dir, data_dir)
+    return TopicModelTrainServiceImpl(test_conf, data_dir)
 
 
 @pytest.fixture(scope="module")
@@ -148,19 +148,19 @@ def test_start_train(data_dir, grpc_stub):
             == TrainTopicModelStatusResponse.TrainTopicModelStatus.COMPLETE
     )
 
-    # resp = grpc_stub.StartTrainTopicModel(
-    #     StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.UPDATE)
-    # )
-    # assert resp.Status == StartTrainTopicModelResponse.StartTrainTopicModelStatus.OK
-    #
-    # while (
-    #         grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
-    #         == TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
-    # ):
-    #     sleep(1)
-    #
-    # assert (
-    #         grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
-    #         == TrainTopicModelStatusResponse.TrainTopicModelStatus.COMPLETE
-    # )
+    resp = grpc_stub.StartTrainTopicModel(
+        StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.UPDATE)
+    )
+    assert resp.Status == StartTrainTopicModelResponse.StartTrainTopicModelStatus.OK
+
+    while (
+            grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
+            == TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
+    ):
+        sleep(1)
+
+    assert (
+            grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
+            == TrainTopicModelStatusResponse.TrainTopicModelStatus.COMPLETE
+    )
 
