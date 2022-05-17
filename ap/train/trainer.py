@@ -1,13 +1,10 @@
 import datetime
 import logging
+import math
 import os
-import typing
 
 from pathlib import Path
-from time import sleep
 
-from prometheus_client import Gauge, start_http_server
-from tqdm import tqdm
 from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
 from ap.train.metrics import set_metric
@@ -35,7 +32,6 @@ class ModelTrainer:
         model_name = self.generate_model_name()
         self._path_to_dump_model = Path(self._data_manager.config["path_experiment"]).joinpath(model_name)
 
-
     def _load_model(self, train_type):
         import artm
         current_models = os.listdir(self._models_dir)
@@ -46,16 +42,21 @@ class ModelTrainer:
 
         if (
                 train_type == StartTrainTopicModelRequest.TrainType.FULL
-                or len(current_models) == 0
         ):
             logging.info("Start full training")
             self.model = self._create_initial_model()
         else:
+            if len(current_models) == 0:
+                raise Exception("Can't update a model - no models found")
+
             # TODO: загрузить модель для дообучения
             last_model = max(current_models)
             logging.info("Start training based on %s model", last_model)
 
             self.model = artm.load_artm_model(os.path.join(self._models_dir, last_model))
+
+        set_metric('num_topics', self._data_manager.config["artm_model_params"]["NUM_TOPICS"])
+        set_metric('num_bcg_topics', self._data_manager.config["artm_model_params"]["num_bcg_topic"])
 
     def _create_initial_model(self):
         """
@@ -186,23 +187,21 @@ class ModelTrainer:
 
         return self.model.info
 
-    def model_main_info(self):
+    def set_metrics(self):
         """
         Возвращает основную информацию о модели
 
         Returns:
             info: основная информация о модели
         """
-        info = self._data_manager.config["artm_model_params"]
-        info["Модальности"] = self._data_manager.class_ids
-        info["need_augmentation"] = self._data_manager.config.get("need_augmentation", False)
-        if info["need_augmentation"]:
-            info["aug_proportion"] = self._data_manager.config.get("aug_proportion")
-        info["metrics_to_calculate"] = self._data_manager.config["metrics_to_calculate"]
-        info["num_modalities"] = len(info["Модальности"])
-        info["dictionary_path"] = self._data_manager.config["dictionary_path"]
+        set_metric('num_modalities', len(self._data_manager.class_ids))
 
-        return info
+        set_metric('tau_DecorrelatorPhi', self._data_manager.config["artm_model_params"]['tau_DecorrelatorPhi'])
+        set_metric('tau_SmoothTheta', self._data_manager.config["artm_model_params"]['tau_SmoothTheta'])
+        set_metric('tau_SparseTheta', self._data_manager.config["artm_model_params"]['tau_SparseTheta'])
+
+        for mod, val in self._data_manager.get_modality_distribution().items():
+            set_metric(f'modality_distribution_{mod}', val)
 
     def _train_epoch(self):
         batch_vectorizer = self._data_manager.generate_batches_balanced_by_rubric()
@@ -216,22 +215,24 @@ class ModelTrainer:
             train_type (StartTrainTopicModelRequest.TrainType):
                 full for full train from scratch, update to get the latest model and train it.
         """
-        main_info = self.model_main_info()
-        # Здесь можно визуализировать основную информацию о модели main_info
         logging.info("Start model training")
+        self.set_metrics()
         self._load_model(train_type)
         self._data_manager.load_train_data()
         for epoch in range(self._data_manager.config['artm_model_params']["num_collection_passes"]):
             logging.info(f'Training epoch {epoch}')
-            set_metric('training_iteration', epoch+1)
+            set_metric('training_iteration', epoch + 1)
             self._train_epoch()
 
             scores_value = self.model_scores_value
-            # тут можно визуализировать скоры модели scores_value
             if "PerlexityScore_@ru" in scores_value:
                 logging.info(f"PerlexityScore_@ru: {scores_value['PerlexityScore_@ru']}")
+                set_metric("perlexity_score_ru",
+                           -1 if math.isnan(scores_value['PerlexityScore_@ru']) else scores_value['PerlexityScore_@ru'])
             if "PerlexityScore_@en" in scores_value:
                 logging.info(f"PerlexityScore_@en: {scores_value['PerlexityScore_@en']}")
+                set_metric("perlexity_score_en",
+                           -1 if math.isnan(scores_value['PerlexityScore_@en']) else scores_value['PerlexityScore_@en'])
             if self._path_to_dump_model.exists():
                 recursively_unlink(self._path_to_dump_model)
             self.model.dump_artm_model(str(self._path_to_dump_model))
