@@ -16,7 +16,6 @@ prometheus-client==0.13.1
 aiohttp==3.8.1
 requests==2.27.1
 rtds-action
-yaml~=0.2.5
 prometheus_client~=0.13.1
 scipy~=1.8.0
 pytest~=5.4.1
