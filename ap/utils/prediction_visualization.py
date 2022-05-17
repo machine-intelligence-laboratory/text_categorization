@@ -88,8 +88,7 @@ def _get_important_tokens(text_dist, num_top_tokens=5):
     return added, removed
 
 
-def _mutate_text(vw_texts, phi, topics, need_change, multiplier, num_top_tokens=5,
-                 tmp_file='data/change_topic/tmp.txt'):
+def _mutate_text(tmp_file, vw_texts, phi, topics, need_change, multiplier, num_top_tokens=5):
     changed = {}
 
     with open(tmp_file, 'w') as file:
@@ -139,9 +138,13 @@ def _mutate_text(vw_texts, phi, topics, need_change, multiplier, num_top_tokens=
     return changed
 
 
-def _check_change(model, topics, need_change, changed, tmp_file, log_file='data/change_topic/log.txt'):
+def _check_change(model, topics, need_change, changed, target_folder):
+    tmp_file = str(target_folder.joinpath('change_topic', 'tmp.txt'))
+    log_file = str(target_folder.joinpath('change_topic', 'log.txt'))
+    batches = target_folder.joinpath('batches_tmp2')
+    batches.mkdir(exist_ok=True)
     batch_vectorizer = artm.BatchVectorizer(data_path=tmp_file, data_format='vowpal_wabbit',
-                                            target_folder='data/batches_tmp2', batch_size=20)
+                                            target_folder=batches, batch_size=20)
     theta = model.transform(batch_vectorizer)
     texts = theta.columns
     with open(log_file, 'a') as log:
@@ -178,20 +181,17 @@ def augment_text(model, input_text: str, target_folder: str, n: int, num_top_tok
     # TODO: заменить n на len(vw_texts) ?
 
     target_folder = Path(target_folder)
-    target_folder.mkdir(exist_ok=True)
     tmp_batches = target_folder.joinpath('batches')
     tmp_batches.mkdir(exist_ok=True)
     batch_vectorizer = artm.BatchVectorizer(data_path=input_text, data_format='vowpal_wabbit',
                                             target_folder=str(tmp_batches), batch_size=20)
-    change_topic = target_folder.joinpath('change_topic')
-    change_topic.mkdir(exist_ok=True)
-    tmp_file = change_topic.joinpath('tmp.txt')
-
-    # model = artm.load_artm_model(model_path)
 
     theta = model.transform(batch_vectorizer)
     phi = model.get_phi(class_ids="@ru")
-
+    change_topic = target_folder.joinpath('change_topic')
+    change_topic.mkdir(exist_ok=True)
+    tmp_file = str(change_topic.joinpath('tmp.txt'))
+    log_file = str(change_topic.joinpath('log.txt'))
     topics = _get_topics(vw_texts, theta, phi, n, tmp_file)
 
     with open(tmp_file) as file:
@@ -200,7 +200,7 @@ def augment_text(model, input_text: str, target_folder: str, n: int, num_top_tok
     need_change = {title: True for title in topics}
 
     for multiplier in np.logspace(-1.5, 0, 5):
-        changed = _mutate_text(vw_texts, phi, topics, need_change, multiplier, num_top_tokens, tmp_file)
-        need_change, stop = _check_change(model, topics, need_change, changed, tmp_file)
+        changed = _mutate_text(tmp_file, vw_texts, phi, topics, need_change, multiplier, num_top_tokens)
+        need_change, stop = _check_change(model, topics, need_change, changed, target_folder)
         if stop:
             break
