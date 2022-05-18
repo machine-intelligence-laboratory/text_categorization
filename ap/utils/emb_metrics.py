@@ -36,13 +36,13 @@ def generate_theta(path_models: str, save_path: str):
         for lang in config.LANGUAGES_MAIN:
             test_path = '/data/datasets/Antiplagiat/texts_vw/test_BPE/' \
                         f'test_test/test_{lang}_120k_rank_batches'
-            batch_vectorizer = artm.BatchVectorizer(data_path=test_path, data_format="batches",)
+            batch_vectorizer = artm.BatchVectorizer(data_path=test_path, data_format="batches", )
             vec = model_artm.transform(batch_vectorizer=batch_vectorizer).T
             joblib.dump(vec, save_path_theta.joinpath(f'theta.{lang}'))
 
 
 def _check_rank_quality(vec_first, vec_second):
-    max_val = sum([1/i for i in range(1, vec_first.shape[1]+1)])
+    max_val = sum([1 / i for i in range(1, vec_first.shape[1] + 1)])
 
     docs = list(set(vec_first.index).intersection(set(vec_second.index)))
     all_cos = list()
@@ -138,7 +138,7 @@ def _check_cluster_intersection_quality(class_json_path, vec):
             [center], vec.loc[~vec.index.isin(doc_list)].values
         )[0]
         elements = cos_values[np.where(cos_values >= mean_cos)].shape[0]
-        mean_intersection[rubric] = [elements/len(doc_list)]
+        mean_intersection[rubric] = [elements / len(doc_list)]
 
     return mean_intersection
 

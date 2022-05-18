@@ -12,9 +12,9 @@ path_articles_rubrics_train_grnti = data_path + 'grnti_codes.json'
 path_elib_train_rubrics_grnti = data_path + 'articles_train_val2/' + \
                                 'data_train/elib_train_grnti_codes.json'
 path_elib_val_rubrics_grnti = data_path + 'articles_train_val2/' + \
-                                'data_val/elib_val_grnti_codes.json'
+                              'data_val/elib_val_grnti_codes.json'
 path_elib_train_val_rubrics_grnti = data_path + 'articles_train_val2/' + \
-                                'elib_train_val_grnti_codes.json'
+                                    'elib_train_val_grnti_codes.json'
 path_vak_rubrics = data_path + 'val_vak/val_vak.json'
 
 # subsamples
@@ -27,7 +27,7 @@ path_val_combined_subsamples_grnti = data_path + 'subsamples_15_val_combined_grn
 path_vak_subsamples = data_path + 'val_vak/subsamples'
 
 path_model_base = '/data/antiplagiat_models/' + \
-                    'TM_for_100_languages_with_wiki_with_dictionary_reduction_BPE_120k_2k/'
+                  'TM_for_100_languages_with_wiki_with_dictionary_reduction_BPE_120k_2k/'
 
 # only wiki
 path_wiki_train_bpe = data_path + 'wiki_100/wiki_100_train_bpe_120k.txt'
@@ -51,7 +51,7 @@ path_articles_val_1_2_bpe = data_path + 'validation_1_2_BPE/validation_validatio
 path_wiki_with_articles_train_batches = data_path + \
                                         'wiki_with_articles/batches_train'
 path_wiki_with_articles_train_topicnet_dataset = data_path + \
-                                        'wiki_with_articles/wiki_with_articles.csv'
+                                                 'wiki_with_articles/wiki_with_articles.csv'
 
 # elibrary
 path_elib_train_raw = data_path + 'articles_train_val2/data_train/'
