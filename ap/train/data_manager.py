@@ -89,8 +89,8 @@ class ModelDataManager:
         Загружает тренировочные данные.
 
         Создает два атрибута:
-            self.train_docs - словарь, где по doc_id содержиться документ в Vowpal Wabbit формате
-            self._docs_of_rubrics - словарь, где по рубрике хранится
+            - self.train_docs - словарь, где по doc_id содержиться документ в Vowpal Wabbit формате
+            - self._docs_of_rubrics - словарь, где по рубрике хранится
                 список всех doc_id с такой рубрикой из self.rubrics_train.
         """
         with open(self.train_path, encoding='utf-8') as file:
@@ -150,7 +150,7 @@ class ModelDataManager:
         до батчей, построенных по википедии self._path_batches_wiki, то батчи будут использованы для обучения модели.
         Иначе в обучении будут принимать участие только батчи, сбалансированные относительно рубрик ГРНТИ.
 
-        Возвразает artm.BatchVectorizer, построенный на этих батчах.
+        Возвращает artm.BatchVectorizer, построенный на этих батчах.
 
         Returns:
             batch_vectorizer (artm.BatchVectorizer): artm.BatchVectorizer, построенный на сбалансированных батчах.
@@ -234,7 +234,7 @@ class ModelDataManager:
 
         Returns:
             modality_distribution_all (dict): словарь, ключ - модальность,
-                значение - количество документов с такой модальностью
+            значение - количество документов с такой модальностью
         """
         with open(self.config["train_vw_path"], encoding='utf-8') as file:
             train_data = file.read()
