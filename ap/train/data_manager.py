@@ -89,7 +89,7 @@ class ModelDataManager:
         Загружает тренировочные данные.
 
         Создает два атрибута:
-            - self.train_docs - словарь, где по doc_id содержиться документ в Vowpal Wabbit формате
+            - self.train_docs это словарь, где по doc_id содержиться документ в Vowpal Wabbit формате
             - self._docs_of_rubrics это словарь, где по рубрике хранится
                 список всех doc_id с такой рубрикой из self.rubrics_train.
         """
