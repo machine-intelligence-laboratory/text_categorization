@@ -233,8 +233,8 @@ class ModelDataManager:
         оценки всего тренировочного датасета.
 
         Returns:
-            modality_distribution_all (dict): словарь, ключ - модальность,
-            значение - количество документов с такой модальностью
+            modality_distribution_all (dict): словарь, ключ это модальность,
+            значение это количество документов с такой модальностью
         """
         with open(self.config["train_vw_path"], encoding='utf-8') as file:
             train_data = file.read()
