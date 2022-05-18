@@ -44,6 +44,7 @@ class ModelDataManager:
 
         with open(self.config['balancing_rubrics_train']) as file:
             self.rubrics_train: typing.Dict[str, str] = json.load(file)
+        self.average_rubric_size = int(len(self.rubrics_train) / len(set(self.rubrics_train.values())))
 
         self.train_path = self.config["train_vw_path"]
 
@@ -72,7 +73,6 @@ class ModelDataManager:
                                 **self.config["LANGUAGES_TRAIN"]}
         self.class_ids = all_modalities_train
 
-        self.average_rubric_size = int(len(self.rubrics_train) / len(set(self.rubrics_train.values())))
         num_rubric = len(set(self.rubrics_train.values()))
         logging.info('Balanced learning is used: at each epoch ' +
                      'rubric-balanced documents are sampled from the training data.')
@@ -181,7 +181,7 @@ class ModelDataManager:
             logging.info('Calling artm 2nd time')
 
             if self._path_batches_wiki:
-                if self.wiki_balancing_type == 'avr_rubric_size':
+                if self.wiki_balancing_type == 'avr_rubric_size' or self.wiki_balancing_type == 'wiki_unisize':
                     wiki_batch_subsample = np.random.choice(
                         list(Path(self._path_batches_wiki).iterdir()), self.wiki_batches_per_epoch)
                     for batch in wiki_batch_subsample:
@@ -189,11 +189,11 @@ class ModelDataManager:
                     batch_vectorizer = artm.BatchVectorizer(
                         data_path=str(self._path_to_batches)
                     )
-                elif self.wiki_balancing_type == 'wiki_unisize':
-                    sample = np.random.choice(self.wiki_batches, self.wiki_batches_per_epoch,
-                                              replace=False)
-                    for batch in sample:
-                        self.wiki_batches.remove(batch)
+                # elif self.wiki_balancing_type == 'wiki_unisize':
+                #     sample = np.random.choice(self.wiki_batches, self.wiki_batches_per_epoch,
+                #                               replace=False)
+                #     for batch in sample:
+                #         self.wiki_batches.remove(batch)
                 else:
                     batch_vectorizer = artm.BatchVectorizer(
                         data_path=[str(self._path_to_batches), self._path_batches_wiki],
