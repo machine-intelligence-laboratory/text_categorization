@@ -128,7 +128,8 @@ def test_add_documents_new_lang_no_bpe(models_dir, data_dir, grpc_stub):
         res = file.readlines()
         assert len(res) == 2
 
-def test_start_train(data_dir, grpc_stub):
+
+def test_start_train_full(data_dir, grpc_stub):
     resp = grpc_stub.StartTrainTopicModel(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.FULL)
     )
@@ -160,4 +161,39 @@ def test_start_train(data_dir, grpc_stub):
             grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
             == TrainTopicModelStatusResponse.TrainTopicModelStatus.COMPLETE
     )
+
+
+def test_start_train_update(data_dir, grpc_stub):
+    resp = grpc_stub.StartTrainTopicModel(
+        StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.UPDATE)
+    )
+    assert resp.Status == StartTrainTopicModelResponse.StartTrainTopicModelStatus.OK
+
+    while (
+            grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
+            == TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
+    ):
+        sleep(1)
+
+    assert (
+            grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
+            == TrainTopicModelStatusResponse.TrainTopicModelStatus.COMPLETE
+    )
+
+    resp = grpc_stub.StartTrainTopicModel(
+        StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.UPDATE)
+    )
+    assert resp.Status == StartTrainTopicModelResponse.StartTrainTopicModelStatus.OK
+
+    while (
+            grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
+            == TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
+    ):
+        sleep(1)
+
+    assert (
+            grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
+            == TrainTopicModelStatusResponse.TrainTopicModelStatus.COMPLETE
+    )
+
 

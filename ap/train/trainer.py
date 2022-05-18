@@ -54,6 +54,7 @@ class ModelTrainer:
             logging.info("Start training based on %s model", last_model)
 
             self.model = artm.load_artm_model(os.path.join(self._models_dir, last_model))
+            self._check_update_conditions()
 
         set_metric('num_topics', self._data_manager.config["artm_model_params"]["NUM_TOPICS"])
         set_metric('num_bcg_topics', self._data_manager.config["artm_model_params"]["num_bcg_topic"])
@@ -246,3 +247,12 @@ class ModelTrainer:
             Новое имя для модели
         """
         return datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    def _check_update_conditions(self):
+        model_langs = set(self.model.class_ids().keys())
+        config_langs = set(self._data_manager.config['LANGUAGES_TRAIN'])
+        if len(config_langs - model_langs):
+            logging.error("These languages don't present in the model that is going to be updated %s", str(config_langs - model_langs))
+            raise Exception("Can't add modalities to an existing model")
+        if len(model_langs - config_langs):
+            logging.warning("Model contains modalities that won't be updated %s", str(model_langs - config_langs))
