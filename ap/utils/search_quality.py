@@ -66,6 +66,7 @@ def calculate_search_quality(config_experiment) -> typing.Dict[str, float]:
 
     Args:
         config_experiment (dict): конфиг эксперимента, содержащий:
+
             - config_experiment["path_experiment"] (str): путь до папки с экспериментом
             - config_experiment['path_model'] (str): путь до тестируемой модели,
             - config_experiment['path_results'] (str): путь для выгрузки результата эксперимента,
