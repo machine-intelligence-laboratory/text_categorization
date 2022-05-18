@@ -20,11 +20,11 @@ def get_num_entries(dictionary: artm.Dictionary) -> int:
 
 
 def limit_classwise(
-    dictionary: artm.Dictionary,
-    cls_ids: typing.Iterable[str],
-    max_dictionary_size: int,
-    tmp_dir: str,
-    out_file: str,
+        dictionary: artm.Dictionary,
+        cls_ids: typing.Iterable[str],
+        max_dictionary_size: int,
+        tmp_dir: str,
+        out_file: str,
 ):
     """
     Ограничивает словарь.

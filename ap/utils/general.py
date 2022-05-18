@@ -40,7 +40,6 @@ def docs_from_pack(pack) -> typing.Dict[str, typing.Dict[str, str]]:
         dict из документов
     """
 
-
     return {
         id_to_str(doc.Id): get_modalities(doc)
         for doc in pack.Documents

@@ -54,7 +54,8 @@ def test_embeddings(artm_model, grpc_stub):
                 "sobr",
                 "seguida",
             ],
-            Modalities=[Modality(Key="lang", Value='es'), Modality(Key="UDK", Value='6'), Modality(Key="GRNTI", Value='11806946'),],
+            Modalities=[Modality(Key="lang", Value='es'), Modality(Key="UDK", Value='6'),
+                        Modality(Key="GRNTI", Value='11806946'), ],
         ),
         Document(
             Id=DocId(Lo=0, Hi=1),
@@ -68,7 +69,8 @@ def test_embeddings(artm_model, grpc_stub):
                 "coherente",
                 "ook",
             ],
-            Modalities=[Modality(Key="lang", Value='nl'), Modality(Key="UDK", Value='6'), Modality(Key="GRNTI", Value='11806946'),],
+            Modalities=[Modality(Key="lang", Value='nl'), Modality(Key="UDK", Value='6'),
+                        Modality(Key="GRNTI", Value='11806946'), ],
         ),
     ]
     resp = grpc_stub.GetDocumentsEmbedding(
