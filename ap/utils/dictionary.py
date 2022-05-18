@@ -20,16 +20,16 @@ def get_num_entries(dictionary: artm.Dictionary) -> int:
 
 
 def limit_classwise(
-    dictionary: artm.Dictionary,
-    cls_ids: typing.Iterable[str],
-    max_dictionary_size: int,
-    tmp_dir: str,
-    out_file: str,
+        dictionary: artm.Dictionary,
+        cls_ids: typing.Iterable[str],
+        max_dictionary_size: int,
+        tmp_dir: str,
+        out_file: str,
 ):
     """
-    Ограничивает словарь.
+    Ограничивает словарь и сохраняет его в out_file.
 
-    Таким образом, что в разрезе каждоого class id будет не более max_dictionary_size токенов.
+    Ограничивает словарь таким образом, что в разрезе каждоого class id будет не более max_dictionary_size токенов.
     Сохраняет словарь в текстовым форматом в файле out_file.
 
     Args:
@@ -37,7 +37,7 @@ def limit_classwise(
         cls_ids (list): модальности
         max_dictionary_size (int): максимальный размер словаря в разрезе модальности
         tmp_dir (str): директория для хранения промежуточных результатов
-        out_file (str): файл, в котором сохраняется результат
+        out_file (str): файл, в который сохраняется результат
     """
     for cls_id in cls_ids:
         filtered = dictionary
