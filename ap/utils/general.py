@@ -25,8 +25,7 @@ def get_modalities(doc):
         doc: документ
 
     Returns:
-        res (dict): словарь, ключ -- язык, значение -- строка токенов на этом языке
-            через пробел
+        res (dict): словарь язык -> строка токенов на этом языке через пробел
     """
     res = {}
 
@@ -41,15 +40,14 @@ def get_modalities(doc):
 
 def docs_from_pack(pack) -> typing.Dict[str, typing.Dict[str, str]]:
     """
-    Создает dict документов из pack.
+    Создает словарь документов из pack.
 
     Args:
-        pack (ap.topic_model.v1.TopicModelBase_pb2.DocumentPack): TODO
+        pack (ap.topic_model.v1.TopicModelBase_pb2.DocumentPack): коллекция
 
     Returns:
         dict из документов
     """
-
 
     return {
         id_to_str(doc.Id): get_modalities(doc)
@@ -104,7 +102,7 @@ def recursively_unlink(path: Path):
     Рекурсивно удаляет файлы и директории.
 
     Args:
-        path (Path): путь, по которому необходимо удалить все файлы.
+        path (pathlib.Path): путь, по которому необходимо удалить все файлы.
     """
     for child in path.iterdir():
         if child.is_file():
