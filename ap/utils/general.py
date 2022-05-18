@@ -63,7 +63,7 @@ def ensure_directory(path: str) -> str:
         path (str): путь к директории
 
     Returns:
-        path
+        path (str) путь к директории
     """
     if not os.path.exists(path):
         os.makedirs(path)

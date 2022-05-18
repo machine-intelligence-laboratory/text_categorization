@@ -94,7 +94,7 @@ class VowpalWabbit:
         Конвертирует исходный документ в формат BOW.
 
         Args:
-            doc словарь язык->текст документа
+            doc (dict): словарь язык -> текст документа
 
         Returns:
             res (dict): словарь язык -> BOW документа. Если use_counters==True, словарь в виде Counter

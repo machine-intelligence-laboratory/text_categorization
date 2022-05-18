@@ -310,7 +310,8 @@ def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
                       metrics_to_calculate: typing.List[str], mode: str,
                       path_model: str, path_experiment_result: str,
                       matrix_norm_metric, path_subsamples: str, path_rubrics: str,
-                      path_test: str, current_languages: typing.List[str], recalculate_test_thetas: bool, **kwargs):
+                      path_test: str, current_languages: typing.List[str], recalculate_test_thetas: bool, **kwargs) -> \
+        typing.Dict[str, typing.Dict[str, float]]:
     """
     Класс для вычисления метрик качества тематической модели.
 
@@ -337,8 +338,7 @@ def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
             - False означает загрузить существующие Тэты
 
     Returns:
-        quality_experiment (dict): словарь словарей - по имени модели хранятся названия метрик,
-            по названиям метрик хранятся значения метрик этих моделей
+        quality_experiment (dict): словарь имя модели -> словарь название метрики -> значение метрики
     """
     path_model = Path(path_model)
     path_experiment_result = Path(path_experiment_result)

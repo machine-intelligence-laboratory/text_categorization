@@ -21,7 +21,7 @@ def dump_train_centroids(model_path: str, bcg_topic_list: typing.List[str], path
     Вычисляет центроиды, необходимые для преобразования текста из одного языка в другой.
 
     Args:
-        model_path (str): тематичекая модель
+        model_path (str): путь до тематичекой модели
         bcg_topic_list (list): список тем, которые не будут использоваться для построения
         path_train_centroids (str): путь для выгрузки центроид
     """
@@ -54,9 +54,9 @@ def dump_train_centroids(model_path: str, bcg_topic_list: typing.List[str], path
     print('Train centroids were calculated.')
 
 
-def calculate_search_quality(config_experiment):
+def calculate_search_quality(config_experiment) -> typing.Dict[str, float]:
     """
-    Вычисление качества модели по 6 метрикам качества:
+    Вычисление качества модели по 6 метрикам:
         - Средняя частота УДК,
         - Средний процент УДК,
         - Средняя частота ГРНТИ,
@@ -74,7 +74,7 @@ def calculate_search_quality(config_experiment):
             - config_experiment['metrics_to_calculate'] (str): название меры близости ('analogy' или 'eucl'),
             - config_experiment['path_train_thetas'] (str): путь до центроид
             - config_experiment['recalculate_train_centroids'] (bool): признак необходимости вычислять центроиды
-            - config_experiment['recalculate_test_thetas'] (bool): признак необходимости вычислять матрицы Тэта для
+            - config_experiment['recalculate_test_thetas'] (bool): признак необходимости вычислять матрицы Тэта для \
                 тестовых данных
 
     Returns:
