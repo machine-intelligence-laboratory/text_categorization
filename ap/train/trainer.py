@@ -34,6 +34,7 @@ class ModelTrainer:
 
     def _load_model(self, train_type):
         import artm
+
         current_models = os.listdir(self._models_dir)
         # TODO: для дообучения
         # добавить условие: есть язык не из 100 языков
@@ -168,31 +169,9 @@ class ModelTrainer:
                         for score in self.model_scores}
         return scores_value
 
-    @property
-    def model_info(self):
-        """
-        Возвращает характеристики модели
-
-        Очень подробна информация о характеристиках модели:
-        - названия тем
-        - названия модальностей
-        - веса модальностей
-        - метрики
-        - информация о регуляризаторах
-        - другое
-
-        Returns:
-            характеристики модели
-        """
-
-        return self.model.info
-
     def set_metrics(self):
         """
-        Возвращает основную информацию о модели
-
-        Returns:
-            info: основная информация о модели
+        Задает основную информацию о модели.
         """
         set_metric('num_modalities', len(self._data_manager.class_ids))
 
