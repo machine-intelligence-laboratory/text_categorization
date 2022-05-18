@@ -34,6 +34,7 @@ class ModelTrainer:
 
     def _load_model(self, train_type):
         import artm
+
         current_models = os.listdir(self._models_dir)
         # TODO: для дообучения
         # добавить условие: есть язык не из 100 языков
@@ -168,31 +169,9 @@ class ModelTrainer:
                         for score in self.model_scores}
         return scores_value
 
-    @property
-    def model_info(self):
-        """
-        Возвращает характеристики модели
-
-        Очень подробна информация о характеристиках модели:
-        - названия тем
-        - названия модальностей
-        - веса модальностей
-        - метрики
-        - информация о регуляризаторах
-        - другое
-
-        Returns:
-            характеристики модели
-        """
-
-        return self.model.info
-
     def set_metrics(self):
         """
-        Возвращает основную информацию о модели
-
-        Returns:
-            info: основная информация о модели
+        Задает основную информацию о модели.
         """
         set_metric('num_modalities', len(self._data_manager.class_ids))
 
@@ -204,7 +183,7 @@ class ModelTrainer:
             set_metric(f'modality_distribution_{mod}', val)
 
     def _train_epoch(self):
-        batch_vectorizer = self._data_manager.generate_batches_balanced_by_rubric()
+        batch_vectorizer = self._data_manager._generate_batches_balanced_by_rubric()
         self.model.fit_offline(batch_vectorizer, num_collection_passes=1)
 
     def train_model(self, train_type: StartTrainTopicModelRequest.TrainType):

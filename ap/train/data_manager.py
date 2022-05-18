@@ -76,6 +76,9 @@ class ModelDataManager:
         self.update_ds_metrics()
 
     def update_ds_metrics(self):
+        """
+        Обновляет метрики о датасете.
+        """
         set_metric('train_size_bytes', os.path.getsize(self.train_path))
         with open(self.train_path, encoding='utf-8') as file:
             train_vw = file.readlines()
@@ -83,7 +86,12 @@ class ModelDataManager:
 
     def load_train_data(self):
         """
-        TODO
+        Загружает тренировочные данные.
+
+        Создает два атрибута:
+            self.train_docs - словарь, где по doc_id содержиться документ в Vowpal Wabbit формате
+            self._docs_of_rubrics - словарь, где по рубрике хранится
+                список всех doc_id с такой рубрикой из self.rubrics_train.
         """
         with open(self.train_path, encoding='utf-8') as file:
             train_vw = file.readlines()
@@ -198,13 +206,13 @@ class ModelDataManager:
             logging.exception(e)
             raise e
 
-    def write_new_docs(self, vw, docs):
+    def write_new_docs(self, vw, docs: typing.Dict[str, typing.Dict[str, str]]):
         """
-        TODO
+        Сохраняет документы.
 
         Args:
-            vw (TODO): TODO
-            docs (TODO): TODO
+            vw (VowpalWabbitBPE): объект класса VowpalWabbitBPE для сохранения VW файлов.
+            docs (dict): документы
         """
         if not all(
                 [
@@ -256,26 +264,12 @@ class ModelDataManager:
 
         return modality_distribution_all
 
-    def _recursively_unlink(self, path: Path):
-        """
-        Рекурсивно удаляет все данные, расположенные по пути path.
-
-        Args:
-            path (Path): путь до данных, которые нужно удалить
-        """
-        for child in path.iterdir():
-            if child.is_file():
-                child.unlink()
-            else:
-                self._recursively_unlink(child)
-        path.rmdir()
-
     def update_config(self, config: str):
         """
-        TODO
+        Обновляет конфиг, хранящийся по пути self._config_path.
 
         Args:
-            config (TODO): TODO
+            config: конфиг обучаемой модели
         """
         self.config = yaml.safe_load(config)
         with open(self._config_path, "w") as file:
