@@ -90,7 +90,7 @@ class ModelDataManager:
 
         Создает два атрибута:
             - self.train_docs - словарь, где по doc_id содержиться документ в Vowpal Wabbit формате
-            - self._docs_of_rubrics - словарь, где по рубрике хранится
+            - self._docs_of_rubrics это словарь, где по рубрике хранится
                 список всех doc_id с такой рубрикой из self.rubrics_train.
         """
         with open(self.train_path, encoding='utf-8') as file:
