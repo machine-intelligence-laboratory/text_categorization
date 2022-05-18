@@ -70,6 +70,7 @@ def calculate_search_quality(config_experiment) -> typing.Dict[str, float]:
             - config_experiment["path_experiment"] (str): путь до папки с экспериментом
             - config_experiment['path_model'] (str): путь до тестируемой модели,
             - config_experiment['path_results'] (str): путь для выгрузки результата эксперимента,
+
             - config_experiment["artm_model_params"] (dict): параметры тематической модели ARTM,
                 - config_experiment["artm_model_params"]["num_bcg_topic"] (int): количество фоновых тем,
             - config_experiment['metrics_to_calculate'] (str): название меры близости ('analogy' или 'eucl'),
