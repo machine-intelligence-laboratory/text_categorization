@@ -61,7 +61,7 @@ class ModelDataManager:
                 # // 1000, т.к. в 1 батче Википедии 1000 документов.
                 self.wiki_batches_per_epoch = self.average_rubric_size // 1000 + 1
             elif self.wiki_balancing_type == 'wiki_unisize':
-                self.wiki_batches_per_epoch = (len(self.wiki_batches) /
+                self.wiki_batches_per_epoch = int(len(self.wiki_batches) /
                                                self.config['artm_model_params']["num_collection_passes"])
 
         # TODO: в добучении
