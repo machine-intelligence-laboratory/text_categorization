@@ -57,11 +57,12 @@ def data_dir(tmpdir_factory):
 def test_conf(data_dir):
     return os.path.join(data_dir, "test_config.yml")
 
+
 @pytest.fixture(scope="module")
-def grpc_servicer(test_conf, models_dir, data_dir):
+def grpc_servicer(test_conf, data_dir):
     from ap.train.server import TopicModelTrainServiceImpl
 
-    return TopicModelTrainServiceImpl(test_conf, models_dir, data_dir)
+    return TopicModelTrainServiceImpl(test_conf, data_dir)
 
 
 @pytest.fixture(scope="module")
@@ -85,6 +86,7 @@ def clean_data(data_dir):
     with open(os.path.join(data_dir, "test_config.yml"), 'w') as f:
         yaml.safe_dump(c, f)
 
+
 @pytest.mark.usefixtures("clean_data")
 def test_add_documents(models_dir, data_dir, grpc_stub):
     docs = [
@@ -106,7 +108,7 @@ def test_add_documents(models_dir, data_dir, grpc_stub):
 
     with open(os.path.join(data_dir, "train.txt"), "r") as file:
         res = file.readlines()
-        assert len(res) == 4
+        assert len(res) == 42
 
 
 @pytest.mark.usefixtures("clean_data")
@@ -126,7 +128,8 @@ def test_add_documents_new_lang_no_bpe(models_dir, data_dir, grpc_stub):
     assert resp.Status == AddDocumentsToModelResponse.AddDocumentsStatus.EXCEPTION
     with open(os.path.join(data_dir, "train.txt"), "r") as file:
         res = file.readlines()
-        assert len(res) == 2
+        assert len(res) == 40
+
 
 def test_start_train(data_dir, grpc_stub):
     resp = grpc_stub.StartTrainTopicModel(
@@ -160,4 +163,3 @@ def test_start_train(data_dir, grpc_stub):
             grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
             == TrainTopicModelStatusResponse.TrainTopicModelStatus.COMPLETE
     )
-

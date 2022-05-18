@@ -1,40 +1,39 @@
 import datetime
 import logging
 import math
-import os
+
+import numpy as np
 
 from pathlib import Path
 
 from ap.topic_model.v1.TopicModelTrain_pb2 import StartTrainTopicModelRequest
 from ap.train.data_manager import ModelDataManager
 from ap.train.metrics import set_metric
-from ap.utils.general import ensure_directory, recursively_unlink
+from ap.utils.general import recursively_unlink
 
 
 class ModelTrainer:
     def __init__(
             self,
             data_manager: ModelDataManager,
-            models_dir: str,
     ):
         """
         Initialize a model trainer.
 
         Args:
             data_manager (ModelDataManager): data manager
-            models_dir (str): a path to store new models
         """
 
         from prometheus_client import Gauge
 
         self._data_manager = data_manager
-        self._models_dir = ensure_directory(models_dir)
+        self._models_dir = Path(self._data_manager.config['path_experiment'])
         model_name = self.generate_model_name()
-        self._path_to_dump_model = Path(self._data_manager.config["path_experiment"]).joinpath(model_name)
+        self._path_to_dump_model = Path((self._models_dir.joinpath(model_name)))
 
     def _load_model(self, train_type):
         import artm
-        current_models = os.listdir(self._models_dir)
+        current_models = list(self._models_dir.iterdir())
         # TODO: для дообучения
         # добавить условие: есть язык не из 100 языков
         # new_modalities = list(config["LANGUAGES_ALL"]).extend(list(config["MODALITIES_TRAIN"]))
@@ -50,10 +49,12 @@ class ModelTrainer:
                 raise Exception("Can't update a model - no models found")
 
             # TODO: загрузить модель для дообучения
-            last_model = max(current_models)
+            last_modification = [Path(path).stat().st_mtime for path in current_models]
+            last_modification_index = np.argmax(last_modification)
+            last_model = current_models[last_modification_index]
             logging.info("Start training based on %s model", last_model)
 
-            self.model = artm.load_artm_model(os.path.join(self._models_dir, last_model))
+            self.model = artm.load_artm_model(str(self._models_dir.joinpath(last_model)))
 
         set_metric('num_topics', self._data_manager.config["artm_model_params"]["NUM_TOPICS"])
         set_metric('num_bcg_topics', self._data_manager.config["artm_model_params"]["num_bcg_topic"])
@@ -93,7 +94,7 @@ class ModelTrainer:
             model.scores.add(artm.SparsityPhiScore(name=f'SparsityPhiScore_{lang}',
                                                    class_id=lang,
                                                    topic_names=subject_topic_list))
-            model.scores.add(artm.PerplexityScore(name=f'PerlexityScore_{lang}',
+            model.scores.add(artm.PerplexityScore(name=f'PerplexityScore_{lang}',
                                                   class_ids=lang,
                                                   dictionary=dictionary))
 
@@ -217,25 +218,29 @@ class ModelTrainer:
         """
         logging.info("Start model training")
         self.set_metrics()
+        logging.info("set_metrics before training")
         self._load_model(train_type)
         self._data_manager.load_train_data()
         for epoch in range(self._data_manager.config['artm_model_params']["num_collection_passes"]):
-            logging.info(f'Training epoch {epoch}')
+            logging.info(f'Training epoch {epoch + 1}')
             set_metric('training_iteration', epoch + 1)
             self._train_epoch()
 
             scores_value = self.model_scores_value
-            if "PerlexityScore_@ru" in scores_value:
-                logging.info(f"PerlexityScore_@ru: {scores_value['PerlexityScore_@ru']}")
-                set_metric("perlexity_score_ru",
-                           -1 if math.isnan(scores_value['PerlexityScore_@ru']) else scores_value['PerlexityScore_@ru'])
-            if "PerlexityScore_@en" in scores_value:
-                logging.info(f"PerlexityScore_@en: {scores_value['PerlexityScore_@en']}")
-                set_metric("perlexity_score_en",
-                           -1 if math.isnan(scores_value['PerlexityScore_@en']) else scores_value['PerlexityScore_@en'])
+            if "PerplexityScore_@ru" in scores_value:
+                logging.info(f"PerplexityScore_@ru: {scores_value['PerplexityScore_@ru']}")
+                set_metric("perplexity_score_ru",
+                           -1 if math.isnan(scores_value['PerplexityScore_@ru']) else
+                           scores_value['PerplexityScore_@ru'])
+            if "PerplexityScore_@en" in scores_value:
+                logging.info(f"PerplexityScore_@en: {scores_value['PerplexityScore_@en']}")
+                set_metric("perplexity_score_en",
+                           -1 if math.isnan(scores_value['PerplexityScore_@en']) else
+                           scores_value['PerplexityScore_@en'])
             if self._path_to_dump_model.exists():
                 recursively_unlink(self._path_to_dump_model)
             self.model.dump_artm_model(str(self._path_to_dump_model))
+            logging.info(f"save model to {str(self._path_to_dump_model)}")
 
     @staticmethod
     def generate_model_name() -> str:

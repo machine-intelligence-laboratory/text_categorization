@@ -23,7 +23,7 @@ class VowpalWabbitBPE:
         self.punctuation = punctuation + hanzi.punctuation
 
     def save_docs(
-        self, target_file: str, doc: typing.Dict[str, typing.Dict[str, str]]
+            self, target_file: str, doc: typing.Dict[str, typing.Dict[str, str]]
     ):
         """
         Конвертирует документы в BOW и сохраняет их.
@@ -35,11 +35,11 @@ class VowpalWabbitBPE:
         self.save_bow(target_file, self.convert_to_bow(doc))
 
     def save_bow(
-        self,
-        target_file: str,
-        sessions_bow_messages: typing.Dict[
-            str, typing.Dict[str, typing.Union[str, typing.Counter]]
-        ],
+            self,
+            target_file: str,
+            sessions_bow_messages: typing.Dict[
+                str, typing.Dict[str, typing.Union[str, typing.Counter]]
+            ],
     ):
         """
         Сохраняет BOW представление документов.
@@ -58,8 +58,8 @@ class VowpalWabbitBPE:
                         [
                             token + ":" + str(count)
                             for token, count in sessions_bow_messages[key][
-                                modality
-                            ].items()
+                            modality
+                        ].items()
                         ]
                     )
                 else:
@@ -69,10 +69,8 @@ class VowpalWabbitBPE:
                     f.write(new_message_str_format)
                     f.write('\n')
 
-
-
     def convert_to_bow(
-        self, data: typing.Dict[str, typing.Dict[str, str]]
+            self, data: typing.Dict[str, typing.Dict[str, str]]
     ) -> typing.Dict[str, typing.Dict[str, typing.Union[str, typing.Counter]]]:
         """
         Конвертирует набор документов в BOW представление (см. VowpalWabbit.convet_doct).
@@ -89,7 +87,7 @@ class VowpalWabbitBPE:
         return sessions_bow_messages
 
     def convert_doc(
-        self, doc: typing.Dict[str, str]
+            self, doc: typing.Dict[str, str]
     ) -> typing.Dict[str, typing.Union[str, typing.Counter]]:
         """
         Конвертирует исходный документ в формат BOW.
@@ -111,7 +109,7 @@ class VowpalWabbitBPE:
                     tokens, output_type=yttm.OutputType.SUBWORD
                 )
             else:
-                tokens=[tokens]
+                tokens = [tokens]
             res[modality] = Counter(tokens)
 
         return res
