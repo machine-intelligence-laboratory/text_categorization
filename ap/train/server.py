@@ -1,7 +1,9 @@
 import concurrent
 import logging
 import typing
+
 from concurrent import futures
+from time import sleep
 
 import click
 import grpc
@@ -13,13 +15,15 @@ from ap.topic_model.v1.TopicModelTrain_pb2 import (
     StartTrainTopicModelRequest,
     StartTrainTopicModelResponse,
     TrainTopicModelStatusRequest,
-    TrainTopicModelStatusResponse,
+    TrainTopicModelStatusResponse, UpdateModelConfigurationRequest, UpdateModelConfigurationResponse,
 )
 from ap.topic_model.v1.TopicModelTrain_pb2_grpc import (
     TopicModelTrainServiceServicer,
     add_TopicModelTrainServiceServicer_to_server,
 )
 from ap.train.data_manager import ModelDataManager, NoTranslationException
+from ap.train.metrics import send_metric, run_metrics_server, inc_metric
+
 from ap.train.trainer import ModelTrainer
 from ap.utils.bpe import load_bpe_models
 from ap.utils.general import docs_from_pack, id_to_str
@@ -28,55 +32,64 @@ from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
     def __init__(
-        self,
-        bpe_models: typing.Dict[str, typing.Any],
-        train_conf: typing.Dict[str, typing.Any],
-        models_dir: str,
-        data_dir: str,
-        rubric_dir: str,
+            self,
+            train_conf: str,
+            models_dir: str,
+            data_dir: str
     ):
         """
         Инициализирует сервер.
 
-        Parameters
-        ----------
-        train_conf - словарь с конфигурацией обучения
-        models_dir - путь к директория сохранения файлов
-        data_dir - путь к директории с данными
+        Args:
+            bpe_models (typing.Dict[str, typing.Any]): TODO
+            train_conf (typing.Dict[str, typing.Any]): словарь с конфигурацией обучения
+            models_dir (str): путь к директория сохранения файлов
+            data_dir (str): путь к директории с данными
         """
-        self._vw = VowpalWabbitBPE(bpe_models)
-        self._data_manager = ModelDataManager(data_dir, train_conf, rubric_dir)
-        self._trainer = ModelTrainer(self._data_manager, train_conf, models_dir)
-
-        self._executor = concurrent.futures.ProcessPoolExecutor(max_workers=2)
+        self._executor = concurrent.futures.ProcessPoolExecutor(max_workers=3)
         self._training_future = None
 
+        with open(train_conf, "r") as file:
+            self._config = yaml.safe_load(file)
+
+        self._executor.submit(run_metrics_server, self._config)
+        sleep(10)
+
+
+        bpe_models = load_bpe_models(self._config["BPE_models"])
+        self._vw = VowpalWabbitBPE(bpe_models)
+
+        self._data_manager = ModelDataManager(data_dir, train_conf)
+        self._trainer = ModelTrainer(self._data_manager, models_dir)
+
     def AddDocumentsToModel(
-        self, request: AddDocumentsToModelRequest, context
+            self, request: AddDocumentsToModelRequest, context
     ) -> AddDocumentsToModelResponse:
         """
         Добавляет документы в модель.
 
-        Parameters
-        ----------
-        request - запрос с документами
-        context - не используется
+        Args:
+            request (AddDocumentsToModelRequest): запрос с документами
+            context: не используется
 
-        Returns
-        -------
-        Ответ
+        Returns:
+            (AddDocumentsToModelResponse): Ответ
         """
         try:
             logging.info("AddDocumentsToModel")
 
             docs = docs_from_pack(request.Collection)
-
+            grouped_docs = {}
             for parallel_docs in request.ParallelDocuments:
                 base_id = id_to_str(parallel_docs.Ids[0])
+                grouped_docs[base_id] = docs[base_id]
                 for i in range(1, len(parallel_docs.Ids)):
-                    docs[base_id].update(docs[id_to_str(parallel_docs.Ids[i])])
+                    grouped_docs[base_id].update(docs[id_to_str(parallel_docs.Ids[i])])
 
-            self._data_manager.write_new_docs(self._vw, docs)
+            self._data_manager.write_new_docs(self._vw, grouped_docs)
+
+            inc_metric('added_docs', len(grouped_docs))
+            self._data_manager.update_ds_metrics()
         except NoTranslationException:
             return AddDocumentsToModelResponse(
                 Status=AddDocumentsToModelResponse.AddDocumentsStatus.NO_TRANSLATION
@@ -91,19 +104,17 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         )
 
     def StartTrainTopicModel(
-        self, request: StartTrainTopicModelRequest, context
+            self, request: StartTrainTopicModelRequest, context
     ) -> StartTrainTopicModelResponse:
         """
         Запускает обучение.
 
-        Parameters
-        ----------
-        request - запрос с типом обучения.
-        context - не используется.
+        Args:
+            request (StartTrainTopicModelRequest): запрос с типом обучения.
+            context: не используется.
 
-        Returns
-        -------
-        Статус запуска.
+        Returns:
+            (StartTrainTopicModelResponse): Статус запуска.
         """
         logging.info("StartTrainTopicModel")
 
@@ -111,32 +122,30 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
             return StartTrainTopicModelResponse(
                 Status=StartTrainTopicModelResponse.StartTrainTopicModelStatus.ALREADY_STARTED
             )
-        else:
-            self._training_future = self._executor.submit(
-                self._trainer.train_model, [request.Type]
-            )
+
+        self._training_future = self._executor.submit(
+            self._trainer.train_model, request.Type
+        )
 
         return StartTrainTopicModelResponse(
             Status=StartTrainTopicModelResponse.StartTrainTopicModelStatus.OK
         )
 
     def TrainTopicModelStatus(
-        self, request: TrainTopicModelStatusRequest, context
+            self, request: TrainTopicModelStatusRequest, context
     ) -> TrainTopicModelStatusResponse:
         """
         Возвращает статус текущей сессии обучения.
 
-        Parameters
-        ----------
-        request - пустой запрос
-        context - контекст, не используется
+        Args:
+            request (TrainTopicModelStatusRequest): пустой запрос
+            context: контекст, не используется
 
         Returns
-        -------
-        Статус
+            (TrainTopicModelStatusResponse): Статус
         """
         if self._training_future is None or (
-            self._training_future.done() and self._training_future.exception() is None
+                self._training_future.done() and self._training_future.exception() is None
         ):
             return TrainTopicModelStatusResponse(
                 Status=TrainTopicModelStatusResponse.TrainTopicModelStatus.COMPLETE
@@ -146,44 +155,50 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
                 Status=TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
             )
         elif (
-            self._training_future.cancelled()
-            or logging.error(self._training_future.exception()) is not None
+                self._training_future.cancelled()
+                or self._training_future.exception() is not None
         ):
             logging.error(str(self._training_future.exception()))
             return TrainTopicModelStatusResponse(
                 Status=TrainTopicModelStatusResponse.TrainTopicModelStatus.ABORTED
             )
 
+    def UpdateModelConfiguration(self, request: UpdateModelConfigurationRequest,
+                                 context) -> UpdateModelConfigurationResponse:
+        """обновление конфигурации обучения
+        """
+        self._data_manager.update_config(request.Configuration)
+        return UpdateModelConfigurationResponse(
+            Status=UpdateModelConfigurationResponse.UpdateModelConfigurationStatus.OK)
+
 
 @click.command()
+@click.option(
+    "--config", help="A path to experiment yaml config",
+)
 @click.option(
     "--models", help="A path to store trained bigARTM models",
 )
 @click.option(
-    "--bpe", help="A path to a directory with BPE models",
-)
-@click.option(
     "--data", help="A path to data directories",
 )
-@click.option(
-    "--rubric", help="A path to data directories",
-)
-def serve(models, bpe, data, rubric):
+def serve(models, config, data):
     """
     Запускает сервер.
 
-    Parameters
-    ----------
-    models - Путь к моделям
-    data - Путь к данным
+    Args:
+        models (TODO): TODO
+        config (TODO): TODO
+        data (TODO): TODO
     """
-    with open("./train_conf.yaml", "r") as f:
-        train_conf = yaml.safe_load(f)
+    from prometheus_client import start_http_server
 
+    # TODO: дообучение:
+    # если пути config["BPE_models"] нет - не надо загружать модели
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_TopicModelTrainServiceServicer_to_server(
-        TopicModelTrainServiceImpl(load_bpe_models(bpe), train_conf, models, data, rubric),
+        TopicModelTrainServiceImpl(config, models, data),
         server,
     )
     server.add_insecure_port("[::]:50051")

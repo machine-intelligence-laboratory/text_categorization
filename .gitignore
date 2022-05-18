@@ -1,0 +1,5 @@
+.idea
+ap/topic_model
+*__pycache__*
+*.ipynb_checkpoints*
+*bigartm*

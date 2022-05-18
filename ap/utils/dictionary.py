@@ -8,13 +8,11 @@ def get_num_entries(dictionary: artm.Dictionary) -> int:
     """
     Возвращает размер словаря.
 
-    Parameters
-    ----------
-    dictionary словарь
+    Args:
+        dictionary (artm.Dictionary): словарь тематической модели
 
-    Returns
-    -------
-    количество токенов в словаре
+    Returns:
+        количество токенов в словаре
     """
     return next(
         x for x in dictionary._master.get_info().dictionary if x.name == dictionary.name
@@ -34,13 +32,12 @@ def limit_classwise(
     Таким образом, что в разрезе каждоого class id будет не более max_dictionary_size токенов.
     Сохраняет словарь в текстовым форматом в файле out_file.
 
-    Parameters
-    ----------
-    dictionary исходный словарь
-    cls_ids модальности
-    max_dictionary_size максимальный размер словаря в разрезе модальности
-    tmp_dir директория для хранения промежуточных результатов
-    out_file файл, в котором сохраняется результат
+    Args:
+        dictionary (artm.Dictionary): исходный словарь
+        cls_ids (list): модальности
+        max_dictionary_size (int): максимальный размер словаря в разрезе модальности
+        tmp_dir (str): директория для хранения промежуточных результатов
+        out_file (str): файл, в котором сохраняется результат
     """
     for cls_id in cls_ids:
         filtered = dictionary

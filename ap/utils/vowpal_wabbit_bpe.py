@@ -12,32 +12,31 @@ from zhon import hanzi
 class VowpalWabbitBPE:
     def __init__(self, bpe_models, use_counters=True):
         """
-        Создает класс сохранения VW файлов с BPE преобразованием
+        Создает класс сохранения VW файлов с BPE преобразованием.
 
-        Parameters
-        ----------
-        use_counters - признак использования каунтеров
+        Parameters:
+            bpe_models: TODO.
+            use_counters: признак использования каунтеров.
         """
         self._bpe_models = bpe_models
         self._use_counters = use_counters
         self.punctuation = punctuation + hanzi.punctuation
 
     def save_docs(
-        self, target_file: typing.Dict[str, str], doc: typing.Dict[str, typing.Dict[str, str]]
+        self, target_file: str, doc: typing.Dict[str, typing.Dict[str, str]]
     ):
         """
         Конвертирует документы в BOW и сохраняет их.
 
-        Parameters
-        ----------
-        target_file путь к файлу
-        doc сырые документы
+        Parameters:
+            target_file: путь к файлу.
+            doc: сырые документы.
         """
         self.save_bow(target_file, self.convert_to_bow(doc))
 
     def save_bow(
         self,
-        target_file: typing.Dict[str, str],
+        target_file: str,
         sessions_bow_messages: typing.Dict[
             str, typing.Dict[str, typing.Union[str, typing.Counter]]
         ],
@@ -45,10 +44,9 @@ class VowpalWabbitBPE:
         """
         Сохраняет BOW представление документов.
 
-        Parameters
-        ----------
-        target_file словарь с vw
-        sessions_bow_messages документы в формате BOW
+        Parameters:
+            target_file: словарь с vw.
+            sessions_bow_messages: документы в формате BOW.
         """
         for key, modality_bows in sessions_bow_messages.items():
             new_message_str_format = str(key).replace(" ", "_")
@@ -67,7 +65,11 @@ class VowpalWabbitBPE:
                 else:
                     modality_content = sessions_bow_messages[key][modality]
                 new_message_str_format += " |@{} {}".format(modality, modality_content)
-                target_file[str(key).replace(" ", "_")] = new_message_str_format
+                with open(target_file, 'a') as f:
+                    f.write(new_message_str_format)
+                    f.write('\n')
+
+
 
     def convert_to_bow(
         self, data: typing.Dict[str, typing.Dict[str, str]]
@@ -75,13 +77,11 @@ class VowpalWabbitBPE:
         """
         Конвертирует набор документов в BOW представление (см. VowpalWabbit.convet_doct).
 
-        Parameters
-        ----------
-        param data словарь айди документа->документ
+        Parameters:
+            data: словарь айди документа->документ.
 
-        Returns
-        -------
-        словарь айди документа->документ в виде BOW
+        Returns:
+            словарь айди документа->документ в виде BOW.
         """
         sessions_bow_messages = dict()
         for elem_id, elem in data.items():
@@ -94,12 +94,11 @@ class VowpalWabbitBPE:
         """
         Конвертирует исходный документ в формат BOW.
 
-        Parameters
-        ----------
-        doc словарь язык->текст документа
-        Returns
-        -------
-        словарь язык->BOW документа. Если use_counters==True, словарь в виде Counter
+        Parameters:
+            doc словарь язык->текст документа.
+
+        Returns:
+            словарь язык->BOW документа. Если use_counters==True, словарь в виде Counter.
         """
 
         res = {}
@@ -107,10 +106,12 @@ class VowpalWabbitBPE:
         for modality, mod_elem in doc.items():
             print(modality)
             tokens = " ".join(self._token_filtration(mod_elem))
-            if modality not in ['@UDK', '@GRNTI']:
+            if modality not in ['UDK', 'GRNTI']:
                 tokens = self._bpe_models[modality].encode(
                     tokens, output_type=yttm.OutputType.SUBWORD
                 )
+            else:
+                tokens=[tokens]
             res[modality] = Counter(tokens)
 
         return res

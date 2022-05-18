@@ -1,3 +1,7 @@
+"""
+Файл с путями до различных данных.
+"""
+
 data_path = '/data/datasets/Antiplagiat/'
 
 # rubrics
@@ -60,7 +64,6 @@ path_elib_val_bpe = data_path + 'articles_train_val2/val_bpe/'
 
 # wiki + articles + elibrary
 path_combined_train_batches = data_path + 'combined_train/batches'
-path_combined_train_dataset = data_path + 'combined_train/combined_train.csv'
 
 # wiki + elibrary
 path_wiki_with_elib_train_batches = data_path + 'wiki_with_elib_train/batches'
