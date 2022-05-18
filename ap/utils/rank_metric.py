@@ -8,6 +8,7 @@ import artm
 import joblib
 import numpy as np
 import pandas as pd
+import typing
 
 from sklearn.metrics.pairwise import cosine_similarity
 from tqdm import tqdm
@@ -15,27 +16,24 @@ from tqdm import tqdm
 
 class RankingByModel:
     def __init__(
-            self, bcg_topic_list, metrics_to_calculate,
+            self, bcg_topic_list: list, metrics_to_calculate: typing.List[str],
             model_path, matrix_norm_metric, path_subsamples, path_rubrics,
             mode, **kwargs
     ):
         """
         Class for ranking document search between language pairs.
 
-        Parameters:
-            bcg_topic_list: list
-                backgroung topics of a topic model
-            metrics_to_calculate: list of str ('analogy', 'eucl')
-                list of names of proximity measures to use in ranking
-            model_path: str
-                a path to the artm model directory
-            matrix_norm_metric: callable
-                a way to measure norm of a matrix of vectors
-                for example init as:
-                matrix_norm_metric = np.linalg.norm
-            path_subsamples: str
-                path to file in json format that contains subsamples of documents indices
-                for which will be searched
+        Args:
+            bcg_topic_list (list): список фоновых тем тематической модели
+            metrics_to_calculate (list of str ('analogy', 'eucl')): список названий метрик близости
+                для использования в ранжировании
+            model_path (str): путь тематической модели
+            matrix_norm_metric (callable): способ измерения нормы матрицы векторов
+                например: matrix_norm_metric = np.linalg.norm
+            path_subsamples (str): путь к файлу в формате json, содержащему подвыборки индексов документов,
+                по которым будет производиться поиск
+            path_rubrics (str): путь к json-файлу, где по doc_id содержится его рубрика
+            mode (str): тип данных, например 'test'
         """
         self._model = artm.load_artm_model(model_path)
         self._metrics_to_calculate = metrics_to_calculate
@@ -87,10 +85,10 @@ class RankingByModel:
         return theta.columns, theta
 
     def _metrics_on_analogy_similarity(
-        self, theta_original,
-        doc_id, top_10_percent,
-        a_train, a_z_train,
-        subsample_for_doc_id, vectors_source
+            self, theta_original,
+            doc_id, top_10_percent,
+            a_train, a_z_train,
+            subsample_for_doc_id, vectors_source
     ):
 
         b = theta_original[doc_id].values
@@ -108,9 +106,9 @@ class RankingByModel:
         return percent_same_rubric, count
 
     def _metrics_on_eucl_similarity(
-        self,
-        search_num, search_indices, doc_id, top_10_percent,
-        subsample_for_doc_id, vectors_original, vectors_source
+            self,
+            search_num, search_indices, doc_id, top_10_percent,
+            subsample_for_doc_id, vectors_original, vectors_source
     ):
         difference = vectors_source - vectors_original[search_num]
         vectors_norm = self._matrix_norm_metric(difference, self._axis)
@@ -118,7 +116,7 @@ class RankingByModel:
         rating = subsample_for_doc_id[np.argsort(vectors_norm)]
         top_rating = rating[:len(top_10_percent)]
         num_same_rubric = sum([self._rubrics[current_id] == self._rubrics[doc_id]
-                              for current_id in top_rating])
+                               for current_id in top_rating])
         percent_same_rubric = num_same_rubric / len(top_10_percent)
         position = np.argwhere(rating == search_indices[search_num])[0][0]
         count = 1 if position < len(top_10_percent) else 0

@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import json
 import warnings
 
@@ -7,6 +5,7 @@ import artm
 import joblib
 import numpy as np
 
+from pathlib import Path
 from tqdm import tqdm
 
 import ap.utils.rank_metric as rank_metric
