@@ -18,6 +18,16 @@ def id_to_str(id) -> str:
 
 
 def get_modalities(doc):
+    """
+    Возвращает словарь, где по языку хранятся токены на этом языке.
+
+    Args:
+        doc: документ
+
+    Returns:
+        res (dict): словарь, ключ -- язык, значение -- строка токенов на этом языке
+            через пробел
+    """
     res = {}
 
     for modality in doc.Modalities:
@@ -91,7 +101,7 @@ def batch_names(starts_from, count) -> typing.Generator[str, None, None]:
 
 def recursively_unlink(path: Path):
     """
-    Рекурсивное удаление файлов и директорий.
+    Рекурсивно удаляет файлы и директории.
 
     Args:
         path (Path): путь, по которому необходимо удалить все файлы.
