@@ -6,4 +6,5 @@ ap/topic_model
 docs/
 ap/utils/config.py
 ap/utils/emb_metrics.py
+ap/utils/subsamples_creator.py
 .coverage
