@@ -130,7 +130,7 @@ def calculate_search_quality(config_experiment) -> Dict[str, Dict[str, Dict[str,
             matrix_norm_metric, path_subsamples, path_rubrics,
             path_test, current_languages, recalculate_test_thetas, axis=axis
         )
-        quality[str(path_rubrics)] = {
+        quality[Path(path_rubrics).stem] = {
             "average_frequency": quality_model[frequency],
             "average_percent": quality_model[percent],
         }
