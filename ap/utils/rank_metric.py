@@ -323,6 +323,7 @@ def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
     """
     path_model = Path(path_model)
     path_experiment_result = Path(path_experiment_result)
+    path_experiment_result.mkdir(parents=True, exist_ok=True)
     quality_experiment = {}
     # path_model_result = Path(path_experiment_result).joinpath(path_model.name)
     # path_model_result.mkdir(parents=True, exist_ok=True)
