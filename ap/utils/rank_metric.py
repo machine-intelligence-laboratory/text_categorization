@@ -1,5 +1,6 @@
 import json
 import os
+import typing
 
 from itertools import combinations_with_replacement
 from pathlib import Path
@@ -8,7 +9,6 @@ import artm
 import joblib
 import numpy as np
 import pandas as pd
-import typing
 
 from sklearn.metrics.pairwise import cosine_similarity
 from tqdm import tqdm
@@ -64,7 +64,7 @@ class RankingByModel:
             theta_lang = joblib.load(path_thetas)
             print('Existing thetas of test data were loaded.')
         else:
-            theta_lang = dict()
+            theta_lang = {}
             for lang in current_languages:
                 data_lang_path = str(path_test.joinpath(
                     f'test_{lang}_120k.txt'))
@@ -136,11 +136,11 @@ class RankingByModel:
         Возвращает метрики "Средний процент" и "Средняя частота".
         """
         path_train_lang = Path(path_train_lang)
-        average_position = dict()
-        percent_same_rubric = dict()
+        average_position = {}
+        percent_same_rubric = {}
         for metric in self._metrics_to_calculate:
-            average_position[metric] = list()
-            percent_same_rubric[metric] = list()
+            average_position[metric] = []
+            percent_same_rubric[metric] = []
         with open(Path(self._path_subsamples).joinpath(
                 lang_original, f'{lang_source}.json')) as file:
             subsamples = json.load(file)
@@ -177,7 +177,7 @@ class RankingByModel:
                 percent_same_rubric[metric].append(percent)
                 average_position[metric].append(count)
 
-        metrics = dict()
+        metrics = {}
         for metric in self._metrics_to_calculate:
             metrics[metric] = {
                 'percent_same_rubric': float(np.mean(percent_same_rubric[metric])),
@@ -219,7 +219,7 @@ class RankingByModel:
             theta_two[search_indices], theta_one[search_indices]
         )
 
-        metrics = dict()
+        metrics = {}
         for metric in self._metrics_to_calculate:
             metrics[metric] = {
                 'percent_same_rubric': {
@@ -257,8 +257,8 @@ class RankingByModel:
             intersections (pandas.DataFrame): pandas.DataFrame, где \
                 для каждой пары языков оригинал-перевод хранится пересечение документов
         """
-        percent = dict()
-        frequency = dict()
+        percent = {}
+        frequency = {}
         for metric in self._metrics_to_calculate:
             percent[metric] = pd.DataFrame(index=current_languages, columns=current_languages)
             frequency[metric] = pd.DataFrame(index=current_languages, columns=current_languages)
@@ -323,7 +323,7 @@ def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
     """
     path_model = Path(path_model)
     path_experiment_result = Path(path_experiment_result)
-    quality_experiment = dict()
+    quality_experiment = {}
     # path_model_result = Path(path_experiment_result).joinpath(path_model.name)
     # path_model_result.mkdir(parents=True, exist_ok=True)
     # path_thetas = str(path_model_result.joinpath('theta_lang.joblib'))

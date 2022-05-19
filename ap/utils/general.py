@@ -1,10 +1,15 @@
+"""
+Модуль содержит функции общего назначения.
+"""
+
+
 import os
 import typing
 
 from pathlib import Path
 
 
-def id_to_str(id) -> str:
+def id_to_str(doc_id) -> str:
     """
     Конвертирует DocId в строку.
 
@@ -12,9 +17,9 @@ def id_to_str(id) -> str:
         id (DocId): id документа
 
     Returns:
-        Строка из DocId
+        (str): Строка из DocId
     """
-    return f"{id.Hi}_{id.Lo}"
+    return f"{doc_id.Hi}_{doc_id.Lo}"
 
 
 def get_modalities(doc):
