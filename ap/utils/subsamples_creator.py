@@ -24,14 +24,15 @@ class MakeSubsamples:
         subsample_size (int):
             The size of the subsample. The default is 1000.
     """
+
     def __init__(
-        self,
-        languages: list,
-        path_to_save_subsamples: str,
-        path_to_data: str,
-        path_rubrics: str,
-        mode: str,
-        subsample_size: int = 1000
+            self,
+            languages: list,
+            path_to_save_subsamples: str,
+            path_to_data: str,
+            path_rubrics: str,
+            mode: str,
+            subsample_size: int = 1000
     ):
         with open(path_rubrics) as file:
             self._rubrics = json.load(file)
@@ -50,11 +51,11 @@ class MakeSubsamples:
         self._path_to_save_subsamples = path_to_save_subsamples
 
     def _get_subsample(
-        self,
-        doc_id: str,
-        lang_original: str,
-        lang_source: str,
-        subsample_size: int
+            self,
+            doc_id: str,
+            lang_original: str,
+            lang_source: str,
+            subsample_size: int
     ) -> list:
         doc_rubric = self._rubrics[doc_id]
         test_sample_ids_source = self._test_ids[lang_source]
