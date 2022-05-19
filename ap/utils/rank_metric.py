@@ -188,8 +188,8 @@ class RankingByModel:
         metrics = dict()
         for metric in self._metrics_to_calculate:
             metrics[metric] = {
-                'percent_same_rubric': np.mean(percent_same_rubric[metric]),
-                'average_position': np.mean(average_position[metric])
+                'percent_same_rubric': float(np.mean(percent_same_rubric[metric])),
+                'average_position': float(np.mean(average_position[metric]))
             }
         return metrics
 
@@ -338,9 +338,7 @@ def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
         quality_experiment (dict): словарь имя модели -> словарь название метрики -> значение метрики
     """
     path_model = Path(path_model)
-    # path_experiment_result = Path(path_experiment_result)
     quality_experiment = dict()
-    # quality_experiment[path_model.name] = dict()
     path_model_result = Path(path_experiment_result).joinpath(path_model.name)
     path_model_result.mkdir(parents=True, exist_ok=True)
     path_thetas = str(path_model_result.joinpath('theta_lang.joblib'))
@@ -362,12 +360,5 @@ def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
         quality_experiment[f'average_frequency_{metric}'] = average_frequency
         quality_experiment[f'average_percent_{metric}'] = average_percent
     print(quality_experiment)
-
-    # # TODO: надо ли сохранять дважды?
-    # with open(path_model_result.joinpath('metrics.json'), 'w') as file:
-    #     json.dump(quality_experiment, file)
-    #
-    # with open(path_experiment_result.joinpath('metrics.json'), 'w') as file:
-    #     json.dump(quality_experiment, file)
 
     return quality_experiment
