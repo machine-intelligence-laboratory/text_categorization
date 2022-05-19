@@ -46,7 +46,7 @@ def docs_from_pack(pack) -> typing.Dict[str, typing.Dict[str, str]]:
         pack (ap.topic_model.v1.TopicModelBase_pb2.DocumentPack): коллекция
 
     Returns:
-        dict из документов
+        (dict): словарь из документов
     """
 
     return {
@@ -63,7 +63,7 @@ def ensure_directory(path: str) -> str:
         path (str): путь к директории
 
     Returns:
-        path (str) путь к директории
+        path (str): путь к директории
     """
     if not os.path.exists(path):
         os.makedirs(path)
