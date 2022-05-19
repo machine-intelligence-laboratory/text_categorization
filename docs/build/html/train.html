@@ -1,0 +1,374 @@
+
+<!DOCTYPE html>
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>ap.train &#8212; документация text_categorization 0.1.0</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/translations.js"></script>
+    
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="ap.utils" href="utils.html" />
+    <link rel="prev" title="ap.inference" href="inference.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             accesskey="I">указатель</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Содержание модулей Python"
+             >модули</a> |</li>
+        <li class="right" >
+          <a href="utils.html" title="ap.utils"
+             accesskey="N">вперёд</a> |</li>
+        <li class="right" >
+          <a href="inference.html" title="ap.inference"
+             accesskey="P">назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">документация text_categorization 0.1.0</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ap.train</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-ap.train.data_manager">
+<span id="ap-train"></span><h1>ap.train<a class="headerlink" href="#module-ap.train.data_manager" title="Ссылка на этот заголовок">¶</a></h1>
+<p>Модуль для поддержания работы с данными</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.data_manager.</span></span><span class="sig-name descname"><span class="pre">ModelDataManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Класс для поддержания работы с данными</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.generate_batches_balanced_by_rubric">
+<span class="sig-name descname"><span class="pre">generate_batches_balanced_by_rubric</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.generate_batches_balanced_by_rubric" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает artm.BatchVectorizer, построенный на сбалансированных батчах.</p>
+<p>Генерирует батчи, в которых документы сбалансированны относительно рубрик ГРНТИ.
+Из всего тренировочного датасета сэмплируются документы так, чтобы
+в обучении на эпохе участвовало одинаковое количество документов каждой рубрики ГРНТИ.
+Количество документов каждой рубрики равно average_rubric_size - среднему размеру рубрики ГРНТИ.</p>
+<p>Если в конфиге для обучения модели self._config присутствует путь
+до батчей, построенных по википедии self._path_batches_wiki, то батчи будут использованы для обучения модели.
+Иначе в обучении будут принимать участие только батчи, сбалансированные относительно рубрик ГРНТИ.</p>
+<p>Возвращает artm.BatchVectorizer, построенный на этих батчах.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>artm.BatchVectorizer, построенный на сбалансированных батчах.</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>batch_vectorizer (artm.BatchVectorizer)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.get_modality_distribution">
+<span class="sig-name descname"><span class="pre">get_modality_distribution</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.get_modality_distribution" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает количество документов каждой модальности из self.class_ids для тренировочных данных.</p>
+<p>Если в конфиге для обучения модели self.config передан путь до словаря,
+содержащего количество документов Wikipedia по модальностям, эти данные учитываются для
+оценки всего тренировочного датасета.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>словарь, ключ это модальность,
+значение это количество документов с такой модальностью</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>modality_distribution_all (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.load_train_data">
+<span class="sig-name descname"><span class="pre">load_train_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.load_train_data" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Загружает тренировочные данные.</p>
+<dl class="simple">
+<dt>Создает два атрибута:</dt><dd><ul class="simple">
+<li><p>self.train_docs - словарь, где по doc_id содержиться документ в Vowpal Wabbit формате</p></li>
+<li><dl class="simple">
+<dt>self._docs_of_rubrics - словарь, где по рубрике хранится</dt><dd><p>список всех doc_id с такой рубрикой из self.rubrics_train.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.update_config">
+<span class="sig-name descname"><span class="pre">update_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.update_config" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Обновляет конфиг, хранящийся по пути self._config_path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>config</strong> – конфиг обучаемой модели</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.update_ds_metrics">
+<span class="sig-name descname"><span class="pre">update_ds_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.update_ds_metrics" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Обновляет метрики о датасете.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.write_new_docs">
+<span class="sig-name descname"><span class="pre">write_new_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.write_new_docs" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Сохраняет документы.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vw</strong> (<em>VowpalWabbitBPE</em>) – объект класса VowpalWabbitBPE для сохранения VW файлов.</p></li>
+<li><p><strong>docs</strong> (<em>dict</em>) – документы</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ap.train.data_manager.NoTranslationException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.data_manager.</span></span><span class="sig-name descname"><span class="pre">NoTranslationException</span></span><a class="headerlink" href="#ap.train.data_manager.NoTranslationException" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<span class="target" id="module-ap.train.metrics"></span><dl class="py function">
+<dt class="sig sig-object py" id="ap.train.metrics.handle">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.metrics.</span></span><span class="sig-name descname"><span class="pre">handle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.metrics.handle" title="Ссылка на это определение">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.train.metrics.inc_metric">
+<span class="sig-prename descclassname"><span class="pre">ap.train.metrics.</span></span><span class="sig-name descname"><span class="pre">inc_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.metrics.inc_metric" title="Ссылка на это определение">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.train.metrics.run_metrics_server">
+<span class="sig-prename descclassname"><span class="pre">ap.train.metrics.</span></span><span class="sig-name descname"><span class="pre">run_metrics_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.metrics.run_metrics_server" title="Ссылка на это определение">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.train.metrics.send_metric">
+<span class="sig-prename descclassname"><span class="pre">ap.train.metrics.</span></span><span class="sig-name descname"><span class="pre">send_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.metrics.send_metric" title="Ссылка на это определение">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.train.metrics.set_metric">
+<span class="sig-prename descclassname"><span class="pre">ap.train.metrics.</span></span><span class="sig-name descname"><span class="pre">set_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.metrics.set_metric" title="Ссылка на это определение">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-ap.train.server"></span><dl class="py class">
+<dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.server.</span></span><span class="sig-name descname"><span class="pre">TopicModelTrainServiceImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_conf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2_grpc.TopicModelTrainServiceServicer</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl.AddDocumentsToModel">
+<span class="sig-name descname"><span class="pre">AddDocumentsToModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.AddDocumentsToModelRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.AddDocumentsToModelResponse</span></span></span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl.AddDocumentsToModel" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Добавляет документы в модель.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>AddDocumentsToModelRequest</em>) – запрос с документами</p></li>
+<li><p><strong>context</strong> – не используется</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Ответ</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>(AddDocumentsToModelResponse)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl.StartTrainTopicModel">
+<span class="sig-name descname"><span class="pre">StartTrainTopicModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.StartTrainTopicModelRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.StartTrainTopicModelResponse</span></span></span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl.StartTrainTopicModel" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Запускает обучение.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>StartTrainTopicModelRequest</em>) – запрос с типом обучения.</p></li>
+<li><p><strong>context</strong> – не используется.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Статус запуска.</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>(StartTrainTopicModelResponse)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl.TrainTopicModelStatus">
+<span class="sig-name descname"><span class="pre">TrainTopicModelStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.TrainTopicModelStatusRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.TrainTopicModelStatusResponse</span></span></span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl.TrainTopicModelStatus" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает статус текущей сессии обучения.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>TrainTopicModelStatusRequest</em>) – пустой запрос</p></li>
+<li><p><strong>context</strong> – контекст, не используется</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>(TrainTopicModelStatusResponse): Статус</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl.UpdateModelConfiguration">
+<span class="sig-name descname"><span class="pre">UpdateModelConfiguration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.UpdateModelConfigurationRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.UpdateModelConfigurationResponse</span></span></span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl.UpdateModelConfiguration" title="Ссылка на это определение">¶</a></dt>
+<dd><p>обновление конфигурации обучения</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-ap.train.trainer"></span><dl class="py class">
+<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.trainer.</span></span><span class="sig-name descname"><span class="pre">ModelTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ap.train.data_manager.ModelDataManager" title="ap.train.data_manager.ModelDataManager"><span class="pre">ap.train.data_manager.ModelDataManager</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.generate_model_name">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_model_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.generate_model_name" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Генерирует новое имя для модели.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>Новое имя для модели</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.model_scores">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_scores</span></span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.model_scores" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает все скоры тематической модели</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>список скоров тематической модели</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>(artm.scores.Scores)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.model_scores_value">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_scores_value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#ap.train.trainer.ModelTrainer.model_scores_value" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает значения всех скоров тематической модели на текущей эпохе</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>значения всех скоров тематической модели на текущей эпохе</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>scores_value (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.set_metrics">
+<span class="sig-name descname"><span class="pre">set_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.set_metrics" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Задает основную информацию о модели.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.train_model">
+<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f62d425f2b0&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.train_model" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Функция обучения тематической модели.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>train_type</strong> (<em>StartTrainTopicModelRequest.TrainType</em>) – full for full train from scratch, update to get the latest model and train it.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Предыдущий раздел</h4>
+    <p class="topless"><a href="inference.html"
+                          title="предыдущая глава">ap.inference</a></p>
+  </div>
+  <div>
+    <h4>Следующий раздел</h4>
+    <p class="topless"><a href="utils.html"
+                          title="следующая глава">ap.utils</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>Эта страница</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/train.rst.txt"
+            rel="nofollow">Исходный текст</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Быстрый поиск</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Искать" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             >указатель</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Содержание модулей Python"
+             >модули</a> |</li>
+        <li class="right" >
+          <a href="utils.html" title="ap.utils"
+             >вперёд</a> |</li>
+        <li class="right" >
+          <a href="inference.html" title="ap.inference"
+             >назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">документация text_categorization 0.1.0</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ap.train</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, MIL Team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+  </body>
+</html>
