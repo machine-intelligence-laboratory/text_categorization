@@ -9,8 +9,6 @@ ap.utils
    :members:
 .. automodule:: ap.utils.general
    :members:
-.. automodule:: ap.utils.graphics_for_emb_metrics
-   :members:
 .. automodule:: ap.utils.rank_metric
    :members:
 .. automodule:: ap.utils.search_quality

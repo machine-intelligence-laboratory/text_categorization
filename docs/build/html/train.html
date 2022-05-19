@@ -65,7 +65,7 @@
 <p>Если в конфиге для обучения модели self._config присутствует путь
 до батчей, построенных по википедии self._path_batches_wiki, то батчи будут использованы для обучения модели.
 Иначе в обучении будут принимать участие только батчи, сбалансированные относительно рубрик ГРНТИ.</p>
-<p>Возвразает artm.BatchVectorizer, построенный на этих батчах.</p>
+<p>Возвращает artm.BatchVectorizer, построенный на этих батчах.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Результат</dt>
 <dd class="field-odd"><p>artm.BatchVectorizer, построенный на сбалансированных батчах.</p>
@@ -84,9 +84,12 @@
 содержащего количество документов Wikipedia по модальностям, эти данные учитываются для
 оценки всего тренировочного датасета.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Параметры</dt>
-<dd class="field-odd"><p><strong>modality_distribution_all</strong> (<em>dict</em>) – словарь, ключ - модальность,
-значение - количество документов с такой модальностью</p>
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>словарь, ключ это модальность,
+значение это количество документов с такой модальностью</p>
+</dd>
+<dt class="field-even">Тип результата</dt>
+<dd class="field-even"><p>modality_distribution_all (dict)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -94,28 +97,46 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.load_train_data">
 <span class="sig-name descname"><span class="pre">load_train_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.load_train_data" title="Ссылка на это определение">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.update_config">
-<span class="sig-name descname"><span class="pre">update_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.update_config" title="Ссылка на это определение">¶</a></dt>
-<dd><p>TODO</p>
-<dl class="field-list simple">
-<dt class="field-odd">Параметры</dt>
-<dd class="field-odd"><p><strong>config</strong> (<em>TODO</em>) – TODO</p>
+<dd><p>Загружает тренировочные данные.</p>
+<dl class="simple">
+<dt>Создает два атрибута:</dt><dd><ul class="simple">
+<li><p>self.train_docs - словарь, где по doc_id содержиться документ в Vowpal Wabbit формате</p></li>
+<li><dl class="simple">
+<dt>self._docs_of_rubrics - словарь, где по рубрике хранится</dt><dd><p>список всех doc_id с такой рубрикой из self.rubrics_train.</p>
+</dd>
+</dl>
+</li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.update_config">
+<span class="sig-name descname"><span class="pre">update_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.update_config" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Обновляет конфиг, хранящийся по пути self._config_path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>config</strong> – конфиг обучаемой модели</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.update_ds_metrics">
+<span class="sig-name descname"><span class="pre">update_ds_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.update_ds_metrics" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Обновляет метрики о датасете.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ap.train.data_manager.ModelDataManager.write_new_docs">
-<span class="sig-name descname"><span class="pre">write_new_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.write_new_docs" title="Ссылка на это определение">¶</a></dt>
-<dd><p>TODO</p>
+<span class="sig-name descname"><span class="pre">write_new_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.data_manager.ModelDataManager.write_new_docs" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Сохраняет документы.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vw</strong> (<em>TODO</em>) – TODO</p></li>
-<li><p><strong>docs</strong> (<em>TODO</em>) – TODO</p></li>
+<li><p><strong>vw</strong> (<em>VowpalWabbitBPE</em>) – объект класса VowpalWabbitBPE для сохранения VW файлов.</p></li>
+<li><p><strong>docs</strong> (<em>dict</em>) – документы</p></li>
 </ul>
 </dd>
 </dl>
@@ -131,7 +152,7 @@
 
 <span class="target" id="module-ap.train.server"></span><dl class="py class">
 <dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.server.</span></span><span class="sig-name descname"><span class="pre">TopicModelTrainServiceImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_conf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl" title="Ссылка на это определение">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.server.</span></span><span class="sig-name descname"><span class="pre">TopicModelTrainServiceImpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_conf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2_grpc.TopicModelTrainServiceServicer</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl.AddDocumentsToModel">
@@ -201,7 +222,7 @@
 
 <span class="target" id="module-ap.train.trainer"></span><dl class="py class">
 <dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.trainer.</span></span><span class="sig-name descname"><span class="pre">ModelTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ap.train.data_manager.ModelDataManager" title="ap.train.data_manager.ModelDataManager"><span class="pre">ap.train.data_manager.ModelDataManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">models_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer" title="Ссылка на это определение">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.trainer.</span></span><span class="sig-name descname"><span class="pre">ModelTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ap.train.data_manager.ModelDataManager" title="ap.train.data_manager.ModelDataManager"><span class="pre">ap.train.data_manager.ModelDataManager</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.generate_model_name">
@@ -210,38 +231,6 @@
 <dl class="field-list simple">
 <dt class="field-odd">Результат</dt>
 <dd class="field-odd"><p>Новое имя для модели</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.model_info">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_info</span></span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.model_info" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Возвращает характеристики модели</p>
-<p>Очень подробна информация о характеристиках модели:
-- названия тем
-- названия модальностей
-- веса модальностей
-- метрики
-- информация о регуляризаторах
-- другое</p>
-<dl class="field-list simple">
-<dt class="field-odd">Результат</dt>
-<dd class="field-odd"><p>характеристики модели</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.model_main_info">
-<span class="sig-name descname"><span class="pre">model_main_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.model_main_info" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Возвращает основную информацию о модели</p>
-<dl class="field-list simple">
-<dt class="field-odd">Результат</dt>
-<dd class="field-odd"><p>основная информация о модели</p>
-</dd>
-<dt class="field-even">Тип результата</dt>
-<dd class="field-even"><p>info</p>
 </dd>
 </dl>
 </dd></dl>
@@ -275,8 +264,14 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.set_metrics">
+<span class="sig-name descname"><span class="pre">set_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.set_metrics" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Задает основную информацию о модели.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.train_model">
-<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f038ccde610&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.train_model" title="Ссылка на это определение">¶</a></dt>
+<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7fe40f0a58b0&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.train_model" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Функция обучения тематической модели.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры</dt>
