@@ -1,5 +1,4 @@
 import json
-from typing import Dict, Any
 
 import artm
 import joblib
@@ -53,7 +52,8 @@ def dump_train_centroids(model_path: str, bcg_topic_list: typing.List[str],
     print('Train centroids were calculated.')
 
 
-def calculate_search_quality(config_experiment) -> Dict[str, Dict[str, Dict[str, float]]]:
+def calculate_search_quality(config_experiment) -> \
+        typing.Dict[str, typing.Dict[str, typing.Dict[str, float]]]:
     """
     Вычисление качества модели по 6 метрикам:
         - Средняя частота УДК,
@@ -80,7 +80,7 @@ def calculate_search_quality(config_experiment) -> Dict[str, Dict[str, Dict[str,
             - config_experiment["languages_for_metric_calculation"] (list): названия языков, \
                 используемых для подсчёта метрик
             - config_experiment['path_test'] (str): путь до тестовых данных
-            - config_experiment['path_subsamples'] (str): путь к файлу в формате json, содержащему \
+            - config_experiment['path_subsamples_list'] (list): список путей к json-файлам, содержащим \
                 подвыборки индексов документов, по которым будет производиться поиск
             - config_experiment['path_rubrics_list'] (list):  список путей к json-файлам с рубриками, \
                 где по doc_id содержится рубрика документа
@@ -89,38 +89,32 @@ def calculate_search_quality(config_experiment) -> Dict[str, Dict[str, Dict[str,
         quality (dict): подсчитанные метрики качества
     """
     path_experiment = Path(config_experiment["path_experiment"])
-    path_model = config_experiment.get('path_model', path_experiment.joinpath('topic_model'))
+    path_model = str(config_experiment.get('path_model', path_experiment.joinpath('topic_model')))
     path_experiment_result = str(config_experiment.get('path_results', path_experiment.joinpath('results')))
-
     num_bcg_topic = config_experiment["artm_model_params"]["num_bcg_topic"]
     bcg_topic_list = config_experiment.get('bcg_topic_list', [f'topic_{i}' for i in range(num_bcg_topic)])
     metrics_to_calculate = config_experiment.get('metrics_to_calculate', 'analogy')
     path_train_centroids = config_experiment['path_train_thetas']
     recalculate_train_centroids = config_experiment.get('recalculate_train_centroids', False)
     recalculate_test_thetas = config_experiment.get('recalculate_test_thetas', True)
-
-    matrix_norm_metric = np.linalg.norm
-    axis = 1
+    path_test = config_experiment['path_test']
+    path_subsamples_list = config_experiment['path_subsamples_list']
+    path_rubrics_list = config_experiment['path_rubrics_list']
     current_languages = config_experiment["languages_for_metric_calculation"]
 
     if recalculate_train_centroids:
-        dump_train_centroids(str(path_model), bcg_topic_list, current_languages, path_train_centroids)
-
-    path_test = config_experiment['path_test']
-    path_subsamples = config_experiment['path_subsamples']
-    path_rubrics_list = config_experiment['path_rubrics_list']
+        dump_train_centroids(path_model, bcg_topic_list, current_languages, path_train_centroids)
 
     frequency = 'average_frequency_analogy'
     percent = 'average_percent_analogy'
     quality = dict()
 
-    for path_rubrics in path_rubrics_list:
+    for path_rubrics, path_subsamples in zip(path_rubrics_list, path_subsamples_list):
         quality_model = rank_metric.quality_of_models(
             path_train_centroids, bcg_topic_list,
             metrics_to_calculate,
-            path_model, path_experiment_result,
-            matrix_norm_metric, path_subsamples, path_rubrics,
-            path_test, current_languages, recalculate_test_thetas, axis=axis
+            path_model, path_experiment_result, path_subsamples, path_rubrics,
+            path_test, current_languages, recalculate_test_thetas
         )
         quality[Path(path_rubrics).stem] = {
             "average_frequency": quality_model[frequency],

@@ -17,19 +17,16 @@ from tqdm import tqdm
 class RankingByModel:
     def __init__(
             self, bcg_topic_list: list, metrics_to_calculate: typing.List[str],
-            model_path: str, matrix_norm_metric, path_subsamples: str, path_rubrics: str,
-            **kwargs
+            model_path: str, path_subsamples: str, path_rubrics: str
     ):
         """
-        Class for ranking document search between language pairs.
+        Класс для вычисления метрик качества тематической модели.
 
         Args:
             bcg_topic_list (list): список фоновых тем тематической модели
             metrics_to_calculate (list of str ('analogy', 'eucl')): список названий мер близости
                 для использования в ранжировании
             model_path (str): путь до тематической модели
-            matrix_norm_metric (callable): способ измерения нормы матрицы векторов
-                например: matrix_norm_metric = np.linalg.norm
             path_subsamples (str): путь к файлу в формате json, содержащему подвыборки индексов документов,
                 по которым будет производиться поиск
             path_rubrics (str): путь к json-файлу, где по doc_id содержится его рубрика
@@ -38,14 +35,12 @@ class RankingByModel:
         self._metrics_to_calculate = metrics_to_calculate
         self._sbj_topic_list = [topic for topic in self._model.topic_names
                                 if topic not in bcg_topic_list]
-        self._matrix_norm_metric = matrix_norm_metric
         self._path_subsamples = path_subsamples
         with open(path_rubrics) as file:
             self._rubrics = json.load(file)
         self._rubric_docs = {rubric: [] for rubric in set(self._rubrics.values())}
         for doc_id, rubric in self._rubrics.items():
             self._rubric_docs[rubric].append(doc_id)
-        self._axis = kwargs.get('axis', 1)
 
     def get_thetas(self, path_test: str, path_thetas: str,
                    current_languages: typing.List[str], recalculate_test_thetas: bool = True):
@@ -100,10 +95,8 @@ class RankingByModel:
         return theta.columns, theta
 
     def _metrics_on_analogy_similarity(
-            self, theta_original,
-            doc_id, top_10_percent,
-            a_train, a_z_train,
-            subsample_for_doc_id, vectors_source
+            self, theta_original, doc_id, top_10_percent,
+            a_train, a_z_train, subsample_for_doc_id, vectors_source
     ):
 
         b = theta_original[doc_id].values
@@ -121,12 +114,11 @@ class RankingByModel:
         return percent_same_rubric, count
 
     def _metrics_on_eucl_similarity(
-            self,
-            search_num, search_indices, doc_id, top_10_percent,
+            self, search_num, search_indices, doc_id, top_10_percent,
             subsample_for_doc_id, vectors_original, vectors_source
     ):
         difference = vectors_source - vectors_original[search_num]
-        vectors_norm = self._matrix_norm_metric(difference, self._axis)
+        vectors_norm = np.linalg.norm(difference, 1)
 
         rating = subsample_for_doc_id[np.argsort(vectors_norm)]
         top_rating = rating[:len(top_10_percent)]
@@ -242,7 +234,7 @@ class RankingByModel:
 
         return metrics, len(search_indices)
 
-    def metrics_to_df(self, path_train_lang: str, path_experiment_result: str,
+    def metrics_to_df(self, path_train_lang: str,
                       current_languages: typing.List[str], theta_lang) -> \
             typing.Tuple[typing.Dict[str, pd.DataFrame],
                          typing.Dict[str, pd.DataFrame],
@@ -265,7 +257,6 @@ class RankingByModel:
             intersections (pandas.DataFrame): pandas.DataFrame, где \
                 для каждой пары языков оригинал-перевод хранится пересечение документов
         """
-        path_experiment_result = Path(path_experiment_result)
         percent = dict()
         frequency = dict()
         for metric in self._metrics_to_calculate:
@@ -296,22 +287,17 @@ class RankingByModel:
                 intersections.loc[lang_0, lang_1] = intersection
                 intersections.loc[lang_1, lang_0] = intersection
 
-        for metric in self._metrics_to_calculate:
-            frequency[metric].to_csv(path_experiment_result.joinpath(f'frequency_{metric}.csv'))
-            percent[metric].to_csv(path_experiment_result.joinpath(f'percent_{metric}.csv'))
-        intersections.to_csv(path_experiment_result.joinpath('intersections.csv'))
-
         return percent, frequency, intersections
 
 
 def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
                       metrics_to_calculate: typing.List[str],
                       path_model: str, path_experiment_result: str,
-                      matrix_norm_metric, path_subsamples: str, path_rubrics: str,
-                      path_test: str, current_languages: typing.List[str], recalculate_test_thetas: bool, **kwargs) -> \
+                      path_subsamples: str, path_rubrics: str,
+                      path_test: str, current_languages: typing.List[str], recalculate_test_thetas: bool) -> \
         typing.Dict[str, typing.Dict[str, float]]:
     """
-    Класс для вычисления метрик качества тематической модели.
+    Возвращает метрики качества тематической модели.
 
     Args:
         path_train_lang (str):
@@ -322,8 +308,6 @@ def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
             используемых для ранжирования
         path_model (str): путь до тематической модели
         path_experiment_result (str): путь до папки, куда сохраняются результаты модели
-        matrix_norm_metric (callable): способ измерения нормы матрицы векторов
-            например: matrix_norm_metric = np.linalg.norm
         path_subsamples (str): путь к файлу в формате json, содержащему подвыборки индексов документов,
                 по которым будет производиться поиск
         path_rubrics (str): путь к json-файлу, где по doc_id содержится его рубрика
@@ -338,20 +322,26 @@ def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
         quality_experiment (dict): словарь имя модели -> словарь название метрики -> значение метрики
     """
     path_model = Path(path_model)
+    path_experiment_result = Path(path_experiment_result)
     quality_experiment = dict()
-    path_model_result = Path(path_experiment_result).joinpath(path_model.name)
-    path_model_result.mkdir(parents=True, exist_ok=True)
-    path_thetas = str(path_model_result.joinpath('theta_lang.joblib'))
+    # path_model_result = Path(path_experiment_result).joinpath(path_model.name)
+    # path_model_result.mkdir(parents=True, exist_ok=True)
+    # path_thetas = str(path_model_result.joinpath('theta_lang.joblib'))
+    path_thetas = str(path_experiment_result.joinpath('theta_lang.joblib'))
 
     rbm = RankingByModel(
         bcg_topic_list, metrics_to_calculate,
-        str(path_model), matrix_norm_metric, path_subsamples, path_rubrics, kwargs=kwargs
+        str(path_model), path_subsamples, path_rubrics
     )
     theta_lang = rbm.get_thetas(path_test, path_thetas, current_languages, recalculate_test_thetas)
 
-    percent, frequency, _ = rbm.metrics_to_df(
-        path_train_lang, str(path_model_result), current_languages, theta_lang
+    percent, frequency, intersections = rbm.metrics_to_df(
+        path_train_lang, current_languages, theta_lang
     )
+    for metric in metrics_to_calculate:
+        frequency[metric].to_csv(path_experiment_result.joinpath(f'frequency_{metric}.csv'))
+        percent[metric].to_csv(path_experiment_result.joinpath(f'percent_{metric}.csv'))
+    intersections.to_csv(path_experiment_result.joinpath('intersections.csv'))
 
     # Вычисляю значения метрик
     for metric in metrics_to_calculate:
