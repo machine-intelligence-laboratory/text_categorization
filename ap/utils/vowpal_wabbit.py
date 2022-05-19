@@ -18,7 +18,7 @@ class VowpalWabbit:
         """
         Создает класс сохранения VW файлов.
 
-        Parameters:
+        Args:
             use_counters: признак использования каунтеров
         """
         self._use_counters = use_counters
@@ -30,7 +30,7 @@ class VowpalWabbit:
         """
         Конвертирует документы в BOW и сохраняет их.
 
-        Parameters:
+        Args:
             target_file: путь к файлу
             doc: сырые документы
         """
@@ -46,7 +46,7 @@ class VowpalWabbit:
         """
         Сохраняет BOW представление документов.
 
-        Parameters:
+        Args:
             target_file: путь к файлу
             sessions_bow_messages: документы в формате BOW
         """
@@ -76,13 +76,11 @@ class VowpalWabbit:
         """
         Конвертирует набор документов в BOW представление (см. VowpalWabbit.convet_doct).
 
-        Parameters
-        ----------
-        param data словарь айди документа->документ
+        Args:
+            data: словарь айди документа -> документ
 
-        Returns
-        -------
-        словарь айди документа->документ в виде BOW
+        Returns:
+            sessions_bow_messages (dict): словарь айди документа->документ в виде BOW
         """
         sessions_bow_messages = dict()
         for elem_id, elem in data.items():
@@ -95,12 +93,11 @@ class VowpalWabbit:
         """
         Конвертирует исходный документ в формат BOW.
 
-        Parameters
-        ----------
-        doc словарь язык->текст документа
-        Returns
-        -------
-        словарь язык->BOW документа. Если use_counters==True, словарь в виде Counter
+        Args:
+            doc (dict): словарь язык -> текст документа
+
+        Returns:
+            res (dict): словарь язык -> BOW документа. Если use_counters==True, словарь в виде Counter
         """
         res = {}
         if self._use_counters:

@@ -18,6 +18,15 @@ def id_to_str(id) -> str:
 
 
 def get_modalities(doc):
+    """
+    Возвращает словарь, где по языку хранятся токены на этом языке.
+
+    Args:
+        doc: документ
+
+    Returns:
+        res (dict): словарь язык -> строка токенов на этом языке через пробел
+    """
     res = {}
 
     for modality in doc.Modalities:
@@ -31,13 +40,13 @@ def get_modalities(doc):
 
 def docs_from_pack(pack) -> typing.Dict[str, typing.Dict[str, str]]:
     """
-    Создает dict документов из pack.
+    Создает словарь документов из pack.
 
     Args:
-        pack (ap.topic_model.v1.TopicModelBase_pb2.DocumentPack): TODO
+        pack (ap.topic_model.v1.TopicModelBase_pb2.DocumentPack): коллекция
 
     Returns:
-        dict из документов
+        (dict): словарь из документов
     """
 
     return {
@@ -54,7 +63,7 @@ def ensure_directory(path: str) -> str:
         path (str): путь к директории
 
     Returns:
-        path
+        path (str): путь к директории
     """
     if not os.path.exists(path):
         os.makedirs(path)
@@ -90,10 +99,10 @@ def batch_names(starts_from, count) -> typing.Generator[str, None, None]:
 
 def recursively_unlink(path: Path):
     """
-    Рекурсивное удаление файлов и директорий.
+    Рекурсивно удаляет файлы и директории.
 
     Args:
-        path (Path): путь, по которому необходимо удалить все файлы.
+        path (pathlib.Path): путь, по которому необходимо удалить все файлы.
     """
     for child in path.iterdir():
         if child.is_file():
