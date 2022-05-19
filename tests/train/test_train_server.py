@@ -166,37 +166,3 @@ def test_start_train_full(data_dir, grpc_stub):
     )
 
 
-def test_start_train_update(data_dir, grpc_stub):
-    resp = grpc_stub.StartTrainTopicModel(
-        StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.UPDATE)
-    )
-    assert resp.Status == StartTrainTopicModelResponse.StartTrainTopicModelStatus.OK
-
-    while (
-            grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
-            == TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
-    ):
-        sleep(1)
-
-    assert (
-            grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
-            == TrainTopicModelStatusResponse.TrainTopicModelStatus.COMPLETE
-    )
-
-    resp = grpc_stub.StartTrainTopicModel(
-        StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.UPDATE)
-    )
-    assert resp.Status == StartTrainTopicModelResponse.StartTrainTopicModelStatus.OK
-
-    while (
-            grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
-            == TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
-    ):
-        sleep(1)
-
-    assert (
-            grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
-            == TrainTopicModelStatusResponse.TrainTopicModelStatus.COMPLETE
-    )
-
-

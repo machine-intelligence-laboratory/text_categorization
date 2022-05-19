@@ -254,8 +254,8 @@ class ModelTrainer:
         return datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
     def _check_update_conditions(self):
-        model_langs = set(self.model.class_ids().keys())
-        config_langs = set(self._data_manager.config['LANGUAGES_TRAIN'])
+        model_langs = set(self.model.class_ids.keys())
+        config_langs = set([f'@{x}' for x in self._data_manager.config['LANGUAGES_TRAIN']])
         if len(config_langs - model_langs):
             logging.error("These languages don't present in the model that is going to be updated %s", str(config_langs - model_langs))
             raise Exception("Can't add modalities to an existing model")
