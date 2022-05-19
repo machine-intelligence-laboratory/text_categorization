@@ -6,6 +6,10 @@ ap.train
    :members:
    :undoc-members:
    :show-inheritance:
+.. automodule:: ap.train.metrics
+   :members:
+   :undoc-members:
+   :show-inheritance:
 .. automodule:: ap.train.server
    :members:
    :undoc-members:
