@@ -18,7 +18,7 @@ class RankingByModel:
     def __init__(
             self, bcg_topic_list: list, metrics_to_calculate: typing.List[str],
             model_path: str, matrix_norm_metric, path_subsamples: str, path_rubrics: str,
-            mode: str, **kwargs
+            **kwargs
     ):
         """
         Class for ranking document search between language pairs.
@@ -33,7 +33,6 @@ class RankingByModel:
             path_subsamples (str): путь к файлу в формате json, содержащему подвыборки индексов документов,
                 по которым будет производиться поиск
             path_rubrics (str): путь к json-файлу, где по doc_id содержится его рубрика
-            mode (str): тип данных, например 'test'
         """
         self._model = artm.load_artm_model(model_path)
         self._metrics_to_calculate = metrics_to_calculate
@@ -47,7 +46,6 @@ class RankingByModel:
         for doc_id, rubric in self._rubrics.items():
             self._rubric_docs[rubric].append(doc_id)
         self._axis = kwargs.get('axis', 1)
-        self._mode = mode
 
     def get_thetas(self, path_test: str, path_thetas: str,
                    current_languages: typing.List[str], recalculate_test_thetas: bool = True):
@@ -55,7 +53,7 @@ class RankingByModel:
         Возвращает матрицы Тэта, посчитанные по данным из path_test.
 
         Args:
-            path_test (str): папка с данными в формате f'{self._mode}_{lang}_120k.txt', \
+            path_test (str): папка с данными в формате f'test_{lang}_120k.txt', \
                 для которых надо построить матрицы Тэта
             path_thetas (str): путь для сохранения / загрузки матниц Тэта
             current_languages (list of str): названия языков, используемых для подсчёта метрик
@@ -74,7 +72,7 @@ class RankingByModel:
             theta_lang = dict()
             for lang in current_languages:
                 data_lang_path = str(path_test.joinpath(
-                    f'{self._mode}_{lang}_120k.txt'))
+                    f'test_{lang}_120k.txt'))
                 _, theta = self._get_document_embeddings(data_lang_path)
                 theta_lang[lang] = theta
                 joblib.dump(theta_lang, path_thetas)
@@ -307,7 +305,7 @@ class RankingByModel:
 
 
 def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
-                      metrics_to_calculate: typing.List[str], mode: str,
+                      metrics_to_calculate: typing.List[str],
                       path_model: str, path_experiment_result: str,
                       matrix_norm_metric, path_subsamples: str, path_rubrics: str,
                       path_test: str, current_languages: typing.List[str], recalculate_test_thetas: bool, **kwargs) -> \
@@ -322,7 +320,6 @@ def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
             например: bcg_topic_list = ['topic_0']
         metrics_to_calculate (list of str ('analogy', 'eucl')): список названий мер близости,
             используемых для ранжирования
-        mode (str): тип данных ('test' или 'val')
         path_model (str): путь до тематической модели
         path_experiment_result (str): путь до папки, куда сохраняются результаты модели
         matrix_norm_metric (callable): способ измерения нормы матрицы векторов
@@ -350,7 +347,7 @@ def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
 
     rbm = RankingByModel(
         bcg_topic_list, metrics_to_calculate,
-        str(path_model), matrix_norm_metric, path_subsamples, path_rubrics, mode, kwargs=kwargs
+        str(path_model), matrix_norm_metric, path_subsamples, path_rubrics, kwargs=kwargs
     )
     theta_lang = rbm.get_thetas(path_test, path_thetas, current_languages, recalculate_test_thetas)
 

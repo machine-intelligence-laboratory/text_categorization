@@ -12,9 +12,6 @@ from tqdm import tqdm
 import typing
 
 import ap.utils.rank_metric as rank_metric
-# import ap.utils.config as config
-
-warnings.filterwarnings('ignore')
 
 
 def dump_train_centroids(model_path: str, bcg_topic_list: typing.List[str],
@@ -75,6 +72,7 @@ def calculate_search_quality(config_experiment) -> Dict[str, Dict[str, Dict[str,
             - config_experiment['path_results'] (str): путь для выгрузки результата эксперимента,
             - config_experiment["artm_model_params"] (dict): параметры тематической модели ARTM,
                 - config_experiment["artm_model_params"]["num_bcg_topic"] (int): количество фоновых тем,
+            - config_experiment["bcg_topic_list"] (typing.Optional[typing.List[str]]): список фоновых тем,
             - config_experiment['metrics_to_calculate'] (str): название меры близости ('analogy' или 'eucl'),
             - config_experiment['path_train_thetas'] (str): путь до центроид
             - config_experiment['recalculate_train_centroids'] (bool): признак необходимости вычислять центроиды
@@ -92,7 +90,6 @@ def calculate_search_quality(config_experiment) -> Dict[str, Dict[str, Dict[str,
     """
     path_experiment = Path(config_experiment["path_experiment"])
     path_model = config_experiment.get('path_model', path_experiment.joinpath('topic_model'))
-    # model_name = str(Path(path_model).name)
     path_experiment_result = str(config_experiment.get('path_results', path_experiment.joinpath('results')))
 
     num_bcg_topic = config_experiment["artm_model_params"]["num_bcg_topic"]
@@ -109,23 +106,18 @@ def calculate_search_quality(config_experiment) -> Dict[str, Dict[str, Dict[str,
     if recalculate_train_centroids:
         dump_train_centroids(str(path_model), bcg_topic_list, current_languages, path_train_centroids)
 
-    # path_test = Path(config.path_articles_test_bpe)
     path_test = config_experiment['path_test']
-    # path_subsamples = config.path_articles_subsamples_udk
     path_subsamples = config_experiment['path_subsamples']
-    mode = 'test'
-    # path_rubrics = config.path_articles_rubrics_train_udk
     path_rubrics_list = config_experiment['path_rubrics_list']
 
     frequency = 'average_frequency_analogy'
     percent = 'average_percent_analogy'
     quality = dict()
 
-    # TODO: delete model_name
     for path_rubrics in path_rubrics_list:
         quality_model = rank_metric.quality_of_models(
             path_train_centroids, bcg_topic_list,
-            metrics_to_calculate, mode,
+            metrics_to_calculate,
             path_model, path_experiment_result,
             matrix_norm_metric, path_subsamples, path_rubrics,
             path_test, current_languages, recalculate_test_thetas, axis=axis
