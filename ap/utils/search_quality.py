@@ -77,7 +77,8 @@ def calculate_search_quality(config_experiment) -> Dict[str, Dict[str, Dict[str,
             - config_experiment['recalculate_train_centroids'] (bool): признак необходимости вычислять центроиды
             - config_experiment['recalculate_test_thetas'] (bool): признак необходимости вычислять матрицы Тэта для \
                 тестовых данных
-            - config_experiment["LANGUAGES_TRAIN"] (list): названия языков, используемых для подсчёта метрик
+            - config_experiment["languages_for_metric_calculation"] (list): названия языков, \
+                используемых для подсчёта метрик
             - config_experiment['path_test'] (str): путь до тестовых данных
             - config_experiment['path_subsamples'] (str): путь к файлу в формате json, содержащему \
                 подвыборки индексов документов, по которым будет производиться поиск
@@ -100,7 +101,7 @@ def calculate_search_quality(config_experiment) -> Dict[str, Dict[str, Dict[str,
 
     matrix_norm_metric = np.linalg.norm
     axis = 1
-    current_languages = config_experiment["LANGUAGES_TRAIN"]
+    current_languages = config_experiment["languages_for_metric_calculation"]
 
     if recalculate_train_centroids:
         dump_train_centroids(str(path_model), bcg_topic_list, current_languages, path_train_centroids)
