@@ -56,6 +56,7 @@ class ModelDataManager:
         self._balancing_modality = self.config.get("balancing_modality", 'GRNTI')
         self._path_batches_wiki = self.config.get("path_wiki_train_batches", None)
         if self._path_batches_wiki:
+            Path(self._path_batches_wiki).mkdir(exist_ok=True)
             self.wiki_batches = list(Path(self._path_batches_wiki).iterdir())
             self.wiki_balancing_type = self.config.get('wiki_balancing_type', False)
             if self.wiki_balancing_type == 'avr_rubric_size':
@@ -189,11 +190,6 @@ class ModelDataManager:
                     batch_vectorizer = artm.BatchVectorizer(
                         data_path=str(self._path_to_batches)
                     )
-                # elif self.wiki_balancing_type == 'wiki_unisize':
-                #     sample = np.random.choice(self.wiki_batches, self.wiki_batches_per_epoch,
-                #                               replace=False)
-                #     for batch in sample:
-                #         self.wiki_batches.remove(batch)
                 else:
                     batch_vectorizer = artm.BatchVectorizer(
                         data_path=[str(self._path_to_batches), self._path_batches_wiki],
