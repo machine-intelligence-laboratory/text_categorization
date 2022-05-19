@@ -4,3 +4,5 @@ ap/topic_model
 *.ipynb_checkpoints*
 *bigartm*
 docs/
+ap/utils/config.py
+ap/utils/emb_metrics.py
