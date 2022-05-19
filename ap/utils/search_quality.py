@@ -57,7 +57,7 @@ def dump_train_centroids(model_path: str, bcg_topic_list: typing.List[str],
     print('Train centroids were calculated.')
 
 
-def calculate_search_quality(config_experiment) -> Dict[Any, Dict[str, float]]:
+def calculate_search_quality(config_experiment) -> Dict[str, Dict[str, Dict[str, float]]]:
     """
     Вычисление качества модели по 6 метрикам:
         - Средняя частота УДК,
@@ -92,7 +92,7 @@ def calculate_search_quality(config_experiment) -> Dict[Any, Dict[str, float]]:
     """
     path_experiment = Path(config_experiment["path_experiment"])
     path_model = config_experiment.get('path_model', path_experiment.joinpath('topic_model'))
-    model_name = str(Path(path_model).name)
+    # model_name = str(Path(path_model).name)
     path_experiment_result = str(config_experiment.get('path_results', path_experiment.joinpath('results')))
 
     num_bcg_topic = config_experiment["artm_model_params"]["num_bcg_topic"]
@@ -123,19 +123,19 @@ def calculate_search_quality(config_experiment) -> Dict[Any, Dict[str, float]]:
 
     # TODO: delete model_name
     for path_rubrics in path_rubrics_list:
-        quality_rubric = rank_metric.quality_of_models(
+        quality_model = rank_metric.quality_of_models(
             path_train_centroids, bcg_topic_list,
             metrics_to_calculate, mode,
             path_model, path_experiment_result,
             matrix_norm_metric, path_subsamples, path_rubrics,
             path_test, current_languages, recalculate_test_thetas, axis=axis
         )
-        quality[path_rubrics] = {
-            "Средняя частота": quality_rubric[model_name][frequency],
-            "Средний процент": quality_rubric[model_name][percent],
+        quality[str(path_rubrics)] = {
+            "average_frequency": quality_model[frequency],
+            "average_percent": quality_model[percent],
         }
 
-    with open(Path(path_experiment_result).joinpath(model_name + '.json'), 'w') as file:
+    with open(Path(path_experiment_result).joinpath('metrics.json'), 'w') as file:
         json.dump(quality, file)
 
     return quality

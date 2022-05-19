@@ -341,38 +341,36 @@ def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
         quality_experiment (dict): словарь имя модели -> словарь название метрики -> значение метрики
     """
     path_model = Path(path_model)
-    path_experiment_result = Path(path_experiment_result)
+    # path_experiment_result = Path(path_experiment_result)
     quality_experiment = dict()
-    quality_experiment[path_model.name] = dict()
-    path_model_result = path_experiment_result.joinpath(path_model.name)
+    # quality_experiment[path_model.name] = dict()
+    path_model_result = Path(path_experiment_result).joinpath(path_model.name)
     path_model_result.mkdir(parents=True, exist_ok=True)
-    path_thetas = path_model_result.joinpath('theta_lang.joblib')
+    path_thetas = str(path_model_result.joinpath('theta_lang.joblib'))
 
     rbm = RankingByModel(
         bcg_topic_list, metrics_to_calculate,
-        path_model, matrix_norm_metric, path_subsamples, path_rubrics, mode, kwargs=kwargs
+        str(path_model), matrix_norm_metric, path_subsamples, path_rubrics, mode, kwargs=kwargs
     )
     theta_lang = rbm.get_thetas(path_test, path_thetas, current_languages, recalculate_test_thetas)
 
     percent, frequency, _ = rbm.metrics_to_df(
-        path_train_lang, path_model_result, current_languages, theta_lang
+        path_train_lang, str(path_model_result), current_languages, theta_lang
     )
 
     # Вычисляю значения метрик
     for metric in metrics_to_calculate:
         average_frequency = frequency[metric].sum().sum() / frequency[metric].count().sum()
         average_percent = percent[metric].sum().sum() / percent[metric].count().sum()
-        quality_experiment[path_model.name][
-            f'average_frequency_{metric}'] = average_frequency
-        quality_experiment[path_model.name][
-            f'average_percent_{metric}'] = average_percent
-    print(quality_experiment[path_model.name])
+        quality_experiment[f'average_frequency_{metric}'] = average_frequency
+        quality_experiment[f'average_percent_{metric}'] = average_percent
+    print(quality_experiment)
 
-    # TODO: надо ли сохранять дважды?
-    with open(path_model_result.joinpath('metrics.json'), 'w') as file:
-        json.dump(quality_experiment[path_model.name], file)
-
-    with open(path_experiment_result.joinpath('metrics.json'), 'w') as file:
-        json.dump(quality_experiment, file)
+    # # TODO: надо ли сохранять дважды?
+    # with open(path_model_result.joinpath('metrics.json'), 'w') as file:
+    #     json.dump(quality_experiment, file)
+    #
+    # with open(path_experiment_result.joinpath('metrics.json'), 'w') as file:
+    #     json.dump(quality_experiment, file)
 
     return quality_experiment
