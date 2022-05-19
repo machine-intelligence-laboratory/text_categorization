@@ -38,7 +38,6 @@ class VowpalWabbitBPE:
             target_file: путь к файлу.
             doc: сырые документы.
         """
-        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', type(target_file))
         self.save_bow(target_file, self.convert_to_bow(doc))
 
     def save_bow(
