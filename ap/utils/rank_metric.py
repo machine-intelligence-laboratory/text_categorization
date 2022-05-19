@@ -332,7 +332,7 @@ def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
         path_rubrics (str): путь к json-файлу, где по doc_id содержится его рубрика
         path_test (str):
             путь к папке с txt-файлами, по которым будут считаться метрики
-        current_languages (list of str): названия языков, используемых для подсчёта метрик
+        current_languages (list): названия языков, используемых для подсчёта метрик
         recalculate_test_thetas (bool): признак необходимости вычислять матрицы Тэта для тестовых данных
             - True означает пересчитать Тэты
             - False означает загрузить существующие Тэты

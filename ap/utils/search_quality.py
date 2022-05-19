@@ -1,5 +1,6 @@
 import json
 import warnings
+from typing import Dict, Any
 
 import artm
 import joblib
@@ -11,18 +12,20 @@ from tqdm import tqdm
 import typing
 
 import ap.utils.rank_metric as rank_metric
-import ap.utils.config as config
+# import ap.utils.config as config
 
 warnings.filterwarnings('ignore')
 
 
-def dump_train_centroids(model_path: str, bcg_topic_list: typing.List[str], path_train_centroids: str):
+def dump_train_centroids(model_path: str, bcg_topic_list: typing.List[str],
+                         current_languages: typing.List[str], path_train_centroids: str):
     """
     Вычисляет центроиды, необходимые для преобразования текста из одного языка в другой.
 
     Args:
         model_path (str): путь до тематичекой модели
         bcg_topic_list (list): список тем, которые не будут использоваться для построения
+        current_languages (list): названия языков, используемых для подсчёта метрик
         path_train_centroids (str): путь для выгрузки центроид
     """
     path_train_centroids = Path(path_train_centroids)
@@ -31,7 +34,7 @@ def dump_train_centroids(model_path: str, bcg_topic_list: typing.List[str], path
                       if topic not in bcg_topic_list]
 
     print('Calculation of train centroids were started.')
-    for lang in tqdm(config.LANGUAGES_MAIN):
+    for lang in tqdm(current_languages):
         target_folder = path_train_centroids.joinpath('tmp_batches')
         target_folder.mkdir(exist_ok=True)
         batches_list = list(target_folder.iterdir())
@@ -54,7 +57,7 @@ def dump_train_centroids(model_path: str, bcg_topic_list: typing.List[str], path
     print('Train centroids were calculated.')
 
 
-def calculate_search_quality(config_experiment) -> typing.Dict[str, float]:
+def calculate_search_quality(config_experiment) -> Dict[Any, Dict[str, float]]:
     """
     Вычисление качества модели по 6 метрикам:
         - Средняя частота УДК,
@@ -77,77 +80,62 @@ def calculate_search_quality(config_experiment) -> typing.Dict[str, float]:
             - config_experiment['recalculate_train_centroids'] (bool): признак необходимости вычислять центроиды
             - config_experiment['recalculate_test_thetas'] (bool): признак необходимости вычислять матрицы Тэта для \
                 тестовых данных
+            - config_experiment["LANGUAGES_TRAIN"] (list): названия языков, используемых для подсчёта метрик
+            - config_experiment['path_test'] (str): путь до тестовых данных
+            - config_experiment['path_subsamples'] (str): путь к файлу в формате json, содержащему \
+                подвыборки индексов документов, по которым будет производиться поиск
+            - config_experiment['path_rubrics_list'] (list):  список путей к json-файлам с рубриками, \
+                где по doc_id содержится рубрика документа
 
     Returns:
         quality (dict): подсчитанные метрики качества
     """
     path_experiment = Path(config_experiment["path_experiment"])
-    path_model = Path(config_experiment.get('path_model', path_experiment.joinpath('topic_model')))
-    model_name = str(path_model.name)
-    path_experiment_result = Path(config_experiment.get('path_results', path_experiment.joinpath('results')))
+    path_model = config_experiment.get('path_model', path_experiment.joinpath('topic_model'))
+    model_name = str(Path(path_model).name)
+    path_experiment_result = str(config_experiment.get('path_results', path_experiment.joinpath('results')))
 
     num_bcg_topic = config_experiment["artm_model_params"]["num_bcg_topic"]
     bcg_topic_list = config_experiment.get('bcg_topic_list', [f'topic_{i}' for i in range(num_bcg_topic)])
     metrics_to_calculate = config_experiment.get('metrics_to_calculate', 'analogy')
-    path_train_centroids = Path(config_experiment['path_train_thetas'])
+    path_train_centroids = config_experiment['path_train_thetas']
     recalculate_train_centroids = config_experiment.get('recalculate_train_centroids', False)
     recalculate_test_thetas = config_experiment.get('recalculate_test_thetas', True)
 
     matrix_norm_metric = np.linalg.norm
     axis = 1
-    current_languages = config.LANGUAGES_MAIN
+    current_languages = config_experiment["LANGUAGES_TRAIN"]
 
     if recalculate_train_centroids:
-        dump_train_centroids(path_model, bcg_topic_list, path_train_centroids)
+        dump_train_centroids(str(path_model), bcg_topic_list, current_languages, path_train_centroids)
 
-    path_test = Path(config.path_articles_test_bpe)
+    # path_test = Path(config.path_articles_test_bpe)
+    path_test = config_experiment['path_test']
+    # path_subsamples = config.path_articles_subsamples_udk
+    path_subsamples = config_experiment['path_subsamples']
     mode = 'test'
-    path_subsamples = config.path_articles_subsamples_udk
-    path_rubrics = config.path_articles_rubrics_train_udk
-    quality_udk = rank_metric.quality_of_models(
-        path_train_centroids, bcg_topic_list,
-        metrics_to_calculate, mode,
-        path_model, path_experiment_result,
-        matrix_norm_metric, path_subsamples, path_rubrics,
-        path_test, current_languages, recalculate_test_thetas, axis=axis
-    )
-
-    path_subsamples = config.path_articles_subsamples_grnti
-    path_rubrics = config.path_articles_rubrics_train_grnti
-    quality_grnti = rank_metric.quality_of_models(
-        path_train_centroids, bcg_topic_list,
-        metrics_to_calculate, mode,
-        path_model, path_experiment_result,
-        matrix_norm_metric, path_subsamples, path_rubrics,
-        path_test, current_languages, recalculate_test_thetas, axis=axis
-    )
-
-    current_languages = ['ru']
-    path_test = Path(config.path_vak_val_raw)
-    mode = 'val'
-    path_subsamples = config.path_vak_subsamples
-    path_rubrics = config.path_vak_rubrics
-    quality_vak = rank_metric.quality_of_models(
-        path_train_centroids, bcg_topic_list,
-        metrics_to_calculate, mode,
-        path_model, path_experiment_result,
-        matrix_norm_metric, path_subsamples, path_rubrics,
-        path_test, current_languages, recalculate_test_thetas=True, axis=axis
-    )
+    # path_rubrics = config.path_articles_rubrics_train_udk
+    path_rubrics_list = config_experiment['path_rubrics_list']
 
     frequency = 'average_frequency_analogy'
     percent = 'average_percent_analogy'
+    quality = dict()
 
-    quality = {
-        "Средняя частота УДК": quality_udk[model_name][frequency],
-        "Средний процент УДК": quality_udk[model_name][percent],
-        "Средняя частота ГРНТИ": quality_grnti[model_name][frequency],
-        "Средний процент ГРНТИ": quality_grnti[model_name][percent],
-        "Средняя частота ВАК": quality_vak[model_name][frequency],
-        "Средний процент ВАК": quality_vak[model_name][percent],
-    }
+    # TODO: delete model_name
+    for path_rubrics in path_rubrics_list:
+        quality_rubric = rank_metric.quality_of_models(
+            path_train_centroids, bcg_topic_list,
+            metrics_to_calculate, mode,
+            path_model, path_experiment_result,
+            matrix_norm_metric, path_subsamples, path_rubrics,
+            path_test, current_languages, recalculate_test_thetas, axis=axis
+        )
+        quality[path_rubrics] = {
+            "Средняя частота": quality_rubric[model_name][frequency],
+            "Средний процент": quality_rubric[model_name][percent],
+        }
 
-    with open(path_experiment_result.joinpath(model_name + '.json'), 'w') as file:
+    with open(Path(path_experiment_result).joinpath(model_name + '.json'), 'w') as file:
         json.dump(quality, file)
 
     return quality
