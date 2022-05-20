@@ -55,6 +55,9 @@ class ModelTrainer:
             logging.info("Start training based on %s model", last_model)
 
             self.model = artm.load_artm_model(str(self._models_dir.joinpath(last_model)))
+            self.model.regularizers['SmoothThetaRegularizer'].tau=self._data_manager.config["artm_model_params"]["tau_SmoothTheta"]
+            self.model.regularizers['SparseThetaRegularizer'].tau = self._data_manager.config["artm_model_params"][
+                "tau_SparseTheta"]
             self._check_update_conditions()
 
         set_metric('num_topics', self._data_manager.config["artm_model_params"]["NUM_TOPICS"])
