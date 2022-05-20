@@ -66,10 +66,6 @@ class ModelDataManager:
                 self.wiki_batches_per_epoch = int(len(self.wiki_batches) /
                                                self.config['artm_model_params']["num_collection_passes"])
 
-        # TODO: в добучении
-        # старые модальности - вытащить из модели
-        # новые - из конфига
-
         all_modalities_train = {**self.config["MODALITIES_TRAIN"],
                                 **self.config["LANGUAGES_TRAIN"]}
         self.class_ids = all_modalities_train
@@ -132,7 +128,7 @@ class ModelDataManager:
                 doc_ids_count = Counter(doc_ids_rubric)
                 for doc_id, count in doc_ids_count.items():
                     if count > 1:
-                        new_line_dict = dict()
+                        new_line_dict = {}
                         for line_lang in self.train_docs[doc_id].split(' |@')[1:]:
                             lang = line_lang.split()[0]
                             line_lang_dict = {
@@ -280,5 +276,5 @@ class ModelDataManager:
             config: конфиг обучаемой модели
         """
         self.config = yaml.safe_load(config)
-        with open(self._config_path, "w") as file:
+        with open(self._config_path, "w"):
             yaml.safe_dump(self.config)
