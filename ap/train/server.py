@@ -161,7 +161,14 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
 
     def UpdateModelConfiguration(self, request: UpdateModelConfigurationRequest,
                                  context) -> UpdateModelConfigurationResponse:
-        """обновление конфигурации обучения
+        """
+        Обновляет конфигурацию обучения
+        Args:
+            request: запрос, содержащий конфигурацию
+            context: не используется
+
+        Returns:
+            Статус - всегда ОК или исключение
         """
         self._data_manager.update_config(request.Configuration)
         return UpdateModelConfigurationResponse(

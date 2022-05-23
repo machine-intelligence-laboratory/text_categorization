@@ -3,6 +3,7 @@ import json
 import logging
 
 import requests
+import typing
 from aiohttp import web
 from prometheus_client import start_http_server, Counter
 
@@ -12,25 +13,69 @@ METRICS = dict()
 
 
 def send_metric(key, action, value):
+    """
+    Устанавливает значение метрики через REST сервис
+    Args:
+        key: ключ метрики
+        action: действие inc или set
+        value: значение
+
+    Returns:
+
+    """
     requests.post('http://localhost:8080/set', json={'key': key, 'action': action, 'value': value})
 
 
 def set_metric(key, value):
+    """
+    Устанавливает значение метрики
+    Args:
+        key: Ключ метрики
+        value:  Значение
+
+    Returns:
+
+    """
     send_metric(key, 'set', value)
 
 
 def inc_metric(key, value):
+    """
+    Инкрементирует значение метрики
+    Args:
+        key: ключ метрики
+        value: значение
+
+    Returns:
+
+    """
     send_metric(key, 'inc', value)
 
 
 async def handle(request):
+    """
+    REST обработчик
+    Args:
+        request: REST запрос
+
+    Returns:
+        REST ответ
+    """
     data = await request.json()
     logging.debug(json.dumps(data))
     metric = METRICS.get(data['key'])
     return web.Response()
 
 
-def run_metrics_server(config):
+def run_metrics_server(config: typing.Dict):
+    """
+        Запускает сервер метрик
+    Args:
+        config: конфиг эксперимента
+
+    Returns:
+
+    """
     try:
         from prometheus_client import Gauge
 
