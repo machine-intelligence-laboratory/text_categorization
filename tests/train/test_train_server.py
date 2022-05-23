@@ -131,8 +131,7 @@ def test_add_documents_new_lang_no_bpe(models_dir, data_dir, grpc_stub):
         assert len(res) == 40
 
 
-
-def test_start_train_full(data_dir, grpc_stub):
+def test_start_train(data_dir, grpc_stub):
     resp = grpc_stub.StartTrainTopicModel(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.FULL)
     )
@@ -164,5 +163,3 @@ def test_start_train_full(data_dir, grpc_stub):
             grpc_stub.TrainTopicModelStatus(TrainTopicModelStatusRequest()).Status
             == TrainTopicModelStatusResponse.TrainTopicModelStatus.COMPLETE
     )
-
-

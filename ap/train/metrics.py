@@ -36,7 +36,7 @@ def run_metrics_server(config):
 
         logging.info('Starting metrics server')
 
-        start_http_server(8001, addr='0.0.0.0')
+        start_http_server(8000, addr='0.0.0.0')
         METRICS.update({
             'added_docs': Counter('added_docs', 'Number of added documents'),
             'training_iteration': Gauge('training_iteration', 'Current training iteration'),
