@@ -1,6 +1,7 @@
 import itertools
 import json
 import logging
+import typing
 
 import requests
 from aiohttp import web
@@ -8,29 +9,69 @@ from prometheus_client import start_http_server, Counter
 
 logging.basicConfig(level=logging.DEBUG)
 
-METRICS = dict()
+METRICS = {}
 
 
 def send_metric(key, action, value):
+    """
+    Устанавливает значение метрики через REST сервис
+
+    Args:
+        key: ключ метрики
+        action: действие inc или set
+        value: значение
+
+    Returns:
+
+    """
     requests.post('http://localhost:8080/set', json={'key': key, 'action': action, 'value': value})
 
 
 def set_metric(key, value):
+    """
+    Устанавливает значение метрики
+
+    Args:
+        key: Ключ метрики
+        value:  Значение
+    """
     send_metric(key, 'set', value)
 
 
 def inc_metric(key, value):
+    """
+    Инкрементирует значение метрики
+
+    Args:
+        key: ключ метрики
+        value: значение
+    """
     send_metric(key, 'inc', value)
 
 
 async def handle(request):
+    """
+    REST обработчик
+
+    Args:
+        request: REST запрос
+
+    Returns:
+        REST ответ
+    """
     data = await request.json()
     logging.debug(json.dumps(data))
     metric = METRICS.get(data['key'])
     return web.Response()
 
 
-def run_metrics_server(config):
+def run_metrics_server(config: typing.Dict):
+    """
+    Запускает сервер метрик
+
+    Args:
+        config: конфиг эксперимента
+    """
     try:
         from prometheus_client import Gauge
 
@@ -63,5 +104,5 @@ def run_metrics_server(config):
         app.add_routes([web.post('/set', handle)])
 
         web.run_app(app, host='0.0.0.0', port=8080)
-    except Exception as e:
-        logging.exception(e)
+    except Exception as ex:
+        logging.exception(ex)

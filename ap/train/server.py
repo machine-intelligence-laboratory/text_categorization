@@ -161,7 +161,15 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
 
     def UpdateModelConfiguration(self, request: UpdateModelConfigurationRequest,
                                  context) -> UpdateModelConfigurationResponse:
-        """обновление конфигурации обучения
+        """
+        Обновляет конфигурацию обучения
+
+        Args:
+            request: запрос, содержащий конфигурацию
+            context: не используется
+
+        Returns:
+            Статус - всегда ОК или исключение
         """
         self._data_manager.update_config(request.Configuration)
         return UpdateModelConfigurationResponse(
@@ -180,13 +188,9 @@ def serve(config, data):
     Запускает сервер.
 
     Args:
-        config (TODO): TODO
-        data (TODO): TODO
+        config (str): путь к yaml-конфигу для запуска обучения
+        data (str): путь к директории с данными
     """
-    from prometheus_client import start_http_server
-
-    # TODO: дообучение:
-    # если пути config["BPE_models"] нет - не надо загружать модели
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_TopicModelTrainServiceServicer_to_server(
