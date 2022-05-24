@@ -44,6 +44,8 @@ def data_dir(tmpdir_factory):
         c = yaml.safe_load(f)
 
     c['train_vw_path'] = os.path.join(data_dir, "train.txt")
+    c['new_background_path'] = os.path.join(data_dir, "new_background.txt")
+
     c['path_experiment'] = os.path.join(data_dir, "best_model")
     c['path_wiki_train_batches'] = os.path.join(data_dir, "batches_train")
 
@@ -80,6 +82,8 @@ def clean_data(data_dir):
         c = yaml.safe_load(f)
 
     c['train_vw_path'] = os.path.join(data_dir, "train.txt")
+    c['new_background_path'] = os.path.join(data_dir, "new_background.txt")
+
     c['path_experiment'] = os.path.join(data_dir, "best_model")
     c['path_wiki_train_batches'] = os.path.join(data_dir, "batches_train")
 
@@ -106,9 +110,31 @@ def test_add_documents(models_dir, data_dir, grpc_stub):
 
     assert resp.Status == AddDocumentsToModelResponse.AddDocumentsStatus.OK
 
-    with open(os.path.join(data_dir, "train.txt"), "r") as file:
+    with open(os.path.join(data_dir, "train.txt"), "r", encoding='utf8') as file:
         res = file.readlines()
         assert len(res) == 42
+
+
+@pytest.mark.usefixtures("clean_data")
+def test_add_background_documents(models_dir, data_dir, grpc_stub):
+    docs = [
+        Document(Id=DocId(Lo=0, Hi=0), Tokens=["a", "b"],
+                 Modalities=[Modality(Key="lang", Value='ru')]),
+        Document(Id=DocId(Lo=0, Hi=1), Tokens=["c", "D"],
+                 Modalities=[Modality(Key="lang", Value='ru')]),
+    ]
+    parallel_docs = ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)])
+    resp = grpc_stub.AddDocumentsToModel(
+        AddDocumentsToModelRequest(
+            Collection=DocumentPack(Documents=docs), ParallelDocuments=[parallel_docs]
+        )
+    )
+
+    assert resp.Status == AddDocumentsToModelResponse.AddDocumentsStatus.OK
+
+    with open(os.path.join(data_dir, "new_background.txt"), "r", encoding='utf8') as file:
+        res = file.readlines()
+        assert len(res) == 2
 
 
 @pytest.mark.usefixtures("clean_data")

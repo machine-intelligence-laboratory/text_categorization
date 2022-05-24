@@ -47,6 +47,7 @@ class ModelDataManager:
         self.average_rubric_size = int(len(self.rubrics_train) / len(set(self.rubrics_train.values())))
 
         self.train_path = self.config["train_vw_path"]
+        self.new_background_path = self.config["new_background_path"]
 
         path_experiment = Path(self.config["path_experiment"])
         path_experiment.mkdir(parents=True, exist_ok=True)
@@ -230,7 +231,8 @@ class ModelDataManager:
         ):
             raise NoTranslationException()
 
-        vw.save_docs(self.train_path, docs)
+        path_to_save = self.train_path if 'UDK' in docs and 'GRNTI' in docs else self.new_background_path
+        vw.save_docs(path_to_save, docs)
 
     def get_modality_distribution(self) -> typing.Dict[str, int]:
         """
