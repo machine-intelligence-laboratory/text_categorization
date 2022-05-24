@@ -50,7 +50,7 @@ class ModelDataManager:
 
         path_experiment = Path(self.config["path_experiment"])
         path_experiment.mkdir(parents=True, exist_ok=True)
-        with open(path_experiment.joinpath('experiment_config.yml')) :
+        with open(path_experiment.joinpath('experiment_config.yml'), 'w'):
             yaml.safe_dump(self.config)
 
         path_train_data = path_experiment.joinpath('train_data')
