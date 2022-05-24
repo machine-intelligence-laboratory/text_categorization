@@ -8,6 +8,7 @@ import artm
 import joblib
 import numpy as np
 import pandas as pd
+import typing
 
 from sklearn.metrics.pairwise import cosine_similarity
 from tqdm import tqdm
@@ -15,27 +16,24 @@ from tqdm import tqdm
 
 class RankingByModel:
     def __init__(
-            self, bcg_topic_list, metrics_to_calculate,
-            model_path, matrix_norm_metric, path_subsamples, path_rubrics,
-            mode, **kwargs
+            self, bcg_topic_list: list, metrics_to_calculate: typing.List[str],
+            model_path: str, matrix_norm_metric, path_subsamples: str, path_rubrics: str,
+            mode: str, **kwargs
     ):
         """
         Class for ranking document search between language pairs.
 
-        Parameters:
-            bcg_topic_list: list
-                backgroung topics of a topic model
-            metrics_to_calculate: list of str ('analogy', 'eucl')
-                list of names of proximity measures to use in ranking
-            model_path: str
-                a path to the artm model directory
-            matrix_norm_metric: callable
-                a way to measure norm of a matrix of vectors
-                for example init as:
-                matrix_norm_metric = np.linalg.norm
-            path_subsamples: str
-                path to file in json format that contains subsamples of documents indices
-                for which will be searched
+        Args:
+            bcg_topic_list (list): список фоновых тем тематической модели
+            metrics_to_calculate (list of str ('analogy', 'eucl')): список названий мер близости
+                для использования в ранжировании
+            model_path (str): путь до тематической модели
+            matrix_norm_metric (callable): способ измерения нормы матрицы векторов
+                например: matrix_norm_metric = np.linalg.norm
+            path_subsamples (str): путь к файлу в формате json, содержащему подвыборки индексов документов,
+                по которым будет производиться поиск
+            path_rubrics (str): путь к json-файлу, где по doc_id содержится его рубрика
+            mode (str): тип данных, например 'test'
         """
         self._model = artm.load_artm_model(model_path)
         self._metrics_to_calculate = metrics_to_calculate
@@ -51,8 +49,25 @@ class RankingByModel:
         self._axis = kwargs.get('axis', 1)
         self._mode = mode
 
-    def get_thetas(self, path_test, path_thetas, current_languages, recalculate_test_thetas=True):
-        if not recalculate_test_thetas and path_thetas.exists():
+    def get_thetas(self, path_test: str, path_thetas: str,
+                   current_languages: typing.List[str], recalculate_test_thetas: bool = True):
+        """
+        Возвращает матрицы Тэта, посчитанные по данным из path_test.
+
+        Args:
+            path_test (str): папка с данными в формате f'{self._mode}_{lang}_120k.txt', \
+                для которых надо построить матрицы Тэта
+            path_thetas (str): путь для сохранения / загрузки матниц Тэта
+            current_languages (list of str): названия языков, используемых для подсчёта метрик
+            recalculate_test_thetas (bool): признак необходимости вычислять матрицы Тэта для тестовых данных
+                - True означает пересчитать Тэты
+                - False означает загрузить существующие Тэты
+
+        Returns:
+            theta_lang (dict): словарь язык -> матрица Тэта, посчитанная по данным соответствующего языка из path_test
+        """
+        path_test = Path(path_test)
+        if not recalculate_test_thetas and Path(path_thetas).exists():
             theta_lang = joblib.load(path_thetas)
             print('Existing thetas of test data were loaded.')
         else:
@@ -87,10 +102,10 @@ class RankingByModel:
         return theta.columns, theta
 
     def _metrics_on_analogy_similarity(
-        self, theta_original,
-        doc_id, top_10_percent,
-        a_train, a_z_train,
-        subsample_for_doc_id, vectors_source
+            self, theta_original,
+            doc_id, top_10_percent,
+            a_train, a_z_train,
+            subsample_for_doc_id, vectors_source
     ):
 
         b = theta_original[doc_id].values
@@ -108,9 +123,9 @@ class RankingByModel:
         return percent_same_rubric, count
 
     def _metrics_on_eucl_similarity(
-        self,
-        search_num, search_indices, doc_id, top_10_percent,
-        subsample_for_doc_id, vectors_original, vectors_source
+            self,
+            search_num, search_indices, doc_id, top_10_percent,
+            subsample_for_doc_id, vectors_original, vectors_source
     ):
         difference = vectors_source - vectors_original[search_num]
         vectors_norm = self._matrix_norm_metric(difference, self._axis)
@@ -118,7 +133,7 @@ class RankingByModel:
         rating = subsample_for_doc_id[np.argsort(vectors_norm)]
         top_rating = rating[:len(top_10_percent)]
         num_same_rubric = sum([self._rubrics[current_id] == self._rubrics[doc_id]
-                              for current_id in top_rating])
+                               for current_id in top_rating])
         percent_same_rubric = num_same_rubric / len(top_10_percent)
         position = np.argwhere(rating == search_indices[search_num])[0][0]
         count = 1 if position < len(top_10_percent) else 0
@@ -127,6 +142,10 @@ class RankingByModel:
 
     def _rank(self, path_train_lang, search_indices, lang_original, lang_source,
               theta_original, theta_source):
+        """
+        Возвращает метрики "Средний процент" и "Средняя частота".
+        """
+        path_train_lang = Path(path_train_lang)
         average_position = dict()
         percent_same_rubric = dict()
         for metric in self._metrics_to_calculate:
@@ -176,26 +195,10 @@ class RankingByModel:
             }
         return metrics
 
-    def get_ranking(self, path_train_lang: str, lang_one: str, lang_two: str,
-                    data_lang_one: str, data_lang_two: str):
+    def _get_ranking(self, path_train_lang: str, lang_one: str, lang_two: str,
+                     data_lang_one: str, data_lang_two: str):
         """
-        Function returning average position of search documents in the other language.
-
-        Parameters:
-            path_train_lang: str
-                path to train thetas by languages
-            lang_one: str
-                name of the first language
-            lang_two: str
-                name of the second language
-            data_lang_one: str
-                path to folder with batches or path to vw file
-            data_lang_two: str
-                path to folder with batches or path to vw file
-
-        Returns:
-            metrics
-            len(search_indices)
+        Возвращает среднюю позицию документа-запроса в поисковой выборке для каждого языка.
         """
         if isinstance(data_lang_one, pd.DataFrame):
             idx_one, theta_one = data_lang_one.columns, data_lang_one
@@ -241,8 +244,30 @@ class RankingByModel:
 
         return metrics, len(search_indices)
 
-    def metrics_to_df(self, path_train_lang, path_experiment_result,
-                      current_languages, theta_lang, rbm):
+    def metrics_to_df(self, path_train_lang: str, path_experiment_result: str,
+                      current_languages: typing.List[str], theta_lang) -> \
+            typing.Tuple[typing.Dict[str, pd.DataFrame],
+                         typing.Dict[str, pd.DataFrame],
+                         pd.DataFrame]:
+        """
+        Возвращает метрики качества.
+
+        Args:
+            path_train_lang (str): путь к папке с папками языков, \
+                в которых лежат центроиды, построенные по ТРЕНИРОВОЧНЫМ данным каждого языка
+            path_experiment_result (str): путь для сохранения результатов
+            current_languages (list of str): названия языков, используемых для подсчёта метрик
+            theta_lang (dict): словарь язык -> матрица Тэта, построенная по ТЕСТОВЫМ данным каждого языка
+
+        Returns:
+            percent (dict): по названию метрики хранится pandas.DataFrame, где \
+                для каждой пары языков оригинал-перевод хранится метрика "Средний процент"
+            frequency (dict): по названию метрики хранится pandas.DataFrame, где \
+                для каждой пары языков оригинал-перевод хранится метрика "Средняя частота"
+            intersections (pandas.DataFrame): pandas.DataFrame, где \
+                для каждой пары языков оригинал-перевод хранится пересечение документов
+        """
+        path_experiment_result = Path(path_experiment_result)
         percent = dict()
         frequency = dict()
         for metric in self._metrics_to_calculate:
@@ -252,7 +277,7 @@ class RankingByModel:
 
         lang_pairs = list(combinations_with_replacement(current_languages, r=2))
         for lang_0, lang_1 in tqdm(lang_pairs, total=len(lang_pairs)):
-            metrics, intersection = rbm.get_ranking(
+            metrics, intersection = self._get_ranking(
                 path_train_lang,
                 lang_0, lang_1, theta_lang[lang_0], theta_lang[lang_1]
             )
@@ -281,47 +306,42 @@ class RankingByModel:
         return percent, frequency, intersections
 
 
-def quality_of_models(path_train_lang, bcg_topic_list,
-                      metrics_to_calculate, mode,
-                      path_model, path_experiment_result,
-                      matrix_norm_metric, path_subsamples, path_rubrics,
-                      path_test, current_languages, recalculate_test_thetas, **kwargs):
+def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
+                      metrics_to_calculate: typing.List[str], mode: str,
+                      path_model: str, path_experiment_result: str,
+                      matrix_norm_metric, path_subsamples: str, path_rubrics: str,
+                      path_test: str, current_languages: typing.List[str], recalculate_test_thetas: bool, **kwargs) -> \
+        typing.Dict[str, typing.Dict[str, float]]:
     """
-    Function to calculate quality of models.
+    Класс для вычисления метрик качества тематической модели.
 
     Args:
         path_train_lang (str):
-            path to train thetas by languages
-        bcg_topic_list (list of str):
-            backgroung topics of a topic model
-            for example init as:
-            bcg_topic_list = ['topic_0']
-        metrics_to_calculate (list of str ('analogy', 'eucl')):
-            list of names of proximity measures to use in ranking
-        path_model (str):
-            path to models
-        path_experiment_result (pathlib.Path):
-            path to the folder to save results of models
-        matrix_norm_metric (callable):
-            a way to measure norm of a matrix of vectors
-            for example init as:
-            matrix_norm_metric = np.linalg.norm
-        path_subsamples (str):
-            path to folder with subsemples of different languages in json format
-        path_rubrics (str):
-            path to file with rubrics of documents in json format
+            путь к папке с папками языков, в которых лежат центроиды, построенные по ТРЕНИРОВОЧНЫМ данным каждого языка
+        bcg_topic_list (list of str): список фоновых тем тематической модели
+            например: bcg_topic_list = ['topic_0']
+        metrics_to_calculate (list of str ('analogy', 'eucl')): список названий мер близости,
+            используемых для ранжирования
+        mode (str): тип данных ('test' или 'val')
+        path_model (str): путь до тематической модели
+        path_experiment_result (str): путь до папки, куда сохраняются результаты модели
+        matrix_norm_metric (callable): способ измерения нормы матрицы векторов
+            например: matrix_norm_metric = np.linalg.norm
+        path_subsamples (str): путь к файлу в формате json, содержащему подвыборки индексов документов,
+                по которым будет производиться поиск
+        path_rubrics (str): путь к json-файлу, где по doc_id содержится его рубрика
         path_test (str):
-            path to folder with txt files for calculate metrics
-        current_languages (list of str):
-            names of languages to use to calculate metrics
-        recalculate_test_thetas (bool):
-            True means rebuild thetas
-            False means load existing thetas
+            путь к папке с txt-файлами, по которым будут считаться метрики
+        current_languages (list of str): названия языков, используемых для подсчёта метрик
+        recalculate_test_thetas (bool): признак необходимости вычислять матрицы Тэта для тестовых данных
+            - True означает пересчитать Тэты
+            - False означает загрузить существующие Тэты
 
     Returns:
-        quality_experiment (dict): словарь словарей - по имени модели хранятся названия метрик,
-                                    по названиям метрик хранятся значения метрик этих моделей
+        quality_experiment (dict): словарь имя модели -> словарь название метрики -> значение метрики
     """
+    path_model = Path(path_model)
+    path_experiment_result = Path(path_experiment_result)
     quality_experiment = dict()
     quality_experiment[path_model.name] = dict()
     path_model_result = path_experiment_result.joinpath(path_model.name)
@@ -335,7 +355,7 @@ def quality_of_models(path_train_lang, bcg_topic_list,
     theta_lang = rbm.get_thetas(path_test, path_thetas, current_languages, recalculate_test_thetas)
 
     percent, frequency, _ = rbm.metrics_to_df(
-        path_train_lang, path_model_result, current_languages, theta_lang, rbm
+        path_train_lang, path_model_result, current_languages, theta_lang
     )
 
     # Вычисляю значения метрик
@@ -348,6 +368,7 @@ def quality_of_models(path_train_lang, bcg_topic_list,
             f'average_percent_{metric}'] = average_percent
     print(quality_experiment[path_model.name])
 
+    # TODO: надо ли сохранять дважды?
     with open(path_model_result.joinpath('metrics.json'), 'w') as file:
         json.dump(quality_experiment[path_model.name], file)
 

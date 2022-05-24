@@ -34,16 +34,13 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
     def __init__(
             self,
             train_conf: str,
-            models_dir: str,
             data_dir: str
     ):
         """
         Инициализирует сервер.
 
         Args:
-            bpe_models (typing.Dict[str, typing.Any]): TODO
             train_conf (typing.Dict[str, typing.Any]): словарь с конфигурацией обучения
-            models_dir (str): путь к директория сохранения файлов
             data_dir (str): путь к директории с данными
         """
         self._executor = concurrent.futures.ProcessPoolExecutor(max_workers=3)
@@ -55,12 +52,11 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         self._executor.submit(run_metrics_server, self._config)
         sleep(10)
 
-
         bpe_models = load_bpe_models(self._config["BPE_models"])
         self._vw = VowpalWabbitBPE(bpe_models)
 
         self._data_manager = ModelDataManager(data_dir, train_conf)
-        self._trainer = ModelTrainer(self._data_manager, models_dir)
+        self._trainer = ModelTrainer(self._data_manager)
 
     def AddDocumentsToModel(
             self, request: AddDocumentsToModelRequest, context
@@ -124,7 +120,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
             )
 
         self._training_future = self._executor.submit(
-            self._trainer.train_model, [request.Type]
+            self._trainer.train_model, request.Type
         )
 
         return StartTrainTopicModelResponse(
@@ -156,7 +152,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
             )
         elif (
                 self._training_future.cancelled()
-                or logging.error(self._training_future.exception()) is not None
+                or self._training_future.exception() is not None
         ):
             logging.error(str(self._training_future.exception()))
             return TrainTopicModelStatusResponse(
@@ -177,17 +173,13 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
     "--config", help="A path to experiment yaml config",
 )
 @click.option(
-    "--models", help="A path to store trained bigARTM models",
-)
-@click.option(
     "--data", help="A path to data directories",
 )
-def serve(models, config, data):
+def serve(config, data):
     """
     Запускает сервер.
 
     Args:
-        models (TODO): TODO
         config (TODO): TODO
         data (TODO): TODO
     """
@@ -198,7 +190,7 @@ def serve(models, config, data):
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_TopicModelTrainServiceServicer_to_server(
-        TopicModelTrainServiceImpl(config, models, data),
+        TopicModelTrainServiceImpl(config, data),
         server,
     )
     server.add_insecure_port("[::]:50051")

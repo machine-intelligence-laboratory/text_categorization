@@ -8,22 +8,22 @@ import artm
 import joblib
 import numpy as np
 import pandas as pd
+import typing
 
 from sklearn.metrics.pairwise import cosine_similarity
 from tqdm import tqdm
 
+
 import ap.utils.config as config
 
 
-def generate_theta(path_models, save_path):
+def generate_theta(path_models: str, save_path: str):
     """
-    Function to generate theta matrix.
+    Создает и сохраняет матрицы Тэта.
 
     Args:
-        path_models (str):
-            a path with artm models
-        save_path (str):
-            a path for save theta matrices
+        path_models (str): путь к папке с тематическими моделями
+        save_path (str): путь для сохранения матриц Тэта
     """
     save_path = Path(save_path)
     save_path.mkdir(parents=True, exist_ok=True)
@@ -36,13 +36,13 @@ def generate_theta(path_models, save_path):
         for lang in config.LANGUAGES_MAIN:
             test_path = '/data/datasets/Antiplagiat/texts_vw/test_BPE/' \
                         f'test_test/test_{lang}_120k_rank_batches'
-            batch_vectorizer = artm.BatchVectorizer(data_path=test_path, data_format="batches",)
+            batch_vectorizer = artm.BatchVectorizer(data_path=test_path, data_format="batches", )
             vec = model_artm.transform(batch_vectorizer=batch_vectorizer).T
             joblib.dump(vec, save_path_theta.joinpath(f'theta.{lang}'))
 
 
 def _check_rank_quality(vec_first, vec_second):
-    max_val = sum([1/i for i in range(1, vec_first.shape[1]+1)])
+    max_val = sum([1 / i for i in range(1, vec_first.shape[1] + 1)])
 
     docs = list(set(vec_first.index).intersection(set(vec_second.index)))
     all_cos = list()
@@ -138,7 +138,7 @@ def _check_cluster_intersection_quality(class_json_path, vec):
             [center], vec.loc[~vec.index.isin(doc_list)].values
         )[0]
         elements = cos_values[np.where(cos_values >= mean_cos)].shape[0]
-        mean_intersection[rubric] = [elements/len(doc_list)]
+        mean_intersection[rubric] = [elements / len(doc_list)]
 
     return mean_intersection
 
@@ -148,11 +148,8 @@ def get_topic_profile(path_models, save_path):
     Function to get topic profiles for models.
 
     Args:
-
-        path_models (str):
-            a path with artm models
-        save_path (str):
-            a path for save theta matrices
+        path_models (str): путь к папке с тематическими моделями
+        save_path (str): путь для сохранения матриц Тэта
 
     Returns:
         (pd.DataFrame): DataFrame with topic profiles for models
@@ -181,13 +178,9 @@ def get_mean_classes_intersection(path_models, save_path, path_categories):
     Function to evaluate classes intersection.
 
     Args:
-
-    path_models (str):
-        a path with artm models
-    save_path (str):
-        a path for save theta matrices
-    path_categories (str):
-        a path with classes (json)
+        path_models (str): путь к папке с тематическими моделями
+        save_path (str): путь для сохранения матриц Тэта
+        path_categories (str): json-файл с рубриками документов
 
     Returns:
         (pd.DataFrame): DataFrame with evaluation of classes intersection
@@ -207,16 +200,13 @@ def get_mean_classes_intersection(path_models, save_path, path_categories):
         columns=dict(enumerate(os.listdir(path_models))))
 
 
-def get_analogy_distribution(path_models, save_path):
+def get_analogy_distribution(path_models: str, save_path: str) -> typing.Dict[str, dict]:
     """
     Function to get analogy distribution for models.
 
     Args:
-
-    path_models  (str):
-        a path with artm models
-    save_path (str):
-        a path for save theta matrices
+        path_models  (str): путь к папке с тематическими моделями
+        save_path (str): путь для сохранения матриц Тэта
 
     Returns:
         pair_analogy (dict): dict with distribution of analogy measure
@@ -238,17 +228,14 @@ def get_analogy_distribution(path_models, save_path):
     return pair_analogy
 
 
-def get_cos_distribution(path_models, save_path, path_categories):
+def get_cos_distribution(path_models: str, save_path: str, path_categories: str) -> typing.Dict[str, dict]:
     """
     Function to get cosine distribution in classes for models.
 
     Args:
-        path_models (str):
-            a path with artm models
-        save_path (str):
-            a path for save theta matrices
-        path_categories (str):
-            a path with classes (json)
+        path_models (str): путь к папке с тематическими моделями
+        save_path (str): путь для сохранения матриц Тэта
+        path_categories (str): json-файл с рубриками документов
 
     Returns:
         pair_cos (dict): dict with distribution of cosine measure for classes

@@ -9,6 +9,9 @@ def load_bpe_models(bpe_path: str) -> dict:
 
     Args:
         bpe_path (str): путь до папки с обученными BPE моделями.
+
+    Returns:
+        res (dict): словарь с обученными BPE моделями.
     """
     res = {}
     for model in os.listdir(bpe_path):

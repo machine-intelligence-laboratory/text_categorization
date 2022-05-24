@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import json
 import warnings
 
@@ -7,7 +5,10 @@ import artm
 import joblib
 import numpy as np
 
+from pathlib import Path
 from tqdm import tqdm
+
+import typing
 
 import ap.utils.rank_metric as rank_metric
 import ap.utils.config as config
@@ -15,7 +16,15 @@ import ap.utils.config as config
 warnings.filterwarnings('ignore')
 
 
-def dump_train_centroids(model_path, bcg_topic_list, path_train_centroids):
+def dump_train_centroids(model_path: str, bcg_topic_list: typing.List[str], path_train_centroids: str):
+    """
+    Вычисляет центроиды, необходимые для преобразования текста из одного языка в другой.
+
+    Args:
+        model_path (str): путь до тематичекой модели
+        bcg_topic_list (list): список тем, которые не будут использоваться для построения
+        path_train_centroids (str): путь для выгрузки центроид
+    """
     path_train_centroids = Path(path_train_centroids)
     model = artm.load_artm_model(model_path)
     sbj_topic_list = [topic for topic in model.topic_names
@@ -45,12 +54,40 @@ def dump_train_centroids(model_path, bcg_topic_list, path_train_centroids):
     print('Train centroids were calculated.')
 
 
-def calculate_search_quality(config_experiment):
-    path_model = Path(config_experiment['path_model'])
-    model_name = str(path_model.name)
-    path_experiment_result = Path(config_experiment['path_results'])
+def calculate_search_quality(config_experiment) -> typing.Dict[str, float]:
+    """
+    Вычисление качества модели по 6 метрикам:
+        - Средняя частота УДК,
+        - Средний процент УДК,
+        - Средняя частота ГРНТИ,
+        - Средний процент ГРНТИ,
+        - Средняя частота ВАК,
+        - Средний процент ВАК.
 
-    bcg_topic_list = config_experiment.get('bcg_topic_list', ['topic_0'])
+    Args:
+        config_experiment (dict): конфиг эксперимента, содержащий:
+
+            - config_experiment["path_experiment"] (str): путь до папки с экспериментом
+            - config_experiment['path_model'] (str): путь до тестируемой модели,
+            - config_experiment['path_results'] (str): путь для выгрузки результата эксперимента,
+            - config_experiment["artm_model_params"] (dict): параметры тематической модели ARTM,
+                - config_experiment["artm_model_params"]["num_bcg_topic"] (int): количество фоновых тем,
+            - config_experiment['metrics_to_calculate'] (str): название меры близости ('analogy' или 'eucl'),
+            - config_experiment['path_train_thetas'] (str): путь до центроид
+            - config_experiment['recalculate_train_centroids'] (bool): признак необходимости вычислять центроиды
+            - config_experiment['recalculate_test_thetas'] (bool): признак необходимости вычислять матрицы Тэта для \
+                тестовых данных
+
+    Returns:
+        quality (dict): подсчитанные метрики качества
+    """
+    path_experiment = Path(config_experiment["path_experiment"])
+    path_model = Path(config_experiment.get('path_model', path_experiment.joinpath('topic_model')))
+    model_name = str(path_model.name)
+    path_experiment_result = Path(config_experiment.get('path_results', path_experiment.joinpath('results')))
+
+    num_bcg_topic = config_experiment["artm_model_params"]["num_bcg_topic"]
+    bcg_topic_list = config_experiment.get('bcg_topic_list', [f'topic_{i}' for i in range(num_bcg_topic)])
     metrics_to_calculate = config_experiment.get('metrics_to_calculate', 'analogy')
     path_train_centroids = Path(config_experiment['path_train_thetas'])
     recalculate_train_centroids = config_experiment.get('recalculate_train_centroids', False)

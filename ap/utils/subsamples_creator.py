@@ -4,34 +4,36 @@ import json
 from pathlib import Path
 from itertools import product
 
+import typing
+
 
 class MakeSubsamples:
     """
-    Class for saving subsamples of document indices.
+    Класс для сохранения поисковых подвыборок.
 
     Args:
         languages (list):
-            list of str of languages to use in subsamples
+            список называний языков, используемых в подвыборгках
         path_to_save_subsamples (str):
-            path to file in json format to save subsamples
+            путь для сохранения файла с подвыборками в формате jsonъ
         path_to_data (str):
-            path to data for which subsamples will be created
-            expected data in txt format
+            путь к данным (в формате txt), для которых создаются подвыборки
         path_rubrics (str):
-            path to json file with rubrics of documents
+            путь к json файлу с рубриками документов (doc_id -> рубрика)
         mode ('test' or 'wiki'):
-            kind of data for which subsamples will be created
+            вид данных, для которых будут создаваться подвыборки
         subsample_size (int):
-            The size of the subsample. The default is 1000.
+            размер подавборок, значение по умолчанию 1000.
     """
+
     def __init__(
-        self,
-        languages: list,
-        path_to_save_subsamples: str,
-        path_to_data: str,
-        path_rubrics: str,
-        mode: str,
-        subsample_size: int = 1000
+            self,
+            languages: typing.List[str],
+            path_to_save_subsamples: str,
+            path_to_data: str,
+            path_rubrics: str,
+            mode: str,
+            subsample_size: int = 1000
     ):
         with open(path_rubrics) as file:
             self._rubrics = json.load(file)
@@ -50,11 +52,11 @@ class MakeSubsamples:
         self._path_to_save_subsamples = path_to_save_subsamples
 
     def _get_subsample(
-        self,
-        doc_id: str,
-        lang_original: str,
-        lang_source: str,
-        subsample_size: int
+            self,
+            doc_id: str,
+            lang_original: str,
+            lang_source: str,
+            subsample_size: int
     ) -> list:
         doc_rubric = self._rubrics[doc_id]
         test_sample_ids_source = self._test_ids[lang_source]
@@ -114,7 +116,7 @@ class MakeSubsamples:
 
     def get_subsamples(self):
         """
-        Function saving subsamples of document indices.
+        Функция, сохраняющая поисковые подвыборки индексов документов.
         """
         for lang_original, lang_source in product(self._languages, self._languages):
             print(lang_original, lang_source)

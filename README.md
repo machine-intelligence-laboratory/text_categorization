@@ -1,5 +1,5 @@
 # Документация
-Документация может быть найдена [здесь](https://text-categorization.readthedocs.io/ru/latest/).
+Документация может быть найдена [здесь](https://text-categorization.readthedocs.io/ru/documentation/).
 
 # Запуск приложения
 ## Локальный запуск

@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, Mock
 import pandas as pd
 import pytest
 
-from ap.topic_model.v1.TopicModelBase_pb2 import DocId, Document, DocumentPack
+from ap.topic_model.v1.TopicModelBase_pb2 import DocId, Document, DocumentPack, Modality
 from ap.topic_model.v1.TopicModelInference_pb2 import GetDocumentsEmbeddingRequest
 
 
@@ -30,7 +30,7 @@ def grpc_add_to_server():
 def grpc_servicer(artm_model, bpe_models):
     from ap.inference.server import TopicModelInferenceServiceImpl
 
-    return TopicModelInferenceServiceImpl(artm_model, bpe_models, os.getcwd())
+    return TopicModelInferenceServiceImpl(artm_model, bpe_models, os.getcwd(), 'tests/data')
 
 
 @pytest.fixture(scope="module")
@@ -54,7 +54,8 @@ def test_embeddings(artm_model, grpc_stub):
                 "sobr",
                 "seguida",
             ],
-            Language="es",
+            Modalities=[Modality(Key="lang", Value='es'), Modality(Key="UDK", Value='6'),
+                        Modality(Key="GRNTI", Value='11806946'), ],
         ),
         Document(
             Id=DocId(Lo=0, Hi=1),
@@ -68,7 +69,8 @@ def test_embeddings(artm_model, grpc_stub):
                 "coherente",
                 "ook",
             ],
-            Language="nl",
+            Modalities=[Modality(Key="lang", Value='nl'), Modality(Key="UDK", Value='6'),
+                        Modality(Key="GRNTI", Value='11806946'), ],
         ),
     ]
     resp = grpc_stub.GetDocumentsEmbedding(
