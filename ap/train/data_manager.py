@@ -50,8 +50,8 @@ class ModelDataManager:
 
         path_experiment = Path(self.config["path_experiment"])
         path_experiment.mkdir(parents=True, exist_ok=True)
-        with open(path_experiment.joinpath('experiment_config.yml'), 'w'):
-            yaml.safe_dump(self.config)
+        with open(path_experiment.joinpath('experiment_config.yml'), 'w') as file:
+            yaml.safe_dump(self.config, file)
 
         path_train_data = path_experiment.joinpath('train_data')
         self._path_to_batches = path_train_data.joinpath('batches_balanced')
