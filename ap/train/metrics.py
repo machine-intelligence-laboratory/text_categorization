@@ -1,20 +1,21 @@
 import itertools
 import json
 import logging
+import typing
 
 import requests
-import typing
 from aiohttp import web
 from prometheus_client import start_http_server, Counter
 
 logging.basicConfig(level=logging.DEBUG)
 
-METRICS = dict()
+METRICS = {}
 
 
 def send_metric(key, action, value):
     """
     Устанавливает значение метрики через REST сервис
+
     Args:
         key: ключ метрики
         action: действие inc или set
@@ -32,9 +33,6 @@ def set_metric(key, value):
     Args:
         key: Ключ метрики
         value:  Значение
-
-    Returns:
-
     """
     send_metric(key, 'set', value)
 
@@ -42,12 +40,10 @@ def set_metric(key, value):
 def inc_metric(key, value):
     """
     Инкрементирует значение метрики
+
     Args:
         key: ключ метрики
         value: значение
-
-    Returns:
-
     """
     send_metric(key, 'inc', value)
 
@@ -55,6 +51,7 @@ def inc_metric(key, value):
 async def handle(request):
     """
     REST обработчик
+
     Args:
         request: REST запрос
 
@@ -69,12 +66,10 @@ async def handle(request):
 
 def run_metrics_server(config: typing.Dict):
     """
-        Запускает сервер метрик
+    Запускает сервер метрик
+
     Args:
         config: конфиг эксперимента
-
-    Returns:
-
     """
     try:
         from prometheus_client import Gauge
@@ -108,5 +103,5 @@ def run_metrics_server(config: typing.Dict):
         app.add_routes([web.post('/set', handle)])
 
         web.run_app(app, host='0.0.0.0', port=8080)
-    except Exception as e:
-        logging.exception(e)
+    except Exception as ex:
+        logging.exception(ex)

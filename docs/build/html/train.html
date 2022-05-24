@@ -153,27 +153,65 @@
 <span class="target" id="module-ap.train.metrics"></span><dl class="py function">
 <dt class="sig sig-object py" id="ap.train.metrics.handle">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.train.metrics.</span></span><span class="sig-name descname"><span class="pre">handle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.metrics.handle" title="Ссылка на это определение">¶</a></dt>
-<dd></dd></dl>
+<dd><p>REST обработчик</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>request</strong> – REST запрос</p>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>REST ответ</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ap.train.metrics.inc_metric">
 <span class="sig-prename descclassname"><span class="pre">ap.train.metrics.</span></span><span class="sig-name descname"><span class="pre">inc_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.metrics.inc_metric" title="Ссылка на это определение">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Инкрементирует значение метрики</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – ключ метрики</p></li>
+<li><p><strong>value</strong> – значение</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ap.train.metrics.run_metrics_server">
-<span class="sig-prename descclassname"><span class="pre">ap.train.metrics.</span></span><span class="sig-name descname"><span class="pre">run_metrics_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.metrics.run_metrics_server" title="Ссылка на это определение">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">ap.train.metrics.</span></span><span class="sig-name descname"><span class="pre">run_metrics_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.metrics.run_metrics_server" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Запускает сервер метрик</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>config</strong> – конфиг эксперимента</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ap.train.metrics.send_metric">
 <span class="sig-prename descclassname"><span class="pre">ap.train.metrics.</span></span><span class="sig-name descname"><span class="pre">send_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.metrics.send_metric" title="Ссылка на это определение">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Устанавливает значение метрики через REST сервис</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – ключ метрики</p></li>
+<li><p><strong>action</strong> – действие inc или set</p></li>
+<li><p><strong>value</strong> – значение</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ap.train.metrics.set_metric">
 <span class="sig-prename descclassname"><span class="pre">ap.train.metrics.</span></span><span class="sig-name descname"><span class="pre">set_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.metrics.set_metric" title="Ссылка на это определение">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Устанавливает значение метрики
+:param key: Ключ метрики
+:param value: Значение</p>
+</dd></dl>
 
 <span class="target" id="module-ap.train.server"></span><dl class="py class">
 <dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl">
@@ -240,7 +278,14 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ap.train.server.TopicModelTrainServiceImpl.UpdateModelConfiguration">
 <span class="sig-name descname"><span class="pre">UpdateModelConfiguration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.UpdateModelConfigurationRequest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ap.topic_model.v1.TopicModelTrain_pb2.UpdateModelConfigurationResponse</span></span></span><a class="headerlink" href="#ap.train.server.TopicModelTrainServiceImpl.UpdateModelConfiguration" title="Ссылка на это определение">¶</a></dt>
-<dd><p>обновление конфигурации обучения</p>
+<dd><p>Обновляет конфигурацию обучения
+:param request: запрос, содержащий конфигурацию
+:param context: не используется</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>Статус - всегда ОК или исключение</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -296,7 +341,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ap.train.trainer.ModelTrainer.train_model">
-<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f62d425f2b0&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.train_model" title="Ссылка на это определение">¶</a></dt>
+<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_type:</span> <span class="pre">&lt;google.protobuf.internal.enum_type_wrapper.EnumTypeWrapper</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f937845dbe0&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.train.trainer.ModelTrainer.train_model" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Функция обучения тематической модели.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры</dt>
