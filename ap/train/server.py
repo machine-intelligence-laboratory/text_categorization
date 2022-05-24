@@ -163,6 +163,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
                                  context) -> UpdateModelConfigurationResponse:
         """
         Обновляет конфигурацию обучения
+
         Args:
             request: запрос, содержащий конфигурацию
             context: не используется
