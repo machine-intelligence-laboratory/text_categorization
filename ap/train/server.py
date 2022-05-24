@@ -188,13 +188,9 @@ def serve(config, data):
     Запускает сервер.
 
     Args:
-        config (TODO): TODO
-        data (TODO): TODO
+        config (str): путь к yaml-конфигу для запуска обучения
+        data (str): путь к директории с данными
     """
-    from prometheus_client import start_http_server
-
-    # TODO: дообучение:
-    # если пути config["BPE_models"] нет - не надо загружать модели
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_TopicModelTrainServiceServicer_to_server(
