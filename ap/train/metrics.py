@@ -30,6 +30,7 @@ def send_metric(key, action, value):
 def set_metric(key, value):
     """
     Устанавливает значение метрики
+
     Args:
         key: Ключ метрики
         value:  Значение
