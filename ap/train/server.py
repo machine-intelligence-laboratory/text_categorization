@@ -22,7 +22,7 @@ from ap.topic_model.v1.TopicModelTrain_pb2_grpc import (
     add_TopicModelTrainServiceServicer_to_server,
 )
 from ap.train.data_manager import ModelDataManager, NoTranslationException
-from ap.train.metrics import send_metric, run_metrics_server, inc_metric
+from ap.train.metrics import run_metrics_server, inc_metric
 
 from ap.train.trainer import ModelTrainer
 from ap.utils.bpe import load_bpe_models
