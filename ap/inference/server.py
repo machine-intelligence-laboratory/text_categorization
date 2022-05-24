@@ -22,7 +22,8 @@ from ap.topic_model.v1.TopicModelInference_pb2_grpc import (
     add_TopicModelInferenceServiceServicer_to_server,
 )
 from ap.utils.bpe import load_bpe_models
-from ap.utils.general import id_to_str
+from ap.utils.general import id_to_str, get_modalities
+from ap.utils.prediction_visualization import augment_text
 from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
@@ -159,7 +160,26 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
         )
 
     def GetTopicExplanation(self, request: GetTopicExplanationRequest, context) -> GetTopicExplanationResponse:
-        raise NotImplementedError
+        """
+        Объяснение тематической модели
+        Args:
+            request: grpc запрос, содержащий документ
+            context: не используется
+
+        Returns:
+            Объяснение тематической модели
+        """
+        with tempfile.TemporaryDirectory(dir=self._work_dir) as temp_dir:
+            doc_vw = {
+                id_to_str(request.Doc.Id): get_modalities(request.Doc)
+            }
+            vw_file = os.path.join(temp_dir, 'vw.txt')
+            self._vw.save_docs(vw_file, doc_vw)
+            interpretation = augment_text(self._artm_model, vw_file, os.path.join(temp_dir, 'target'))
+            return GetTopicExplanationResponse(Topic = interpretation['topic_from'],
+                                               NewTopic = interpretation['topic_to'],
+                                               RemovedTokens = interpretation['Removed'],
+                                               AddedTokens = interpretation['Added'])
 
 
 @click.command()

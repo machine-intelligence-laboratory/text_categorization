@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from ap.topic_model.v1.TopicModelBase_pb2 import DocId, Document, DocumentPack, Modality
-from ap.topic_model.v1.TopicModelInference_pb2 import GetDocumentsEmbeddingRequest
+from ap.topic_model.v1.TopicModelInference_pb2 import GetDocumentsEmbeddingRequest, GetTopicExplanationRequest
 
 
 @pytest.fixture(scope="module")
@@ -77,4 +77,26 @@ def test_embeddings(artm_model, grpc_stub):
         GetDocumentsEmbeddingRequest(Pack=DocumentPack(Documents=docs))
     )
     assert len(resp.Embeddings) == len(docs)
+    artm_model.transform.assert_called_once()
+
+
+
+def test_explain(artm_model, grpc_stub):
+    doc = Document(
+            Id=DocId(Lo=0, Hi=0),
+            Tokens=[
+                "introductorio",
+                "proporciona",
+                "rasfondo",
+                "histórico",
+                "sobr",
+                "seguida",
+            ],
+            Modalities=[Modality(Key="lang", Value='es'), Modality(Key="UDK", Value='6'),
+                        Modality(Key="GRNTI", Value='11806946'), ],
+        )
+
+    resp = grpc_stub.GetTopicExplanation(GetTopicExplanationRequest(Doc=doc))
+    print(resp.Topic)
+    print(resp.NewTopic)
     artm_model.transform.assert_called_once()
