@@ -50,6 +50,9 @@ class ModelDataManager:
 
         path_experiment = Path(self.config["path_experiment"])
         path_experiment.mkdir(parents=True, exist_ok=True)
+        with open(path_experiment.joinpath('experiment_config.yml'), 'w') as file:
+            yaml.safe_dump(self.config, file)
+
         path_train_data = path_experiment.joinpath('train_data')
         self._path_to_batches = path_train_data.joinpath('batches_balanced')
         self._path_balanced_train = path_train_data.joinpath('train_balanced.txt')
@@ -186,7 +189,7 @@ class ModelDataManager:
             logging.info('Calling artm 2nd time')
 
             if self._path_batches_wiki:
-                if self.wiki_balancing_type == 'avr_rubric_size' or self.wiki_balancing_type == 'wiki_unisize':
+                if self.wiki_balancing_type in ('avr_rubric_size', 'wiki_unisize'):
                     wiki_batch_subsample = np.random.choice(
                         list(Path(self._path_batches_wiki).iterdir()), self.wiki_batches_per_epoch)
                     for batch in wiki_batch_subsample:

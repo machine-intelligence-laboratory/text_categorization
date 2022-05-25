@@ -28,9 +28,9 @@ python -m ap.inference.server --model={path_to_model}
 
 Для локального запуска сервиса обучения моделей запустите
 ```bash
-python -m ap.train.server --models={path_to_models} --data={path_to_data}
+python -m ap.train.server --config={path_to_config} --data={path_to_data}
 ```
-где `path_to_models` - путь к каталогу для хранения обученных моделей, `path_to_data` - путь к каталогу с данными.
+где `path_to_config` - путь к конфигу для обучения модели в формате yaml, `path_to_data` - путь к каталогу с данными.
 
 ## Запуск в docker-контейнере
 Для запуска сервиса получения векторных представлений в docker-контейнере, выполните команду
