@@ -342,7 +342,6 @@ def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
         percent[metric].to_csv(path_experiment_result.joinpath(f'percent_{metric}.csv'))
     intersections.to_csv(path_experiment_result.joinpath('intersections.csv'))
 
-    # Вычисляю значения метрик
     for metric in metrics_to_calculate:
         average_frequency = frequency[metric].sum().sum() / frequency[metric].count().sum()
         average_percent = percent[metric].sum().sum() / percent[metric].count().sum()
