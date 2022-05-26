@@ -15,13 +15,14 @@ from tqdm import tqdm
 
 
 class RankingByModel:
+    """
+    Класс для вычисления метрик качества тематической модели.
+    """
     def __init__(
             self, bcg_topic_list: list, metrics_to_calculate: typing.List[str],
             model_path: str, path_subsamples: str, path_rubrics: str
     ):
         """
-        Класс для вычисления метрик качества тематической модели.
-
         Args:
             bcg_topic_list (list): список фоновых тем тематической модели
             metrics_to_calculate (list of str ('analogy', 'eucl')): список названий мер близости
@@ -325,9 +326,6 @@ def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
     path_experiment_result = Path(path_experiment_result)
     path_experiment_result.mkdir(parents=True, exist_ok=True)
     quality_experiment = {}
-    # path_model_result = Path(path_experiment_result).joinpath(path_model.name)
-    # path_model_result.mkdir(parents=True, exist_ok=True)
-    # path_thetas = str(path_model_result.joinpath('theta_lang.joblib'))
     path_thetas = str(path_experiment_result.joinpath('theta_lang.joblib'))
 
     rbm = RankingByModel(

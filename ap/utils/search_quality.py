@@ -1,15 +1,19 @@
+"""
+Модуль для вычисления качества тематической модели.
+"""
+
 import json
+import typing
 import warnings
+
+from pathlib import Path
 
 import artm
 import joblib
 
-from pathlib import Path
 from tqdm import tqdm
 
-import typing
-
-import ap.utils.rank_metric as rank_metric
+from ap.utils import rank_metric
 
 warnings.filterwarnings('ignore')
 
@@ -109,7 +113,7 @@ def calculate_search_quality(config_experiment) -> \
 
     frequency = 'average_frequency_analogy'
     percent = 'average_percent_analogy'
-    quality = dict()
+    quality = {}
 
     for path_rubrics, path_subsamples in zip(path_rubrics_list, path_subsamples_list):
         quality_model = rank_metric.quality_of_models(

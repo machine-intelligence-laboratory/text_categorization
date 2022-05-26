@@ -76,7 +76,7 @@ def ensure_directory(path: str) -> str:
     return path
 
 
-def batch_names(starts_from, count) -> typing.Generator[str, None, None]:
+def batch_names(starts_from: object, count: object) -> typing.Generator[str, None, None]:
     """
     Генерирует названия батчей в соответствие с форматом BatchVectorizer.
 
