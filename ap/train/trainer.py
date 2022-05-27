@@ -13,19 +13,15 @@ from ap.utils.general import recursively_unlink
 
 
 class ModelTrainer:
+    """Класс для тренировки тематической модели."""
     def __init__(
             self,
             data_manager: ModelDataManager,
     ):
         """
-        Initialize a model trainer.
-
         Args:
             data_manager (ModelDataManager): data manager
         """
-
-        from prometheus_client import Gauge
-
         self._data_manager = data_manager
         self._models_dir = Path(self._data_manager.config['path_experiment'])
         model_name = self.generate_model_name()
@@ -35,21 +31,12 @@ class ModelTrainer:
         import artm
 
         current_models = list(self._models_dir.iterdir())
-        # TODO: для дообучения
-        # добавить условие: есть язык не из 100 языков
-        # new_modalities = list(config["LANGUAGES_ALL"]).extend(list(config["MODALITIES_TRAIN"]))
-        # if not set(new_modalities).issubset(set(self._class_ids))
-
-        if (
-                train_type == StartTrainTopicModelRequest.TrainType.FULL
-        ):
+        if train_type == StartTrainTopicModelRequest.TrainType.FULL:
             logging.info("Start full training")
             self.model = self._create_initial_model()
         else:
             if len(current_models) == 0:
                 raise Exception("Can't update a model - no models found")
-
-            # TODO: загрузить модель для дообучения
             last_modification = [Path(path).stat().st_mtime for path in current_models]
             last_modification_index = np.argmax(last_modification)
             last_model = current_models[last_modification_index]
@@ -148,16 +135,6 @@ class ModelTrainer:
         return model
 
     @property
-    def model_scores(self):
-        """
-        Возвращает все скоры тематической модели
-
-        Returns:
-            (artm.scores.Scores): список скоров тематической модели
-        """
-        return list(self.model.score_tracker.keys())
-
-    @property
     def model_scores_value(self) -> dict:
         """
         Возвращает значения всех скоров тематической модели на текущей эпохе
@@ -167,7 +144,7 @@ class ModelTrainer:
         """
 
         scores_value = {score: self.model.score_tracker[score].value[-1]
-                        for score in self.model_scores}
+                        for score in list(self.model.score_tracker.keys())}
         return scores_value
 
     def set_metrics(self):

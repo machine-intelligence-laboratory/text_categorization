@@ -9,13 +9,13 @@ BPE_models: 'tests/data/bpe'
 balancing_rubrics_train: 'tests/data/rubrics_train_grnti.json'
 
 # metrics parameters
-metrics_to_calculate: ['analogy']
+metrics_to_calculate: [ 'analogy' ]
 recalculate_train_centroids: True
 path_train_thetas: 'tests/data/train_by_lang'
 recalculate_test_thetas: True
 
 artm_model_params:
-  num_collection_passes: 5
+  num_collection_passes: 2
   NUM_TOPICS: 125
   num_bcg_topic: 1
   tau_DecorrelatorPhi: 0.05

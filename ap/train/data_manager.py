@@ -69,10 +69,6 @@ class ModelDataManager:
                 self.wiki_batches_per_epoch = int(len(self.wiki_batches) /
                                                self.config['artm_model_params']["num_collection_passes"])
 
-        # TODO: в добучении
-        # старые модальности - вытащить из модели
-        # новые - из конфига
-
         all_modalities_train = {**self.config["MODALITIES_TRAIN"],
                                 **self.config["LANGUAGES_TRAIN"]}
         self.class_ids = all_modalities_train
