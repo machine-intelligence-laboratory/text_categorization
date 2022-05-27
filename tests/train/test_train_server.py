@@ -101,10 +101,10 @@ def test_add_documents(models_dir, data_dir, grpc_stub):
                  Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'),
                              Modality(Key="GRNTI", Value='1'), ]),
     ]
-    parallel_docs = ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)])
+    parallel_docs = [ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)]), ParallelDocIds(Ids=[DocId(Lo=0, Hi=1)])]
     resp = grpc_stub.AddDocumentsToModel(
         AddDocumentsToModelRequest(
-            Collection=DocumentPack(Documents=docs), ParallelDocuments=[parallel_docs]
+            Collection=DocumentPack(Documents=docs), ParallelDocuments=parallel_docs
         )
     )
 
@@ -123,10 +123,10 @@ def test_add_background_documents(models_dir, data_dir, grpc_stub):
         Document(Id=DocId(Lo=0, Hi=1), Tokens=["c", "D"],
                  Modalities=[Modality(Key="lang", Value='ru')]),
     ]
-    parallel_docs = ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)])
+    parallel_docs = [ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)]), ParallelDocIds(Ids=[DocId(Lo=0, Hi=1)])]
     resp = grpc_stub.AddDocumentsToModel(
         AddDocumentsToModelRequest(
-            Collection=DocumentPack(Documents=docs), ParallelDocuments=[parallel_docs]
+            Collection=DocumentPack(Documents=docs), ParallelDocuments=parallel_docs
         )
     )
 
@@ -158,6 +158,19 @@ def test_add_documents_new_lang_no_bpe(models_dir, data_dir, grpc_stub):
 
 
 def test_start_train(data_dir, grpc_stub):
+    docs = [
+        Document(Id=DocId(Lo=0, Hi=0), Tokens=["a", "b"],
+                 Modalities=[Modality(Key="lang", Value='ru')]),
+        Document(Id=DocId(Lo=0, Hi=1), Tokens=["c", "D"],
+                 Modalities=[Modality(Key="lang", Value='ru')]),
+    ]
+    parallel_docs = [ParallelDocIds(Ids=[DocId(Lo=0, Hi=0)]), ParallelDocIds(Ids=[DocId(Lo=0, Hi=1)])]
+    resp = grpc_stub.AddDocumentsToModel(
+        AddDocumentsToModelRequest(
+            Collection=DocumentPack(Documents=docs), ParallelDocuments=parallel_docs
+        )
+    )
+
     resp = grpc_stub.StartTrainTopicModel(
         StartTrainTopicModelRequest(Type=StartTrainTopicModelRequest.TrainType.FULL)
     )

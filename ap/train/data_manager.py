@@ -5,6 +5,7 @@
 import json
 import logging
 import os
+import tempfile
 import typing
 import shutil
 
@@ -21,6 +22,30 @@ from ap.utils.general import recursively_unlink
 class NoTranslationException(Exception):
     pass
 
+def batch_names(starts_from, count) -> typing.Generator[str, None, None]:
+    """
+    Генерирует названия батчей в соответствие с форматом BatchVectorizer.
+    Parameters
+    ----------
+    starts_from - название файла последнего батча в директории
+    count - количество батчей
+    Returns
+    -------
+    Генератор имен батчей
+    """
+    orda = ord("a")
+    letters = 26
+    starts_from_int = sum(
+        [letters ** i * (ord(x) - orda) for i, x in enumerate(reversed(starts_from))]
+    )
+
+    for x in range(starts_from_int + 1, starts_from_int + 1 + count):
+        str_name = []
+        for i in range(len(starts_from)):
+            str_name.append(chr(x % letters + orda))
+            x = int(x / letters)
+
+        yield "".join(reversed(str_name))
 
 class ModelDataManager:
     """
@@ -94,6 +119,33 @@ class ModelDataManager:
         with open(self.train_path, encoding='utf-8') as file:
             train_vw = file.readlines()
             set_metric('train_size_docs', len(train_vw))
+
+    def generate_background_batches(self):
+        import artm
+        if os.path.exists(self.new_background_path):
+            pass
+        with tempfile.TemporaryDirectory(dir=self._data_dir) as temp_dir:
+            batch_vectorizer = artm.BatchVectorizer(data_path=self.new_background_path, data_format='vowpal_wabbit',
+                                                target_folder=str(temp_dir), batch_size=20)
+            old_batches = os.listdir(self._path_batches_wiki)
+            if len(old_batches) == 0:
+                for new_batch in os.listdir(temp_dir):
+                    shutil.move(
+                        os.path.join(temp_dir, new_batch),
+                        os.path.join(self._path_batches_wiki, new_batch),
+                    )
+
+            else:
+                new_batches = sorted(os.listdir(temp_dir))
+
+                for new_batch, new_batch_name in zip(
+                        new_batches,
+                        batch_names(os.path.splitext(max(old_batches))[0], len(new_batches)),
+                ):
+                    shutil.move(
+                        os.path.join(temp_dir, new_batch),
+                        os.path.join(self._path_batches_wiki, f"{new_batch_name}.batch"),
+                    )
 
     def load_train_data(self):
         """
@@ -231,8 +283,15 @@ class ModelDataManager:
         ):
             raise NoTranslationException()
 
-        path_to_save = self.train_path if 'UDK' in docs and 'GRNTI' in docs else self.new_background_path
-        vw.save_docs(path_to_save, docs)
+        background, rubrics = {}, {}
+        for idx, doc in docs.items():
+            (background, rubrics)['UDK' in doc and 'GRNTI' in doc][idx] = doc
+
+        if len(rubrics) > 0:
+            vw.save_docs(self.train_path, rubrics)
+
+        if len(background) > 0:
+            vw.save_docs(self.new_background_path, background)
 
     def get_modality_distribution(self) -> typing.Dict[str, int]:
         """

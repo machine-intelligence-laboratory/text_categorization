@@ -199,6 +199,7 @@ class ModelTrainer:
         self.set_metrics()
         logging.info("set_metrics before training")
         self._load_model(train_type)
+        self._data_manager.generate_background_batches()
         self._data_manager.load_train_data()
         for epoch in range(self._data_manager.config['artm_model_params']["num_collection_passes"]):
             logging.info(f'Training epoch {epoch + 1}')
