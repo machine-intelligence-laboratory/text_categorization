@@ -22,8 +22,7 @@ from ap.topic_model.v1.TopicModelTrain_pb2_grpc import (
     add_TopicModelTrainServiceServicer_to_server,
 )
 from ap.train.data_manager import ModelDataManager, NoTranslationException
-from ap.train.metrics import send_metric, run_metrics_server, inc_metric
-
+from ap.train.metrics import run_metrics_server, inc_metric
 from ap.train.trainer import ModelTrainer
 from ap.utils.bpe import load_bpe_models
 from ap.utils.general import docs_from_pack, id_to_str
@@ -122,6 +121,7 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
         self._training_future = self._executor.submit(
             self._trainer.train_model, request.Type
         )
+        print('request.Type', request.Type)
 
         return StartTrainTopicModelResponse(
             Status=StartTrainTopicModelResponse.StartTrainTopicModelStatus.OK
@@ -161,7 +161,15 @@ class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
 
     def UpdateModelConfiguration(self, request: UpdateModelConfigurationRequest,
                                  context) -> UpdateModelConfigurationResponse:
-        """обновление конфигурации обучения
+        """
+        Обновляет конфигурацию обучения
+
+        Args:
+            request: запрос, содержащий конфигурацию
+            context: не используется
+
+        Returns:
+            Статус - всегда ОК или исключение
         """
         self._data_manager.update_config(request.Configuration)
         return UpdateModelConfigurationResponse(
@@ -180,13 +188,9 @@ def serve(config, data):
     Запускает сервер.
 
     Args:
-        config (TODO): TODO
-        data (TODO): TODO
+        config (str): путь к yaml-конфигу для запуска обучения
+        data (str): путь к директории с данными
     """
-    from prometheus_client import start_http_server
-
-    # TODO: дообучение:
-    # если пути config["BPE_models"] нет - не надо загружать модели
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     add_TopicModelTrainServiceServicer_to_server(

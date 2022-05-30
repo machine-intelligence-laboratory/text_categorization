@@ -1,3 +1,8 @@
+"""
+Модуль для работы со словарями ARTM.
+"""
+
+
 import os
 import typing
 
@@ -29,7 +34,8 @@ def limit_classwise(
     """
     Ограничивает словарь и сохраняет его в out_file.
 
-    Ограничивает словарь таким образом, что в разрезе каждоого class id будет не более max_dictionary_size токенов.
+    Ограничивает словарь таким образом, что в разрезе каждоого class id будет \
+        не более max_dictionary_size токенов.
     Сохраняет словарь в текстовым форматом в файле out_file.
 
     Args:
@@ -45,15 +51,15 @@ def limit_classwise(
         for other_id in cls_ids:
             if other_id != cls_id:
                 filtered = filtered.filter(
-                    class_id=other_id, max_df_rate=0.4, min_df_rate=0.5, inplace=inplace
+                    class_id='@' + other_id, max_df_rate=0.4, min_df_rate=0.5, inplace=inplace
                 )
                 inplace = True
         filtered.filter(max_dictionary_size=max_dictionary_size)
-        filtered.save_text(os.path.join(tmp_dir, f"{cls_id[1:]}.txt"))
+        filtered.save_text(os.path.join(tmp_dir, f"{cls_id}.txt"))
 
     res = []
     for cls_id in cls_ids:
-        with open(os.path.join(tmp_dir, f"{cls_id[1:]}.txt")) as file:
+        with open(os.path.join(tmp_dir, f"{cls_id}.txt")) as file:
             res.extend(file.readlines()[2:] if len(res) > 0 else file.readlines())
 
     with open(out_file, "w") as file:
