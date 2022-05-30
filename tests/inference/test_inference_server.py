@@ -99,4 +99,6 @@ def test_explain(artm_model, grpc_stub):
     resp = grpc_stub.GetTopicExplanation(GetTopicExplanationRequest(Doc=doc))
     print(resp.Topic)
     print(resp.NewTopic)
+    print(resp.RemovedTokens)
+    print(resp.AddedTokens )
     artm_model.transform.assert_called_once()
