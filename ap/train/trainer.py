@@ -58,6 +58,7 @@ class ModelTrainer:
             self.model.regularizers['SmoothThetaRegularizer'].tau=self._data_manager.config["artm_model_params"]["tau_SmoothTheta"]
             self.model.regularizers['SparseThetaRegularizer'].tau = self._data_manager.config["artm_model_params"][
                 "tau_SparseTheta"]
+           self.model.regularizers['DecorrelatorPhiRegularizer'].tau = self._data_manager.config["artm_model_params"]["tau_DecorrelatorPhi"]
             self._check_update_conditions()
 
         set_metric('num_topics', self._data_manager.config["artm_model_params"]["NUM_TOPICS"])
