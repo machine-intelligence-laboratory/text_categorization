@@ -98,7 +98,7 @@ class ModelDataManager:
     def generate_background_batches(self):
         import artm
         if os.path.exists(self.new_background_path):
-            pass
+            return
         with tempfile.TemporaryDirectory(dir=self._data_dir) as temp_dir:
             batch_vectorizer = artm.BatchVectorizer(data_path=self.new_background_path, data_format='vowpal_wabbit',
                                                 target_folder=str(temp_dir), batch_size=20)
