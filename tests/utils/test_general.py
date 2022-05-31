@@ -4,7 +4,7 @@ from ap.utils.general import recursively_unlink, ensure_directory, batch_names
 
 
 def test_recursively_unlink():
-    tmp_dir_path = Path('tests/data/tmp_dir')
+    tmp_dir_path = Path('tests/data/my_tmp_dir')
     tmp_dir_path.mkdir()
     tmp_dir_path.joinpath('tmp_dir1').mkdir()
     tmp_dir_path.joinpath('tmp_dir2').mkdir()
@@ -16,7 +16,7 @@ def test_recursively_unlink():
 
 
 def test_ensure_directory():
-    tmp_dir_path = 'tests/data/tmp_dir'
+    tmp_dir_path = 'tests/data/my_tmp_dir'
     assert not Path(tmp_dir_path).exists()
     ensure_directory(tmp_dir_path)
     assert Path(tmp_dir_path).exists()

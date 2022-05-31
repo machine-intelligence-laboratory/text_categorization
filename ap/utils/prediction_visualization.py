@@ -154,6 +154,7 @@ def _check_change(model, topics, need_change, changed, target_folder):
     interpretation_info = {}
     for text in texts:
         if need_change[text]:
+            print('hi')
             top_topic = f'topic_{theta[text].argmax()}'
             topic_from, topic_to = topics[text]
             if top_topic == topic_to:
