@@ -1,5 +1,6 @@
 import artm
 import numpy as np
+import logging
 import pandas as pd
 import typing as tp
 
@@ -9,18 +10,18 @@ from scipy.spatial.distance import cosine
 from ap.utils.general import recursively_unlink
 
 
-def _get_text_dist(vw_texts, phi):
+def _get_text_dist(vw_texts, text_lang, phi):
     text_dists = []
 
     for vw_line in vw_texts:
-        text_dist = pd.DataFrame(index=phi.index.values, dtype=float)
+        text_dist = pd.DataFrame(index=list(phi.index.values), dtype=float)
 
         vw_line_lang_list = vw_line.strip().split(' |@')
         num, *texts = vw_line_lang_list
 
         for vw_line_lang in texts:
             lang, *tokens_with_counter = vw_line_lang.split()
-            if lang == 'ru':
+            if lang == text_lang:
                 text = pd.DataFrame.from_dict(_get_text_tokens(tokens_with_counter), orient='index')[0]
 
                 text_dist['dist'] = (text / text.sum(axis=0))
@@ -40,13 +41,16 @@ def _get_text_tokens(tokens_with_counter: tp.List[str]):
     return res
 
 
-def _get_topics(vw_texts, theta, phi, tmp_file):
+def _get_topics(vw_texts, theta, phi, tmp_file, text_lang):
     cosines = []
-    text_dists = _get_text_dist(vw_texts, phi)
+    text_dists = _get_text_dist(vw_texts, text_lang, phi)
 
     topics = {}
 
+    print('len(text_dists)', len(text_dists))
     for i, text_dist in enumerate(text_dists):
+        print(i)
+        print(theta.columns)
         text = theta.columns[i]
         topic_from = f'topic_{theta[text].argmax()}'
 
@@ -91,11 +95,11 @@ def _get_important_tokens(text_dist, num_top_tokens=5):
     return added, removed
 
 
-def _mutate_text(tmp_file, vw_texts, phi, topics, need_change, multiplier, num_top_tokens=5):
+def _mutate_text(text_lang, tmp_file, vw_texts, phi, topics, need_change, multiplier, num_top_tokens=5):
     changed = {}
 
     with open(tmp_file, 'w') as file:
-        text_dist = pd.DataFrame(index=phi.index.values, dtype=float)
+        text_dist = pd.DataFrame(index=list(phi.index.values), dtype=float)
 
         for vw_line in vw_texts:
             vw_line_lang_list = vw_line.strip().split(' |@')
@@ -107,7 +111,7 @@ def _mutate_text(tmp_file, vw_texts, phi, topics, need_change, multiplier, num_t
                 for vw_line_lang in texts:
                     lang, *tokens_with_counter = vw_line_lang.split()
 
-                    if lang == 'ru':
+                    if lang == text_lang:
                         new_tokens = []
 
                         text = pd.DataFrame.from_dict(_get_text_tokens(tokens_with_counter), orient='index')[0]
@@ -150,7 +154,7 @@ def _check_change(model, topics, need_change, changed, target_folder):
                                             target_folder=str(batches), batch_size=20)
     theta = model.transform(batch_vectorizer)
     texts = theta.columns
-    interpretation_info = dict()
+    interpretation_info = {}
     for text in texts:
         if need_change[text]:
             top_topic = f'topic_{theta[text].argmax()}'
@@ -174,7 +178,7 @@ def augment_text(model, input_text: str, target_folder: str, num_top_tokens: int
 
         Args:
             model (artm.ARTM): путь до обученной модели
-            input_text (str): путь до входного текста для визуализации предсказания модели
+            input_text (str): путь до входного текста (ОДНОГО!) для визуализации предсказания модели \
                 на ru языке в формате vowpal wabbit
             target_folder (str): путь для временного хранения даннных
             num_top_tokens (int): максимальное число добавленных и удаленных топ-токенов
@@ -182,6 +186,8 @@ def augment_text(model, input_text: str, target_folder: str, num_top_tokens: int
 
     with open(input_text) as file:
         vw_texts = file.readlines()
+    print('len vw_texts', len(vw_texts))
+    print('vw_texts', vw_texts)
 
     target_folder = Path(target_folder)
     tmp_batches = target_folder.joinpath('batches')
@@ -191,19 +197,24 @@ def augment_text(model, input_text: str, target_folder: str, num_top_tokens: int
                                             target_folder=str(tmp_batches), batch_size=20)
 
     theta = model.transform(batch_vectorizer)
-    phi = model.get_phi(class_ids="@ru")
-    change_topic = target_folder.joinpath('change_topic')
-    change_topic.mkdir(exist_ok=True)
-    tmp_file = str(change_topic.joinpath('tmp.txt'))
-    topics = _get_topics(vw_texts, theta, phi, tmp_file)
+    # TODO: передавать text_lang в augment_text
+    text_lang = vw_texts[0].strip().split()[1].strip('|@')
+    if '@'+text_lang in model.class_ids:
+        phi = model.get_phi(class_ids=f'@{text_lang}')
+        change_topic = target_folder.joinpath('change_topic')
+        change_topic.mkdir(exist_ok=True)
+        tmp_file = str(change_topic.joinpath('tmp.txt'))
+        topics = _get_topics(vw_texts, theta, phi, tmp_file, text_lang)
 
-    with open(tmp_file) as file:
-        vw_texts = file.readlines()
+        with open(tmp_file) as file:
+            vw_texts = file.readlines()
 
-    need_change = {title: True for title in topics}
+        need_change = {title: True for title in topics}
 
-    for multiplier in np.logspace(-1.5, 0, 5):
-        changed = _mutate_text(tmp_file, vw_texts, phi, topics, need_change, multiplier, num_top_tokens)
-        interpretation_info, need_change, stop = _check_change(model, topics, need_change, changed, target_folder)
-        if stop:
-            return interpretation_info
+        for multiplier in np.logspace(-1.5, 0, 5):
+            changed = _mutate_text(text_lang, tmp_file, vw_texts, phi, topics, need_change, multiplier, num_top_tokens)
+            interpretation_info, need_change, stop = _check_change(model, topics, need_change, changed, target_folder)
+            if stop:
+                return interpretation_info
+    else:
+        logging.warning('Topic model does not support language of this text.')
