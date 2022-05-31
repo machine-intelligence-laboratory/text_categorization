@@ -1,6 +1,7 @@
 path_experiment: 'tests/data/best_model'
 path_wiki_train_batches: 'tests/data/batches_train'
 train_vw_path: 'tests/data/train.txt'
+new_background_path: 'tests/data/new_background.txt'
 dictionary_path: 'tests/data/dictionary.txt'
 BPE_models: 'tests/data/bpe'
 

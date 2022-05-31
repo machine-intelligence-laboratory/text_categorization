@@ -66,9 +66,9 @@ class VowpalWabbitBPE:
                 else:
                     modality_content = sessions_bow_messages[key][modality]
                 new_message_str_format += f" |@{modality} {modality_content}"
-                with open(target_file, 'a') as file:
-                    file.write(new_message_str_format)
-                    file.write('\n')
+            with open(target_file, 'a', encoding='utf8') as file:
+                file.write(new_message_str_format)
+                file.write('\n')
 
     def convert_to_bow(
             self, data: typing.Dict[str, typing.Dict[str, str]]
