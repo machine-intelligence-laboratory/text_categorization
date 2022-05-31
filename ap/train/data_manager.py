@@ -16,36 +16,12 @@ import numpy as np
 import yaml
 
 from ap.train.metrics import set_metric
-from ap.utils.general import recursively_unlink
+from ap.utils.general import recursively_unlink, batch_names
 
 
 class NoTranslationException(Exception):
     pass
 
-def batch_names(starts_from, count) -> typing.Generator[str, None, None]:
-    """
-    Генерирует названия батчей в соответствие с форматом BatchVectorizer.
-    Parameters
-    ----------
-    starts_from - название файла последнего батча в директории
-    count - количество батчей
-    Returns
-    -------
-    Генератор имен батчей
-    """
-    orda = ord("a")
-    letters = 26
-    starts_from_int = sum(
-        [letters ** i * (ord(x) - orda) for i, x in enumerate(reversed(starts_from))]
-    )
-
-    for x in range(starts_from_int + 1, starts_from_int + 1 + count):
-        str_name = []
-        for i in range(len(starts_from)):
-            str_name.append(chr(x % letters + orda))
-            x = int(x / letters)
-
-        yield "".join(reversed(str_name))
 
 class ModelDataManager:
     """
