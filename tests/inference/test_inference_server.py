@@ -94,21 +94,6 @@ def test_embeddings(artm_model, grpc_stub):
             Modalities=[Modality(Key="lang", Value='es'), Modality(Key="UDK", Value='6'),
                         Modality(Key="GRNTI", Value='11806946'), ],
         ),
-        Document(
-            Id=DocId(Lo=0, Hi=1),
-            Tokens=[
-                "bevat",
-                "meer",
-                "dan",
-                "500",
-                "analoog",
-                "gestructureerde",
-                "coherente",
-                "ook",
-            ],
-            Modalities=[Modality(Key="lang", Value='nl'), Modality(Key="UDK", Value='6'),
-                        Modality(Key="GRNTI", Value='11806946'), ],
-        ),
     ]
     resp = grpc_stub.GetDocumentsEmbedding(
         GetDocumentsEmbeddingRequest(Pack=DocumentPack(Documents=docs))
