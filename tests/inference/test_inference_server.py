@@ -2,6 +2,7 @@ import os
 
 from unittest.mock import MagicMock, Mock
 
+import artm
 import numpy as np
 import pandas as pd
 import pytest
@@ -21,9 +22,8 @@ def artm_model():
         return_value=pd.DataFrame(index=[f'topic_{i}' for i in range(num_topic)],
                                   columns=[
                                       "0_0",
-                                      "1_0",
                                   ],
-                                  data=np.random.rand(num_topic, 2))
+                                  data=np.random.rand(num_topic, 1))
     )
     mocked_model.get_phi = Mock(
         return_value=pd.DataFrame(index=[
@@ -37,7 +37,7 @@ def artm_model():
             columns=[f'topic_{i}' for i in range(num_topic)],
             data=np.random.rand(6, num_topic))
     )
-    mocked_model.class_ids = ['@es']
+    mocked_model.class_ids = ['@ru']
     return mocked_model
 
 
@@ -105,17 +105,27 @@ def test_embeddings(artm_model, grpc_stub):
 
 
 def test_explain(artm_model, grpc_stub):
+    # doc = Document(
+    #     Id=DocId(Lo=0, Hi=0),
+    #     Tokens=[
+    #         "introductorio",
+    #         "proporciona",
+    #         "rasfondo",
+    #         "histórico",
+    #         "sobr",
+    #         "seguida",
+    #     ],
     doc = Document(
         Id=DocId(Lo=0, Hi=0),
         Tokens=[
-            "introductorio",
-            "proporciona",
-            "rasfondo",
-            "histórico",
-            "sobr",
-            "seguida",
+            "минимальный",
+            "остаточный",
+            "заболевание",
+            "в",
+            "острый",
+            "миелоидный",
         ],
-        Modalities=[Modality(Key="lang", Value='es'), Modality(Key="UDK", Value='6'),
+        Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'),
                     Modality(Key="GRNTI", Value='11806946'), ],
     )
 

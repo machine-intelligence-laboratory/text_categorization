@@ -149,7 +149,7 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
             (datetime.datetime.now() - processing_start).total_seconds(),
         )
 
-        emb_doc = list()
+        emb_doc = []
         for doc in request.Pack.Documents:
             emb = embeddings[f"{doc.Id.Hi}_{doc.Id.Lo}"]
             if isinstance(emb, pd.DataFrame):
@@ -173,32 +173,25 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
         """
         with tempfile.TemporaryDirectory(dir=self._work_dir) as temp_dir:
             doc_vw = {id_to_str(request.Doc.Id): get_modalities(request.Doc)}
-            print('doc_vw', doc_vw)
             vw_file = os.path.join(temp_dir, 'vw.txt')
-            # print('before')
-            # with open(vw_file) as file:
-            #     print(file.readlines())
             print('doc_vw', doc_vw)
             # self._vw.save_docs(vw_file, doc_vw)
-            print('after')
             with open(vw_file, 'w') as file:
                 to_write = []
                 for doc_id, mod_dict in doc_vw.items():
-                    line = f'{doc_id} '
+                    line = f'{doc_id}'
                     for mod, content in mod_dict.items():
-                        line += f'|@{mod} ' + \
+                        line += f' |@{mod} ' + \
                                 ' '.join([f'{token}:{count}' for token, count in Counter(content.split()).items()])
                     line += '\n'
                     to_write.append(line)
                 file.writelines(to_write)
-            print('after save')
-            with open(vw_file) as file:
-                print(file.read())
             interpretation = augment_text(self._artm_model, vw_file, os.path.join(temp_dir, 'target'))
-            return GetTopicExplanationResponse(Topic = interpretation['topic_from'],
-                                               NewTopic = interpretation['topic_to'],
-                                               RemovedTokens = interpretation['Removed'],
-                                               AddedTokens = interpretation['Added'])
+            print('interpretation', interpretation)
+            return GetTopicExplanationResponse(Topic=interpretation['topic_from'],
+                                               NewTopic=interpretation['topic_to'],
+                                               RemovedTokens=interpretation['Removed'],
+                                               AddedTokens=interpretation['Added'])
 
 
 @click.command()

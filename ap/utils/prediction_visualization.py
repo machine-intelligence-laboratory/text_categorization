@@ -47,7 +47,6 @@ def _get_topics(vw_texts, theta, phi, tmp_file, text_lang):
 
     topics = {}
 
-    print('len(text_dists)', len(text_dists))
     for i, text_dist in enumerate(text_dists):
         print(i)
         print(theta.columns)
@@ -186,8 +185,6 @@ def augment_text(model, input_text: str, target_folder: str, num_top_tokens: int
 
     with open(input_text) as file:
         vw_texts = file.readlines()
-    print('len vw_texts', len(vw_texts))
-    print('vw_texts', vw_texts)
 
     target_folder = Path(target_folder)
     tmp_batches = target_folder.joinpath('batches')
@@ -214,6 +211,7 @@ def augment_text(model, input_text: str, target_folder: str, num_top_tokens: int
         for multiplier in np.logspace(-1.5, 0, 5):
             changed = _mutate_text(text_lang, tmp_file, vw_texts, phi, topics, need_change, multiplier, num_top_tokens)
             interpretation_info, need_change, stop = _check_change(model, topics, need_change, changed, target_folder)
+            print('interpretation_info', interpretation_info)
             if stop:
                 return interpretation_info
     else:
