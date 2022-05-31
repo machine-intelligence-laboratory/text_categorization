@@ -194,7 +194,7 @@ def augment_text(model, input_text: str, target_folder: str, num_top_tokens: int
     theta = model.transform(batch_vectorizer)
     # TODO: передавать text_lang в augment_text
     text_lang = vw_texts[0].strip().split()[1].strip('|@')
-    if '@'+text_lang in model.class_ids:
+    if f'@{text_lang}' in model.class_ids:
         phi = model.get_phi(class_ids=f'@{text_lang}')
         change_topic = target_folder.joinpath('change_topic')
         change_topic.mkdir(exist_ok=True)

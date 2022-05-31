@@ -2,7 +2,6 @@ import os
 
 from unittest.mock import MagicMock, Mock
 
-import artm
 import numpy as np
 import pandas as pd
 import pytest
@@ -15,9 +14,6 @@ from ap.topic_model.v1.TopicModelInference_pb2 import GetDocumentsEmbeddingReque
 def artm_model():
     num_topic = 4
     mocked_model = MagicMock()
-    # mocked_model.transform = Mock(
-    #     return_value=pd.DataFrame.from_dict({"0_0": [3, 2, 1, 0], "1_0": [3, 2, 1, 0]})
-    # )
     mocked_model.transform = Mock(
         return_value=pd.DataFrame(index=[f'topic_{i}' for i in range(num_topic)],
                                   columns=[
@@ -25,15 +21,6 @@ def artm_model():
                                   ],
                                   data=np.random.rand(num_topic, 1))
     )
-    # mocked_model.get_phi = Mock(
-    #     return_value=pd.DataFrame(index=[
-    #         "introductorio",
-    #         "proporciona",
-    #         "rasfondo",
-    #         "histórico",
-    #         "sobr",
-    #         "seguida",
-    #     ],
     mocked_model.get_phi = Mock(
         return_value=pd.DataFrame(index=[
             "минимальный",
@@ -103,16 +90,6 @@ def test_embeddings(artm_model, grpc_stub):
 
 
 def test_explain(artm_model, grpc_stub):
-    # doc = Document(
-    #     Id=DocId(Lo=0, Hi=0),
-    #     Tokens=[
-    #         "introductorio",
-    #         "proporciona",
-    #         "rasfondo",
-    #         "histórico",
-    #         "sobr",
-    #         "seguida",
-    #     ],
     doc = Document(
         Id=DocId(Lo=0, Hi=0),
         Tokens=[
