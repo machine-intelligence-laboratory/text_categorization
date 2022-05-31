@@ -48,8 +48,6 @@ def _get_topics(vw_texts, theta, phi, tmp_file, text_lang):
     topics = {}
 
     for i, text_dist in enumerate(text_dists):
-        print(i)
-        print(theta.columns)
         text = theta.columns[i]
         topic_from = f'topic_{theta[text].argmax()}'
 
@@ -177,7 +175,7 @@ def augment_text(model, input_text: str, target_folder: str, num_top_tokens: int
 
         Args:
             model (artm.ARTM): путь до обученной модели
-            input_text (str): путь до входного текста (ОДНОГО!) для визуализации предсказания модели \
+            input_text (str): путь до входного текста для визуализации предсказания модели \
                 на ru языке в формате vowpal wabbit
             target_folder (str): путь для временного хранения даннных
             num_top_tokens (int): максимальное число добавленных и удаленных топ-токенов

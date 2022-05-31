@@ -25,17 +25,30 @@ def artm_model():
                                   ],
                                   data=np.random.rand(num_topic, 1))
     )
+    # mocked_model.get_phi = Mock(
+    #     return_value=pd.DataFrame(index=[
+    #         "introductorio",
+    #         "proporciona",
+    #         "rasfondo",
+    #         "histórico",
+    #         "sobr",
+    #         "seguida",
+    #     ],
     mocked_model.get_phi = Mock(
         return_value=pd.DataFrame(index=[
-            "introductorio",
-            "proporciona",
-            "rasfondo",
-            "histórico",
-            "sobr",
-            "seguida",
+            "минимальный",
+            "остаточный",
+            "заболевание",
+            "в",
+            "острый",
+            "миелоидный",
+            "раз",
+            "два",
+            "три",
+            "выходи"
         ],
             columns=[f'topic_{i}' for i in range(num_topic)],
-            data=np.random.rand(6, num_topic))
+            data=np.random.rand(10, num_topic))
     )
     mocked_model.class_ids = ['@ru']
     return mocked_model
