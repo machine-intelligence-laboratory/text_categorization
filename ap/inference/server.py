@@ -7,7 +7,6 @@ import json
 
 from concurrent import futures
 from collections import Counter
-from pathlib import Path
 
 import artm
 import click
@@ -41,6 +40,7 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
             rubric_dir: директория, где хранятся json-файлы с рубриками
         """
         self._artm_model = artm_model
+        # self._artm_model = artm.load_artm_model('tests/data/model')
         self._vw = VowpalWabbitBPE(bpe_models)
         self._work_dir = work_dir
         self._rubric_dir = rubric_dir
@@ -188,10 +188,10 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
                 file.writelines(to_write)
             interpretation = augment_text(self._artm_model, vw_file, os.path.join(temp_dir, 'target'))
             print('interpretation', interpretation)
-            return GetTopicExplanationResponse(Topic=interpretation['topic_from'],
-                                               NewTopic=interpretation['topic_to'],
-                                               RemovedTokens=interpretation['Removed'],
-                                               AddedTokens=interpretation['Added'])
+            return GetTopicExplanationResponse(Topic=interpretation[id_to_str(request.Doc.Id)]['topic_from'],
+                                               NewTopic=interpretation[id_to_str(request.Doc.Id)]['topic_to'],
+                                               RemovedTokens=interpretation[id_to_str(request.Doc.Id)]['Removed'],
+                                               AddedTokens=interpretation[id_to_str(request.Doc.Id)]['Added'])
 
 
 @click.command()

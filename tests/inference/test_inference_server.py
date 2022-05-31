@@ -2,6 +2,7 @@ import os
 
 from unittest.mock import MagicMock, Mock
 
+import artm
 import numpy as np
 import pandas as pd
 import pytest
@@ -89,19 +90,41 @@ def test_embeddings(artm_model, grpc_stub):
     artm_model.transform.assert_called_once()
 
 
+# def test_explain(artm_model, grpc_stub):
+    # doc = Document(
+    #     Id=DocId(Lo=0, Hi=0),
+    #     Tokens=[
+    #         "минимальный",
+    #         "требование",
+    #         "разработка",
+    #         "такой",
+    #         "остаточный",
+    #         "заболевание",
+    #         "в",
+    #         "острый",
+    #         "миелоидный",
+    #         "являться",
+    #         "дать"
+    #     ],
+    #     Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'),
+    #                 Modality(Key="GRNTI", Value='11806946'), ],
+    # )
 def test_explain(artm_model, grpc_stub):
+    artm_model = artm.load_artm_model('tests/data/model')
+    with open('tests/data/test_ru.txt') as file:
+        data = file.read()
+    tokens_with_counter = data.split('|@')[1].split()[1:]
+    tokens = []
+    for token_with_counter in tokens_with_counter:
+        token, counter = token_with_counter.split(':')
+        tokens.extend([token] * int(counter))
+    udk = data.split('|@')[2].split()[1].split(':')[0]
+    grnti = data.split('|@')[3].split()[1].split(':')[0]
     doc = Document(
         Id=DocId(Lo=0, Hi=0),
-        Tokens=[
-            "минимальный",
-            "остаточный",
-            "заболевание",
-            "в",
-            "острый",
-            "миелоидный",
-        ],
-        Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'),
-                    Modality(Key="GRNTI", Value='11806946'), ],
+        Tokens=tokens,
+        Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value=udk),
+                    Modality(Key="GRNTI", Value=grnti), ],
     )
 
     resp = grpc_stub.GetTopicExplanation(GetTopicExplanationRequest(Doc=doc))
