@@ -110,7 +110,6 @@ def test_embeddings(artm_model, grpc_stub):
     #                 Modality(Key="GRNTI", Value='11806946'), ],
     # )
 def test_explain(artm_model, grpc_stub):
-    artm_model = artm.load_artm_model('tests/data/model')
     with open('tests/data/test_ru.txt') as file:
         data = file.read()
     tokens_with_counter = data.split('|@')[1].split()[1:]

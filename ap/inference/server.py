@@ -39,8 +39,8 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
             work_dir: рабочая директория для сохранения временных файлов
             rubric_dir: директория, где хранятся json-файлы с рубриками
         """
-        self._artm_model = artm_model
-        # self._artm_model = artm.load_artm_model('tests/data/model')
+        # self._artm_model = artm_model
+        self._artm_model = artm.load_artm_model('tests/data/model')
         self._vw = VowpalWabbitBPE(bpe_models)
         self._work_dir = work_dir
         self._rubric_dir = rubric_dir
