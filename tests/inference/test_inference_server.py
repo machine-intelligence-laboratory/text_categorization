@@ -162,22 +162,3 @@ def test_embeddings(artm_model, grpc_stub):
     artm_model.transform.assert_called_once()
 
 
-def test_explain(artm_model, grpc_stub):
-    doc = Document(
-        Id=DocId(Lo=0, Hi=0),
-        Tokens=["минимальный",
-            "в",
-            "два",
-            "три",
-            "выходи"],
-        Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'),
-                    Modality(Key="GRNTI", Value='11806946'), ],
-    )
-
-
-    resp = grpc_stub.GetTopicExplanation(GetTopicExplanationRequest(Doc=doc))
-    print(resp.Explanation.Topic)
-    print(resp.Explanation.NewTopic)
-    print(resp.Explanation.RemovedTokens)
-    print(resp.Explanation.AddedTokens)
-    #artm_model.transform.assert_called_once()
