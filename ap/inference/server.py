@@ -13,7 +13,7 @@ import click
 import grpc
 import pandas as pd
 
-from ap.topic_model.v1.TopicModelBase_pb2 import Embedding
+from ap.topic_model.v1.TopicModelBase_pb2 import Embedding, TopicExplanation
 from ap.topic_model.v1.TopicModelInference_pb2 import (
     GetDocumentsEmbeddingRequest,
     GetDocumentsEmbeddingResponse, GetTopicExplanationRequest, GetTopicExplanationResponse,
@@ -40,7 +40,8 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
             rubric_dir: директория, где хранятся json-файлы с рубриками
         """
         # self._artm_model = artm_model
-        self._artm_model = artm.load_artm_model('tests/data/model')
+        self._artm_model =  artm.load_artm_model('work_dir/models/model_without_sw_opt_69_rubric_25_iter')
+
         self._vw = VowpalWabbitBPE(bpe_models)
         self._work_dir = work_dir
         self._rubric_dir = rubric_dir
@@ -188,10 +189,11 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
                 file.writelines(to_write)
             interpretation = augment_text(self._artm_model, vw_file, os.path.join(temp_dir, 'target'))
             print('interpretation', interpretation)
-            return GetTopicExplanationResponse(Topic=interpretation[id_to_str(request.Doc.Id)]['topic_from'],
+            return GetTopicExplanationResponse(Explanation=TopicExplanation(
+                                               Topic=interpretation[id_to_str(request.Doc.Id)]['topic_from'],
                                                NewTopic=interpretation[id_to_str(request.Doc.Id)]['topic_to'],
                                                RemovedTokens=interpretation[id_to_str(request.Doc.Id)]['Removed'],
-                                               AddedTokens=interpretation[id_to_str(request.Doc.Id)]['Added'])
+                                               AddedTokens=interpretation[id_to_str(request.Doc.Id)]['Added']))
 
 
 @click.command()

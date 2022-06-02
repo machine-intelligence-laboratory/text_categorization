@@ -6,7 +6,7 @@ from ap.utils.prediction_visualization import augment_text
 
 
 def test_augment_text():
-    model = artm.load_artm_model('tests/data/model')
+    model = artm.load_artm_model('work_dir/models/model_without_sw_opt_69_rubric_25_iter')
     input_text = 'tests/data/test_ru.txt'
     with open(input_text) as file:
         data = file.readline()
