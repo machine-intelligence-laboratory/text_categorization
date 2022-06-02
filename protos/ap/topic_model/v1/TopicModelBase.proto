@@ -36,7 +36,13 @@ message ParallelDocIds {
     repeated DocId Ids = 1;
 }
 
-
+// объяснение тематической модели
+message TopicExplanation {
+    string Topic = 1; // текущая тема документа
+    string NewTopic = 2; // новая тема документа
+    repeated string RemovedTokens = 3; // удаленные токены
+    repeated string AddedTokens = 4; // добавленные токены
+}
 
 
 
