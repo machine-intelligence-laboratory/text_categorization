@@ -24,7 +24,7 @@ message GetTopicExplanationRequest {
 }
 
 message GetTopicExplanationResponse {
-    repeated TopicExplanation Explanation = 1;
+    TopicExplanation Explanation = 1;
 }
 
 
