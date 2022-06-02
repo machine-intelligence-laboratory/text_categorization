@@ -40,7 +40,7 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
             rubric_dir: директория, где хранятся json-файлы с рубриками
         """
         # self._artm_model = artm_model
-        self._artm_model =  artm.load_artm_model('work_dir/models/model_without_sw_opt_69_rubric_25_iter')
+        self._artm_model =  artm_model
 
         self._vw = VowpalWabbitBPE(bpe_models)
         self._work_dir = work_dir

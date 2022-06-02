@@ -14,27 +14,36 @@ from ap.topic_model.v1.TopicModelInference_pb2 import GetDocumentsEmbeddingReque
 @pytest.fixture(scope="module")
 def artm_model():
     num_topic = 4
+    topics = [f'topic_{i}' for i in range(num_topic)]
+    tokens = {
+            "минимальный": np.array([0.8, 0.2, 0, 0]),
+            "остаточный": np.array([0.2, 0.8, 0, 0]),
+            "заболевание": np.array([0.0, 0.2, 0.8, 0]),
+            "в": np.array([0.25, 0.25, 0.25, 0.25]),
+            "острый": np.array([0.0, 0.0, 0.2, 0.8]),
+            "миелоидный": np.array([0.25, 0.25, 0.25, 0.25]),
+            "раз": np.array([0.25, 0.25, 0.25, 0.25]),
+            "два": np.array([0.25, 0.25, 0.25, 0.25]),
+            "три": np.array([0.25, 0.25, 0.25, 0.25]),
+            "выходи": np.array([0.25, 0.25, 0.25, 0.25])
+        }
+    phi = np.stack([t for t in tokens.values()])
+    doc = ["минимальный",
+            "в",
+            "два",
+            "три",
+            "выходи"]
+    doc = np.linalg.norm(np.sum([tokens[x] for x in doc]))
     mocked_model = MagicMock()
     mocked_model.transform = Mock(
         return_value=pd.DataFrame(index=[f'topic_{i}' for i in range(num_topic)],
                                   columns=[
                                       "0_0",
                                   ],
-                                  data=np.random.rand(num_topic, 1))
+                                  data=np.random.dirichlet([0.2, 0.2, 0.2, 0.2], 4)[2])
     )
     mocked_model.get_phi = Mock(
-        return_value=pd.DataFrame(index=[
-            "минимальный",
-            "остаточный",
-            "заболевание",
-            "в",
-            "острый",
-            "миелоидный",
-            "раз",
-            "два",
-            "три",
-            "выходи"
-        ],
+        return_value=pd.DataFrame(index=list(tokens.keys()),
             columns=[f'topic_{i}' for i in range(num_topic)],
             data=np.random.rand(10, num_topic))
     )
@@ -90,41 +99,18 @@ def test_embeddings(artm_model, grpc_stub):
     artm_model.transform.assert_called_once()
 
 
-# def test_explain(artm_model, grpc_stub):
-    # doc = Document(
-    #     Id=DocId(Lo=0, Hi=0),
-    #     Tokens=[
-    #         "минимальный",
-    #         "требование",
-    #         "разработка",
-    #         "такой",
-    #         "остаточный",
-    #         "заболевание",
-    #         "в",
-    #         "острый",
-    #         "миелоидный",
-    #         "являться",
-    #         "дать"
-    #     ],
-    #     Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'),
-    #                 Modality(Key="GRNTI", Value='11806946'), ],
-    # )
 def test_explain(artm_model, grpc_stub):
-    with open('tests/data/test_ru.txt') as file:
-        data = file.read()
-    tokens_with_counter = data.split('|@')[1].split()[1:]
-    tokens = []
-    for token_with_counter in tokens_with_counter:
-        token, counter = token_with_counter.split(':')
-        tokens.extend([token] * int(counter))
-    udk = data.split('|@')[2].split()[1].split(':')[0]
-    grnti = data.split('|@')[3].split()[1].split(':')[0]
     doc = Document(
         Id=DocId(Lo=0, Hi=0),
-        Tokens=tokens,
-        Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value=udk),
-                    Modality(Key="GRNTI", Value=grnti), ],
+        Tokens=["минимальный",
+            "в",
+            "два",
+            "три",
+            "выходи"],
+        Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'),
+                    Modality(Key="GRNTI", Value='11806946'), ],
     )
+
 
     resp = grpc_stub.GetTopicExplanation(GetTopicExplanationRequest(Doc=doc))
     print(resp.Explanation.Topic)
