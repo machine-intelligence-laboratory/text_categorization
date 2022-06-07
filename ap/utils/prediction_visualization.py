@@ -1,10 +1,14 @@
-import artm
-import numpy as np
+"""Модуль для визуализации предсказаний обученной тематической модели."""
+
 import logging
-import pandas as pd
 import typing as tp
 
 from pathlib import Path
+
+import artm
+import numpy as np
+import pandas as pd
+
 from scipy.spatial.distance import cosine
 
 from ap.utils.general import recursively_unlink
@@ -17,7 +21,7 @@ def _get_text_dist(vw_texts, text_lang, phi):
         text_dist = pd.DataFrame(index=list(phi.index.values), dtype=float)
 
         vw_line_lang_list = vw_line.strip().split(' |@')
-        num, *texts = vw_line_lang_list
+        _, *texts = vw_line_lang_list
 
         for vw_line_lang in texts:
             lang, *tokens_with_counter = vw_line_lang.split()
@@ -65,9 +69,9 @@ def _get_topics(vw_texts, theta, phi, tmp_file, text_lang):
 
         topics[text] = [topic_from, topic_to]
 
-    n = len(vw_texts)
+    num_texts = len(vw_texts)
     cosines = np.array(cosines)
-    max_cosines_ind = np.argpartition(cosines, -n)[-n:]
+    max_cosines_ind = np.argpartition(cosines, -num_texts)[-num_texts:]
     texts = theta.columns[max_cosines_ind]
 
     res = {}
@@ -142,6 +146,31 @@ def _mutate_text(text_lang, tmp_file, vw_texts, phi, topics, need_change, multip
     return changed
 
 
+def _get_information_without_topic_change(theta):
+    """
+    Возвращает интерпретацию предсказаний тематической модели в случае, \
+    когда тема top_topic настолько ярко выражена, что её не удаётся сменить на другую.
+
+    Args:
+        theta: матрица Тэта
+
+    Returns:
+        interpretation_info: интерпретация предсказаний тематической модели
+    """
+    texts = theta.columns
+    interpretation_info = {}
+    for text in texts:
+        topic_from = f'topic_{theta[text].argmax()}'
+        topic_to = f'topic_{theta[text].argmax()}'
+        interpretation_info[text] = {
+            'topic_from': topic_from,
+            'topic_to': topic_to,
+            'Added': [],
+            'Removed': [],
+        }
+    return interpretation_info
+
+
 def _check_change(model, topics, need_change, changed, target_folder):
     tmp_file = str(target_folder.joinpath('change_topic', 'tmp.txt'))
     batches = target_folder.joinpath('batches_tmp2')
@@ -154,9 +183,11 @@ def _check_change(model, topics, need_change, changed, target_folder):
     interpretation_info = {}
     for text in texts:
         if need_change[text]:
-            print('hi')
-            top_topic = f'topic_{theta[text].argmax()}'
             topic_from, topic_to = topics[text]
+            top_topic = f'topic_{theta[text].argmax()}'
+            if top_topic == topic_from:
+                second_top_topic = np.argsort(theta[text].values)[::-1][1]
+                top_topic = f'topic_{second_top_topic}'
             if top_topic == topic_to:
                 need_change[text] = False
                 added, removed = changed[text]
@@ -193,7 +224,6 @@ def augment_text(model, input_text: str, target_folder: str, num_top_tokens: int
                                             target_folder=str(tmp_batches), batch_size=20)
 
     theta = model.transform(batch_vectorizer)
-    # TODO: передавать text_lang в augment_text
     text_lang = vw_texts[0].strip().split()[1].strip('|@')
     if f'@{text_lang}' in model.class_ids:
         phi = model.get_phi(class_ids=f'@{text_lang}')
@@ -210,8 +240,8 @@ def augment_text(model, input_text: str, target_folder: str, num_top_tokens: int
         for multiplier in np.logspace(-1.5, 0, 5):
             changed = _mutate_text(text_lang, tmp_file, vw_texts, phi, topics, need_change, multiplier, num_top_tokens)
             interpretation_info, need_change, stop = _check_change(model, topics, need_change, changed, target_folder)
-            print('interpretation_info', interpretation_info)
             if stop:
                 return interpretation_info
+        return _get_information_without_topic_change(theta)
     else:
         logging.warning('Topic model does not support language of this text.')

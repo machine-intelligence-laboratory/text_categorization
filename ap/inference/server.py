@@ -188,7 +188,6 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
                     to_write.append(line)
                 file.writelines(to_write)
             interpretation = augment_text(self._artm_model, vw_file, os.path.join(temp_dir, 'target'))
-            print('interpretation', interpretation)
             return GetTopicExplanationResponse(Explanation=TopicExplanation(
                                                Topic=interpretation[id_to_str(request.Doc.Id)]['topic_from'],
                                                NewTopic=interpretation[id_to_str(request.Doc.Id)]['topic_to'],

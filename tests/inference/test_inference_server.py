@@ -2,7 +2,6 @@ import os
 
 from unittest.mock import MagicMock, Mock
 
-import artm
 import numpy as np
 import pandas as pd
 import pytest
@@ -36,7 +35,6 @@ def artm_model():
     doc = np.linalg.norm(np.sum([tokens[x] for x in doc]))
     thetas = [[5.72787840e-02, 5.13726954e-02, 8.18006932e-04, 8.90530514e-01],
                 [4.87438921e-04, 6.83337098e-01, 2.91425844e-01, 2.47496193e-02]]
-    print(thetas)
     mocked_model = MagicMock()
     mocked_model.transform = Mock(
         side_effect=[pd.DataFrame(index=[f'topic_{i}' for i in range(num_topic)],
@@ -161,4 +159,25 @@ def test_embeddings(artm_model, grpc_stub):
     assert len(resp.Embeddings) == len(docs)
     artm_model.transform.assert_called_once()
 
+def test_explain(artm_model, grpc_stub):
+    with open('tests/data/test_ru_bpe.txt') as file:
+        data = file.readlines()
+    tokens = []
+    for line in data:
+        for tokens_with_counter in line.strip().split()[2:]:
+            token = tokens_with_counter.split(':')[0]
+            tokens.append(token)
 
+    doc = Document(
+        Id=DocId(Lo=0, Hi=0),
+        Tokens=tokens,
+        Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'),
+                    Modality(Key="GRNTI", Value='11806946'), ],
+    )
+
+
+    resp = grpc_stub.GetTopicExplanation(GetTopicExplanationRequest(Doc=doc))
+    print(resp.Explanation.Topic)
+    print(resp.Explanation.NewTopic)
+    print(resp.Explanation.RemovedTokens)
+    print(resp.Explanation.AddedTokens)

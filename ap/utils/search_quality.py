@@ -37,7 +37,7 @@ def dump_train_centroids(model_path: str, bcg_topic_list: typing.List[str],
     print('Calculation of train centroids were started.')
     for lang in tqdm(current_languages):
         target_folder = path_train_centroids.joinpath('tmp_batches')
-        target_folder.mkdir(exist_ok=True)
+        target_folder.mkdir(exist_ok=True, parents=True)
         batches_list = list(target_folder.iterdir())
         if batches_list:
             for batch in batches_list:
@@ -99,7 +99,7 @@ def calculate_search_quality(config_experiment) -> \
     path_experiment_result = str(config_experiment.get('path_results', path_experiment.joinpath('results')))
     num_bcg_topic = config_experiment["artm_model_params"]["num_bcg_topic"]
     bcg_topic_list = config_experiment.get('bcg_topic_list', [f'topic_{i}' for i in range(num_bcg_topic)])
-    metrics_to_calculate = config_experiment.get('metrics_to_calculate', 'analogy')
+    metrics_to_calculate = config_experiment.get('metrics_to_calculate', ['analogy'])
     path_train_centroids = config_experiment['path_train_thetas']
     recalculate_train_centroids = config_experiment.get('recalculate_train_centroids', False)
     recalculate_test_thetas = config_experiment.get('recalculate_test_thetas', True)
