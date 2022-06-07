@@ -13,7 +13,7 @@ def test_augment_text():
     model_path = [path
                   for path in Path('tests/data/best_model').iterdir()
                   if re.match(r'\d+_\d+', path.name)][0]
-    model = artm.load_artm_model(model_path)
+    model = artm.load_artm_model(str(model_path))
     input_text = 'tests/data/test_ru_bpe.txt'
     with open(input_text) as file:
         data = file.readline()
@@ -23,3 +23,4 @@ def test_augment_text():
     interpretation_info = augment_text(model, input_text, tmp_dir)
 
     assert interpretation_info != {}
+    assert doc_id in interpretation_info

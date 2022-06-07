@@ -158,3 +158,26 @@ def test_embeddings(artm_model, grpc_stub):
     )
     assert len(resp.Embeddings) == len(docs)
     artm_model.transform.assert_called_once()
+
+def test_explain(artm_model, grpc_stub):
+    with open('tests/data/test_ru_bpe.txt') as file:
+        data = file.readlines()
+    tokens = []
+    for line in data:
+        for tokens_with_counter in line.strip().split()[2:]:
+            token = tokens_with_counter.split(':')[0]
+            tokens.append(token)
+
+    doc = Document(
+        Id=DocId(Lo=0, Hi=0),
+        Tokens=tokens,
+        Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'),
+                    Modality(Key="GRNTI", Value='11806946'), ],
+    )
+
+
+    resp = grpc_stub.GetTopicExplanation(GetTopicExplanationRequest(Doc=doc))
+    print(resp.Explanation.Topic)
+    print(resp.Explanation.NewTopic)
+    print(resp.Explanation.RemovedTokens)
+    print(resp.Explanation.AddedTokens)

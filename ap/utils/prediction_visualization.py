@@ -146,6 +146,31 @@ def _mutate_text(text_lang, tmp_file, vw_texts, phi, topics, need_change, multip
     return changed
 
 
+def _get_information_without_topic_change(theta):
+    """
+    Возвращает интерпретацию предсказаний тематической модели в случае, \
+    когда тема top_topic настолько ярко выражена, что её не удаётся сменить на другую.
+
+    Args:
+        theta: матрица Тэта
+
+    Returns:
+        interpretation_info: интерпретация предсказаний тематической модели
+    """
+    texts = theta.columns
+    interpretation_info = {}
+    for text in texts:
+        topic_from = f'topic_{theta[text].argmax()}'
+        topic_to = f'topic_{theta[text].argmax()}'
+        interpretation_info[text] = {
+            'topic_from': topic_from,
+            'topic_to': topic_to,
+            'Added': [],
+            'Removed': [],
+        }
+    return interpretation_info
+
+
 def _check_change(model, topics, need_change, changed, target_folder):
     tmp_file = str(target_folder.joinpath('change_topic', 'tmp.txt'))
     batches = target_folder.joinpath('batches_tmp2')
@@ -217,5 +242,6 @@ def augment_text(model, input_text: str, target_folder: str, num_top_tokens: int
             interpretation_info, need_change, stop = _check_change(model, topics, need_change, changed, target_folder)
             if stop:
                 return interpretation_info
+        return _get_information_without_topic_change(theta)
     else:
         logging.warning('Topic model does not support language of this text.')

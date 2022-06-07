@@ -347,6 +347,5 @@ def quality_of_models(path_train_lang: str, bcg_topic_list: typing.List[str],
         average_percent = percent[metric].sum().sum() / percent[metric].count().sum()
         quality_experiment[f'average_frequency_{metric}'] = average_frequency
         quality_experiment[f'average_percent_{metric}'] = average_percent
-    print(quality_experiment)
 
     return quality_experiment
