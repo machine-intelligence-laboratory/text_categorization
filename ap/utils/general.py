@@ -1,38 +1,61 @@
+"""
+Модуль содержит функции общего назначения.
+"""
+
+
 import os
 import typing
 
-from ap.topic_model.v1.TopicModelBase_pb2 import DocId, DocumentPack
+from pathlib import Path
 
 
-def id_to_str(id: DocId) -> str:
+def id_to_str(doc_id) -> str:
     """
     Конвертирует DocId в строку.
 
-    Parameters
-    ----------
-    id - DocId
+    Args:
+        id (DocId): id документа
 
-    Returns
-    -------
-    Строка из DocId
+    Returns:
+        (str): Строка из DocId
     """
-    return f"{id.Hi}_{id.Lo}"
+    return f"{doc_id.Hi}_{doc_id.Lo}"
 
 
-def docs_from_pack(pack: DocumentPack) -> typing.Dict[str, typing.Dict[str, str]]:
+def get_modalities(doc):
     """
-    Создает dict документов из DocumentPack.
+    Возвращает словарь, где по языку хранятся токены на этом языке.
 
-    Parameters
-    ----------
-    pack - DocumentPack
+    Args:
+        doc: документ
 
-    Returns
-    -------
-    dict из документов
+    Returns:
+        res (dict): словарь язык -> строка токенов на этом языке через пробел
     """
+    res = {}
+
+    for modality in doc.Modalities:
+        if modality.Key == 'lang':
+            res[modality.Value] = " ".join(doc.Tokens)
+        else:
+            res[modality.Key] = modality.Value
+
+    return res
+
+
+def docs_from_pack(pack) -> typing.Dict[str, typing.Dict[str, str]]:
+    """
+    Создает словарь документов из pack.
+
+    Args:
+        pack (ap.topic_model.v1.TopicModelBase_pb2.DocumentPack): коллекция
+
+    Returns:
+        (dict): словарь из документов
+    """
+
     return {
-        id_to_str(doc.Id): {doc.Language: " ".join(doc.Tokens)}
+        id_to_str(doc.Id): get_modalities(doc)
         for doc in pack.Documents
     }
 
@@ -41,13 +64,11 @@ def ensure_directory(path: str) -> str:
     """
     Создает директорию, если ее нет, и возвращает path.
 
-    Parameters
-    ----------
-    path - путь к директории
+    Args:
+        path (str): путь к директории
 
-    Returns
-    -------
-    path
+    Returns:
+        path (str): путь к директории
     """
     if not os.path.exists(path):
         os.makedirs(path)
@@ -55,18 +76,16 @@ def ensure_directory(path: str) -> str:
     return path
 
 
-def batch_names(starts_from, count) -> typing.Generator[str, None, None]:
+def batch_names(starts_from: object, count: object) -> typing.Generator[str, None, None]:
     """
     Генерирует названия батчей в соответствие с форматом BatchVectorizer.
 
-    Parameters
-    ----------
-    starts_from - название файла последнего батча в директории
-    count - количество батчей
+    Args:
+        starts_from: название файла последнего батча в директории
+        count: количество батчей
 
-    Returns
-    -------
-    Генератор имен батчей
+    Returns:
+        (typing.Generator[str, None, None]): Генератор имен батчей
     """
     orda = ord("a")
     letters = 26
@@ -76,11 +95,23 @@ def batch_names(starts_from, count) -> typing.Generator[str, None, None]:
 
     for x in range(starts_from_int + 1, starts_from_int + 1 + count):
         str_name = []
-        for i in range(len(starts_from)):
+        for _ in range(len(starts_from)):
             str_name.append(chr(x % letters + orda))
             x = int(x / letters)
 
         yield "".join(reversed(str_name))
 
 
-batch_names("aaaacw.batch", 10)
+def recursively_unlink(path: Path):
+    """
+    Рекурсивно удаляет файлы и директории.
+
+    Args:
+        path (pathlib.Path): путь, по которому необходимо удалить все файлы.
+    """
+    for child in path.iterdir():
+        if child.is_file():
+            child.unlink()
+        else:
+            recursively_unlink(child)
+    path.rmdir()

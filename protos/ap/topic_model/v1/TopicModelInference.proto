@@ -8,6 +8,7 @@ import "ap/topic_model/v1/TopicModelBase.proto";
 service TopicModelInferenceService{
     // получение векторных представлений документов
     rpc GetDocumentsEmbedding(GetDocumentsEmbeddingRequest) returns (GetDocumentsEmbeddingResponse) {}
+    rpc GetTopicExplanation(GetTopicExplanationRequest) returns (GetTopicExplanationResponse) {}
 }
 
 message GetDocumentsEmbeddingRequest {
@@ -18,6 +19,12 @@ message GetDocumentsEmbeddingResponse {
     repeated Embedding Embeddings = 1;
 }
 
+message GetTopicExplanationRequest {
+    Document Doc = 1;
+}
 
+message GetTopicExplanationResponse {
+    TopicExplanation Explanation = 1;
+}
 
 

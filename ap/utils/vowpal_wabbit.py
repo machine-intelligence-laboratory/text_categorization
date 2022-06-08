@@ -1,5 +1,8 @@
+"""Класс для работы с данными в формате Vowpal Wabbit."""
+
 import re
 import typing
+
 from collections import Counter
 from string import punctuation
 
@@ -7,48 +10,49 @@ from zhon import hanzi
 
 
 class VowpalWabbit:
+    """
+    Класс сохранения VW файлов.
+    """
+
     def __init__(self, use_counters):
         """
         Создает класс сохранения VW файлов.
 
-        Parameters
-        ----------
-        use_counters - признак использования каунтеров
+        Args:
+            use_counters: признак использования каунтеров
         """
         self._use_counters = use_counters
         self.punctuation = punctuation + hanzi.punctuation
 
     def save_docs(
-        self, target_file: typing.TextIO, doc: typing.Dict[str, typing.Dict[str, str]]
+            self, target_file: typing.TextIO, doc: typing.Dict[str, typing.Dict[str, str]]
     ):
         """
         Конвертирует документы в BOW и сохраняет их.
 
-        Parameters
-        ----------
-        target_file путь к файлу
-        doc сырые документы
+        Args:
+            target_file: путь к файлу
+            doc: сырые документы
         """
-        self.save_bow(target_file, self.convert_to_bow(doc))
+        self._save_bow(target_file, self._convert_to_bow(doc))
 
-    def save_bow(
-        self,
-        target_file: typing.TextIO,
-        sessions_bow_messages: typing.Dict[
-            str, typing.Dict[str, typing.Union[str, typing.Counter]]
-        ],
+    def _save_bow(
+            self,
+            target_file: typing.TextIO,
+            sessions_bow_messages: typing.Dict[
+                str, typing.Dict[str, typing.Union[str, typing.Counter]]
+            ],
     ):
         """
         Сохраняет BOW представление документов.
 
-        Parameters
-        ----------
-        target_file путь к файлу
-        sessions_bow_messages документы в формате BOW
+        Args:
+            target_file: путь к файлу
+            sessions_bow_messages: документы в формате BOW
         """
         for key, modality_bows in sessions_bow_messages.items():
             new_message_str_format = str(key).replace(" ", "_")
-            for modality, bow in modality_bows.items():
+            for modality, _ in modality_bows.items():
                 if modality == "plain_text":
                     continue
                 if self._use_counters:
@@ -56,8 +60,8 @@ class VowpalWabbit:
                         [
                             token + ":" + str(count)
                             for token, count in sessions_bow_messages[key][
-                                modality
-                            ].items()
+                            modality
+                        ].items()
                         ]
                     )
                 else:
@@ -66,19 +70,17 @@ class VowpalWabbit:
             target_file.write(new_message_str_format)
             target_file.write("\n")
 
-    def convert_to_bow(
-        self, data: typing.Dict[str, typing.Dict[str, str]]
+    def _convert_to_bow(
+            self, data: typing.Dict[str, typing.Dict[str, str]]
     ) -> typing.Dict[str, typing.Dict[str, typing.Union[str, typing.Counter]]]:
         """
         Конвертирует набор документов в BOW представление (см. VowpalWabbit.convet_doct).
 
-        Parameters
-        ----------
-        param data словарь айди документа->документ
+        Args:
+            data: словарь айди документа -> документ
 
-        Returns
-        -------
-        словарь айди документа->документ в виде BOW
+        Returns:
+            sessions_bow_messages (dict): словарь айди документа->документ в виде BOW
         """
         sessions_bow_messages = dict()
         for elem_id, elem in data.items():
@@ -86,17 +88,16 @@ class VowpalWabbit:
         return sessions_bow_messages
 
     def convert_doc(
-        self, doc: typing.Dict[str, str]
+            self, doc: typing.Dict[str, str]
     ) -> typing.Dict[str, typing.Union[str, typing.Counter]]:
         """
         Конвертирует исходный документ в формат BOW.
 
-        Parameters
-        ----------
-        doc словарь язык->текст документа
-        Returns
-        -------
-        словарь язык->BOW документа. Если use_counters==True, словарь в виде Counter
+        Args:
+            doc (dict): словарь язык -> текст документа
+
+        Returns:
+            res (dict): словарь язык -> BOW документа. Если use_counters==True, словарь в виде Counter
         """
         res = {}
         if self._use_counters:

@@ -1,0 +1,10 @@
+.idea
+*__pycache__*
+*.ipynb_checkpoints*
+*bigartm*
+docs/
+ap/topic_model
+ap/utils/config.py
+ap/utils/emb_metrics.py
+ap/utils/subsamples_creator.py
+.coverage

@@ -1,3 +1,8 @@
+joblib~=1.1.0
+matplotlib~=3.5.1
+numpy~=1.21.2
+topicnet
+tqdm~=4.59.0
 grpcio==1.31.0
 grpcio-tools==1.31.0
 bigartm==0.9.2
@@ -7,3 +12,9 @@ zhon==1.1.5
 pyyaml==5.3.1
 youtokentome==1.0.6
 scikit-learn==0.24.2
+prometheus-client==0.13.1
+aiohttp==3.8.1
+requests==2.27.1
+prometheus_client~=0.13.1
+scipy~=1.8.0
+pytest~=5.4.1
