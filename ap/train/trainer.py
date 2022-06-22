@@ -13,19 +13,15 @@ from ap.utils.general import recursively_unlink
 
 
 class ModelTrainer:
+    """Класс для тренировки тематической модели."""
     def __init__(
             self,
             data_manager: ModelDataManager,
     ):
         """
-        Initialize a model trainer.
-
         Args:
             data_manager (ModelDataManager): data manager
         """
-
-        from prometheus_client import Gauge
-
         self._data_manager = data_manager
         self._models_dir = Path(self._data_manager.config['path_experiment'])
         model_name = self.generate_model_name()
@@ -35,27 +31,23 @@ class ModelTrainer:
         import artm
 
         current_models = list(self._models_dir.iterdir())
-        # TODO: для дообучения
-        # добавить условие: есть язык не из 100 языков
-        # new_modalities = list(config["LANGUAGES_ALL"]).extend(list(config["MODALITIES_TRAIN"]))
-        # if not set(new_modalities).issubset(set(self._class_ids))
-
-        if (
-                train_type == StartTrainTopicModelRequest.TrainType.FULL
-        ):
+        if train_type == StartTrainTopicModelRequest.TrainType.FULL:
             logging.info("Start full training")
             self.model = self._create_initial_model()
         else:
             if len(current_models) == 0:
                 raise Exception("Can't update a model - no models found")
-
-            # TODO: загрузить модель для дообучения
             last_modification = [Path(path).stat().st_mtime for path in current_models]
             last_modification_index = np.argmax(last_modification)
             last_model = current_models[last_modification_index]
             logging.info("Start training based on %s model", last_model)
 
             self.model = artm.load_artm_model(str(self._models_dir.joinpath(last_model)))
+            self.model.regularizers['SmoothThetaRegularizer'].tau=self._data_manager.config["artm_model_params"]["tau_SmoothTheta"]
+            self.model.regularizers['SparseThetaRegularizer'].tau = self._data_manager.config["artm_model_params"][
+                "tau_SparseTheta"]
+            self.model.regularizers['DecorrelatorPhiRegularizer'].tau = self._data_manager.config["artm_model_params"]["tau_DecorrelatorPhi"]
+            self._check_update_conditions()
 
         set_metric('num_topics', self._data_manager.config["artm_model_params"]["NUM_TOPICS"])
         set_metric('num_bcg_topics', self._data_manager.config["artm_model_params"]["num_bcg_topic"])
@@ -148,16 +140,6 @@ class ModelTrainer:
         return model
 
     @property
-    def model_scores(self):
-        """
-        Возвращает все скоры тематической модели
-
-        Returns:
-            (artm.scores.Scores): список скоров тематической модели
-        """
-        return list(self.model.score_tracker.keys())
-
-    @property
     def model_scores_value(self) -> dict:
         """
         Возвращает значения всех скоров тематической модели на текущей эпохе
@@ -167,7 +149,7 @@ class ModelTrainer:
         """
 
         scores_value = {score: self.model.score_tracker[score].value[-1]
-                        for score in self.model_scores}
+                        for score in list(self.model.score_tracker.keys())}
         return scores_value
 
     def set_metrics(self):
@@ -199,9 +181,11 @@ class ModelTrainer:
         self.set_metrics()
         logging.info("set_metrics before training")
         self._load_model(train_type)
+        self._data_manager.generate_background_batches()
         self._data_manager.load_train_data()
-        for epoch in range(self._data_manager.config['artm_model_params']["num_collection_passes"]):
-            logging.info(f'Training epoch {epoch + 1}')
+        num_collection_passes = self._data_manager.config['artm_model_params']["num_collection_passes"]
+        for epoch in range(num_collection_passes):
+            logging.info(f'Training epoch {epoch + 1} of {num_collection_passes}')
             set_metric('training_iteration', epoch + 1)
             self._train_epoch()
 
@@ -230,3 +214,12 @@ class ModelTrainer:
             Новое имя для модели
         """
         return datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    def _check_update_conditions(self):
+        model_langs = set(self.model.class_ids.keys())
+        config_langs = set([f'@{x}' for x in self._data_manager.config['LANGUAGES_TRAIN']])
+        if len(config_langs - model_langs):
+            logging.error("These languages don't present in the model that is going to be updated %s", str(config_langs - model_langs))
+            raise Exception("Can't add modalities to an existing model")
+        if len(model_langs - config_langs):
+            logging.warning("Model contains modalities that won't be updated %s", str(model_langs - config_langs))

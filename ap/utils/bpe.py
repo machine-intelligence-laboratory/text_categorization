@@ -1,3 +1,8 @@
+"""
+Модуль для работы с BPE моделями
+"""
+
+
 import os
 
 import youtokentome as yttm

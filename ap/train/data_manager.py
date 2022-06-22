@@ -5,6 +5,7 @@
 import json
 import logging
 import os
+import tempfile
 import typing
 import shutil
 
@@ -15,7 +16,7 @@ import numpy as np
 import yaml
 
 from ap.train.metrics import set_metric
-from ap.utils.general import recursively_unlink
+from ap.utils.general import recursively_unlink, batch_names
 
 
 class NoTranslationException(Exception):
@@ -44,26 +45,36 @@ class ModelDataManager:
 
         with open(self.config['balancing_rubrics_train']) as file:
             self.rubrics_train: typing.Dict[str, str] = json.load(file)
+        self.average_rubric_size = int(len(self.rubrics_train) / len(set(self.rubrics_train.values())))
 
         self.train_path = self.config["train_vw_path"]
+        self.new_background_path = self.config["new_background_path"]
 
         path_experiment = Path(self.config["path_experiment"])
         path_experiment.mkdir(parents=True, exist_ok=True)
+        with open(path_experiment.joinpath('experiment_config.yml'), 'w') as file:
+            yaml.safe_dump(self.config, file)
+
         path_train_data = path_experiment.joinpath('train_data')
         self._path_to_batches = path_train_data.joinpath('batches_balanced')
         self._path_balanced_train = path_train_data.joinpath('train_balanced.txt')
-        self._path_batches_wiki = self.config.get("path_wiki_train_batches", None)
         self._balancing_modality = self.config.get("balancing_modality", 'GRNTI')
-
-        # TODO: в добучении
-        # старые модальности - вытащить из модели
-        # новые - из конфига
+        self._path_batches_wiki = self.config.get("path_wiki_train_batches", None)
+        if self._path_batches_wiki:
+            Path(self._path_batches_wiki).mkdir(exist_ok=True)
+            self.wiki_batches = list(Path(self._path_batches_wiki).iterdir())
+            self.wiki_balancing_type = self.config.get('wiki_balancing_type', False)
+            if self.wiki_balancing_type == 'avr_rubric_size':
+                # // 1000, т.к. в 1 батче Википедии 1000 документов.
+                self.wiki_batches_per_epoch = self.average_rubric_size // 1000 + 1
+            elif self.wiki_balancing_type == 'wiki_unisize':
+                self.wiki_batches_per_epoch = int(len(self.wiki_batches) /
+                                               self.config['artm_model_params']["num_collection_passes"])
 
         all_modalities_train = {**self.config["MODALITIES_TRAIN"],
                                 **self.config["LANGUAGES_TRAIN"]}
         self.class_ids = all_modalities_train
 
-        self.average_rubric_size = int(len(self.rubrics_train) / len(set(self.rubrics_train.values())))
         num_rubric = len(set(self.rubrics_train.values()))
         logging.info('Balanced learning is used: at each epoch ' +
                      'rubric-balanced documents are sampled from the training data.')
@@ -83,6 +94,33 @@ class ModelDataManager:
         with open(self.train_path, encoding='utf-8') as file:
             train_vw = file.readlines()
             set_metric('train_size_docs', len(train_vw))
+
+    def generate_background_batches(self):
+        import artm
+        if not os.path.exists(self.new_background_path):
+            return
+        with tempfile.TemporaryDirectory(dir=self._data_dir) as temp_dir:
+            batch_vectorizer = artm.BatchVectorizer(data_path=self.new_background_path, data_format='vowpal_wabbit',
+                                                target_folder=str(temp_dir), batch_size=20)
+            old_batches = os.listdir(self._path_batches_wiki)
+            if len(old_batches) == 0:
+                for new_batch in os.listdir(temp_dir):
+                    shutil.move(
+                        os.path.join(temp_dir, new_batch),
+                        os.path.join(self._path_batches_wiki, new_batch),
+                    )
+
+            else:
+                new_batches = sorted(os.listdir(temp_dir))
+
+                for new_batch, new_batch_name in zip(
+                        new_batches,
+                        batch_names(os.path.splitext(max(old_batches))[0], len(new_batches)),
+                ):
+                    shutil.move(
+                        os.path.join(temp_dir, new_batch),
+                        os.path.join(self._path_batches_wiki, f"{new_batch_name}.batch"),
+                    )
 
     def load_train_data(self):
         """
@@ -122,7 +160,7 @@ class ModelDataManager:
                 doc_ids_count = Counter(doc_ids_rubric)
                 for doc_id, count in doc_ids_count.items():
                     if count > 1:
-                        new_line_dict = dict()
+                        new_line_dict = {}
                         for line_lang in self.train_docs[doc_id].split(' |@')[1:]:
                             lang = line_lang.split()[0]
                             line_lang_dict = {
@@ -180,25 +218,23 @@ class ModelDataManager:
             logging.info('Calling artm 2nd time')
 
             if self._path_batches_wiki:
-                if self.config.get('wiki_balancing', False):
-                    # // 1000, т.к. в 1 батче Википедии 1000 документов.
-                    wiki_batches_amount = self.average_rubric_size // 1000 + 1
+                if self.wiki_balancing_type in ('avr_rubric_size', 'wiki_unisize'):
                     wiki_batch_subsample = np.random.choice(
-                        list(Path(self._path_batches_wiki).iterdir()), wiki_batches_amount)
+                        list(Path(self._path_batches_wiki).iterdir()), self.wiki_batches_per_epoch)
                     for batch in wiki_batch_subsample:
                         shutil.copy(batch, self._path_to_batches)
                     batch_vectorizer = artm.BatchVectorizer(
-                        data_path=self._path_to_batches
+                        data_path=str(self._path_to_batches)
                     )
                 else:
                     batch_vectorizer = artm.BatchVectorizer(
-                        data_path=[self._path_to_batches, self._path_batches_wiki],
+                        data_path=[str(self._path_to_batches), self._path_batches_wiki],
                         data_weight=[1, 1]
                     )
                 logging.info('Built batches with wiki')
             else:
                 batch_vectorizer = artm.BatchVectorizer(
-                    data_path=self._path_to_batches
+                    data_path=str(self._path_to_batches)
                 )
                 logging.info('Built batches without wiki')
             return batch_vectorizer
@@ -222,7 +258,15 @@ class ModelDataManager:
         ):
             raise NoTranslationException()
 
-        vw.save_docs(self.train_path, docs)
+        background, rubrics = {}, {}
+        for idx, doc in docs.items():
+            (background, rubrics)['UDK' in doc and 'GRNTI' in doc][idx] = doc
+
+        if len(rubrics) > 0:
+            vw.save_docs(self.train_path, rubrics)
+
+        if len(background) > 0:
+            vw.save_docs(self.new_background_path, background)
 
     def get_modality_distribution(self) -> typing.Dict[str, int]:
         """
@@ -272,5 +316,5 @@ class ModelDataManager:
             config: конфиг обучаемой модели
         """
         self.config = yaml.safe_load(config)
-        with open(self._config_path, "w") as file:
+        with open(self._config_path, "w"):
             yaml.safe_dump(self.config)

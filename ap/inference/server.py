@@ -6,23 +6,25 @@ import uuid
 import json
 
 from concurrent import futures
+from collections import Counter
 
 import artm
 import click
 import grpc
 import pandas as pd
 
-from ap.topic_model.v1.TopicModelBase_pb2 import Embedding
+from ap.topic_model.v1.TopicModelBase_pb2 import Embedding, TopicExplanation
 from ap.topic_model.v1.TopicModelInference_pb2 import (
     GetDocumentsEmbeddingRequest,
-    GetDocumentsEmbeddingResponse,
+    GetDocumentsEmbeddingResponse, GetTopicExplanationRequest, GetTopicExplanationResponse,
 )
 from ap.topic_model.v1.TopicModelInference_pb2_grpc import (
     TopicModelInferenceServiceServicer,
     add_TopicModelInferenceServiceServicer_to_server,
 )
 from ap.utils.bpe import load_bpe_models
-from ap.utils.general import id_to_str
+from ap.utils.general import id_to_str, get_modalities
+from ap.utils.prediction_visualization import augment_text
 from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
@@ -37,7 +39,9 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
             work_dir: рабочая директория для сохранения временных файлов
             rubric_dir: директория, где хранятся json-файлы с рубриками
         """
-        self._artm_model = artm_model
+        # self._artm_model = artm_model
+        self._artm_model =  artm_model
+
         self._vw = VowpalWabbitBPE(bpe_models)
         self._work_dir = work_dir
         self._rubric_dir = rubric_dir
@@ -146,7 +150,7 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
             (datetime.datetime.now() - processing_start).total_seconds(),
         )
 
-        emb_doc = list()
+        emb_doc = []
         for doc in request.Pack.Documents:
             emb = embeddings[f"{doc.Id.Hi}_{doc.Id.Lo}"]
             if isinstance(emb, pd.DataFrame):
@@ -157,6 +161,38 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
         return GetDocumentsEmbeddingResponse(
             Embeddings=emb_doc
         )
+
+    def GetTopicExplanation(self, request: GetTopicExplanationRequest, context) -> GetTopicExplanationResponse:
+        """
+        Объяснение тематической модели
+        Args:
+            request: grpc запрос, содержащий документ
+            context: не используется
+
+        Returns:
+            Объяснение тематической модели
+        """
+        with tempfile.TemporaryDirectory(dir=self._work_dir) as temp_dir:
+            doc_vw = {id_to_str(request.Doc.Id): get_modalities(request.Doc)}
+            vw_file = os.path.join(temp_dir, 'vw.txt')
+            print('doc_vw', doc_vw)
+            # self._vw.save_docs(vw_file, doc_vw)
+            with open(vw_file, 'w') as file:
+                to_write = []
+                for doc_id, mod_dict in doc_vw.items():
+                    line = f'{doc_id}'
+                    for mod, content in mod_dict.items():
+                        line += f' |@{mod} ' + \
+                                ' '.join([f'{token}:{count}' for token, count in Counter(content.split()).items()])
+                    line += '\n'
+                    to_write.append(line)
+                file.writelines(to_write)
+            interpretation = augment_text(self._artm_model, vw_file, os.path.join(temp_dir, 'target'))
+            return GetTopicExplanationResponse(Explanation=TopicExplanation(
+                                               Topic=interpretation[id_to_str(request.Doc.Id)]['topic_from'],
+                                               NewTopic=interpretation[id_to_str(request.Doc.Id)]['topic_to'],
+                                               RemovedTokens=interpretation[id_to_str(request.Doc.Id)]['Removed'],
+                                               AddedTokens=interpretation[id_to_str(request.Doc.Id)]['Added']))
 
 
 @click.command()

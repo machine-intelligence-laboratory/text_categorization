@@ -1,3 +1,8 @@
+"""
+Модуль для работы с данными в формате Vowpal Wabbit.
+"""
+
+
 import re
 import typing
 
@@ -10,6 +15,7 @@ from zhon import hanzi
 
 
 class VowpalWabbitBPE:
+    """Класс для сохранения VW файлов с BPE преобразованием."""
     def __init__(self, bpe_models: dict, use_counters: bool = True):
         """
         Создает класс сохранения VW файлов с BPE преобразованием.
@@ -35,17 +41,14 @@ class VowpalWabbitBPE:
         self.save_bow(target_file, self.convert_to_bow(doc))
 
     def save_bow(
-            self,
-            target_file: str,
-            sessions_bow_messages: typing.Dict[
-                str, typing.Dict[str, typing.Union[str, typing.Counter]]
-            ],
+            self, target_file: str,
+            sessions_bow_messages: typing.Dict[str, typing.Dict[str, typing.Union[str, typing.Counter]]],
     ):
         """
         Сохраняет BOW представление документов.
 
         Args:
-            target_file: путь к файлу.
+            target_file (str): путь к файлу.
             sessions_bow_messages (dict): doc_id -> dict: modality -> dict: token -> count.
         """
         for key, modality_bows in sessions_bow_messages.items():
@@ -62,10 +65,10 @@ class VowpalWabbitBPE:
                     )
                 else:
                     modality_content = sessions_bow_messages[key][modality]
-                new_message_str_format += " |@{} {}".format(modality, modality_content)
-                with open(target_file, 'a') as f:
-                    f.write(new_message_str_format)
-                    f.write('\n')
+                new_message_str_format += f" |@{modality} {modality_content}"
+            with open(target_file, 'a', encoding='utf8') as file:
+                file.write(new_message_str_format)
+                file.write('\n')
 
     def convert_to_bow(
             self, data: typing.Dict[str, typing.Dict[str, str]]
@@ -79,7 +82,7 @@ class VowpalWabbitBPE:
         Returns:
             sessions_bow_messages (dict): словарь айди документа -> документ в виде BOW.
         """
-        sessions_bow_messages = dict()
+        sessions_bow_messages = {}
         for elem_id, elem in data.items():
             sessions_bow_messages[elem_id] = self.convert_doc(elem)
         return sessions_bow_messages
