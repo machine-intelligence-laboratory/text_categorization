@@ -165,6 +165,7 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
     def GetTopicExplanation(self, request: GetTopicExplanationRequest, context) -> GetTopicExplanationResponse:
         """
         Объяснение тематической модели
+
         Args:
             request: grpc запрос, содержащий документ
             context: не используется
