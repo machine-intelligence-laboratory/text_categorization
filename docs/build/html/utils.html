@@ -44,6 +44,7 @@
             
   <section id="module-ap.utils.bpe">
 <span id="ap-utils"></span><h1>ap.utils<a class="headerlink" href="#module-ap.utils.bpe" title="Ссылка на этот заголовок">¶</a></h1>
+<p>Модуль для работы с BPE моделями</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="ap.utils.bpe.load_bpe_models">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.bpe.</span></span><span class="sig-name descname"><span class="pre">load_bpe_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bpe_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#ap.utils.bpe.load_bpe_models" title="Ссылка на это определение">¶</a></dt>
@@ -61,7 +62,8 @@
 </dl>
 </dd></dl>
 
-<span class="target" id="module-ap.utils.dictionary"></span><dl class="py function">
+<span class="target" id="module-ap.utils.dictionary"></span><p>Модуль для работы со словарями ARTM.</p>
+<dl class="py function">
 <dt class="sig sig-object py" id="ap.utils.dictionary.get_num_entries">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.dictionary.</span></span><span class="sig-name descname"><span class="pre">get_num_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">artm.dictionary.Dictionary</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#ap.utils.dictionary.get_num_entries" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Возвращает размер словаря.</p>
@@ -79,7 +81,7 @@
 <dt class="sig sig-object py" id="ap.utils.dictionary.limit_classwise">
 <span class="sig-prename descclassname"><span class="pre">ap.utils.dictionary.</span></span><span class="sig-name descname"><span class="pre">limit_classwise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">artm.dictionary.Dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dictionary_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.dictionary.limit_classwise" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Ограничивает словарь и сохраняет его в out_file.</p>
-<p>Ограничивает словарь таким образом, что в разрезе каждоого class id будет не более max_dictionary_size токенов.
+<p>Ограничивает словарь таким образом, что в разрезе каждоого class id будет         не более max_dictionary_size токенов.
 Сохраняет словарь в текстовым форматом в файле out_file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры</dt>
@@ -94,105 +96,10 @@
 </dl>
 </dd></dl>
 
-<span class="target" id="module-ap.utils.emb_metrics"></span><dl class="py function">
-<dt class="sig sig-object py" id="ap.utils.emb_metrics.generate_theta">
-<span class="sig-prename descclassname"><span class="pre">ap.utils.emb_metrics.</span></span><span class="sig-name descname"><span class="pre">generate_theta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.emb_metrics.generate_theta" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Создает и сохраняет матрицы Тэта.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Параметры</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path_models</strong> (<em>str</em>) – путь к папке с тематическими моделями</p></li>
-<li><p><strong>save_path</strong> (<em>str</em>) – путь для сохранения матриц Тэта</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
+<span class="target" id="module-ap.utils.general"></span><p>Модуль содержит функции общего назначения.</p>
 <dl class="py function">
-<dt class="sig sig-object py" id="ap.utils.emb_metrics.get_analogy_distribution">
-<span class="sig-prename descclassname"><span class="pre">ap.utils.emb_metrics.</span></span><span class="sig-name descname"><span class="pre">get_analogy_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.emb_metrics.get_analogy_distribution" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Function to get analogy distribution for models.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Параметры</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path_models</strong> (<em>str</em>) – путь к папке с тематическими моделями</p></li>
-<li><p><strong>save_path</strong> (<em>str</em>) – путь для сохранения матриц Тэта</p></li>
-</ul>
-</dd>
-<dt class="field-even">Результат</dt>
-<dd class="field-even"><p>dict with distribution of analogy measure</p>
-</dd>
-<dt class="field-odd">Тип результата</dt>
-<dd class="field-odd"><p>pair_analogy (dict)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="ap.utils.emb_metrics.get_cos_distribution">
-<span class="sig-prename descclassname"><span class="pre">ap.utils.emb_metrics.</span></span><span class="sig-name descname"><span class="pre">get_cos_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_categories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.emb_metrics.get_cos_distribution" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Function to get cosine distribution in classes for models.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Параметры</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path_models</strong> (<em>str</em>) – путь к папке с тематическими моделями</p></li>
-<li><p><strong>save_path</strong> (<em>str</em>) – путь для сохранения матриц Тэта</p></li>
-<li><p><strong>path_categories</strong> (<em>str</em>) – json-файл с рубриками документов</p></li>
-</ul>
-</dd>
-<dt class="field-even">Результат</dt>
-<dd class="field-even"><p>dict with distribution of cosine measure for classes</p>
-</dd>
-<dt class="field-odd">Тип результата</dt>
-<dd class="field-odd"><p>pair_cos (dict)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="ap.utils.emb_metrics.get_mean_classes_intersection">
-<span class="sig-prename descclassname"><span class="pre">ap.utils.emb_metrics.</span></span><span class="sig-name descname"><span class="pre">get_mean_classes_intersection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_categories</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.emb_metrics.get_mean_classes_intersection" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Function to evaluate classes intersection.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Параметры</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path_models</strong> (<em>str</em>) – путь к папке с тематическими моделями</p></li>
-<li><p><strong>save_path</strong> (<em>str</em>) – путь для сохранения матриц Тэта</p></li>
-<li><p><strong>path_categories</strong> (<em>str</em>) – json-файл с рубриками документов</p></li>
-</ul>
-</dd>
-<dt class="field-even">Результат</dt>
-<dd class="field-even"><p>DataFrame with evaluation of classes intersection</p>
-</dd>
-<dt class="field-odd">Тип результата</dt>
-<dd class="field-odd"><p>(pd.DataFrame)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="ap.utils.emb_metrics.get_topic_profile">
-<span class="sig-prename descclassname"><span class="pre">ap.utils.emb_metrics.</span></span><span class="sig-name descname"><span class="pre">get_topic_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.emb_metrics.get_topic_profile" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Function to get topic profiles for models.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Параметры</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path_models</strong> (<em>str</em>) – путь к папке с тематическими моделями</p></li>
-<li><p><strong>save_path</strong> (<em>str</em>) – путь для сохранения матриц Тэта</p></li>
-</ul>
-</dd>
-<dt class="field-even">Результат</dt>
-<dd class="field-even"><p>DataFrame with topic profiles for models</p>
-</dd>
-<dt class="field-odd">Тип результата</dt>
-<dd class="field-odd"><p>(pd.DataFrame)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<span class="target" id="module-ap.utils.general"></span><dl class="py function">
 <dt class="sig sig-object py" id="ap.utils.general.batch_names">
-<span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">batch_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starts_from</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.general.batch_names" title="Ссылка на это определение">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">batch_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starts_from</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.general.batch_names" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Генерирует названия батчей в соответствие с форматом BatchVectorizer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры</dt>
@@ -263,7 +170,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ap.utils.general.id_to_str">
-<span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">id_to_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#ap.utils.general.id_to_str" title="Ссылка на это определение">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">ap.utils.general.</span></span><span class="sig-name descname"><span class="pre">id_to_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#ap.utils.general.id_to_str" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Конвертирует DocId в строку.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры</dt>
@@ -271,6 +178,9 @@
 </dd>
 <dt class="field-even">Результат</dt>
 <dd class="field-even"><p>Строка из DocId</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>(str)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -286,10 +196,64 @@
 </dl>
 </dd></dl>
 
-<span class="target" id="module-ap.utils.rank_metric"></span><dl class="py function">
-<dt class="sig sig-object py" id="ap.utils.rank_metric.quality_of_models">
-<span class="sig-prename descclassname"><span class="pre">ap.utils.rank_metric.</span></span><span class="sig-name descname"><span class="pre">quality_of_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_train_lang</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bcg_topic_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_to_calculate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_experiment_result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix_norm_metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_subsamples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_rubrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_languages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recalculate_test_thetas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.rank_metric.quality_of_models" title="Ссылка на это определение">¶</a></dt>
+<span class="target" id="module-ap.utils.rank_metric"></span><dl class="py class">
+<dt class="sig sig-object py" id="ap.utils.rank_metric.RankingByModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.utils.rank_metric.</span></span><span class="sig-name descname"><span class="pre">RankingByModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bcg_topic_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_to_calculate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_subsamples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_rubrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.rank_metric.RankingByModel" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Класс для вычисления метрик качества тематической модели.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.utils.rank_metric.RankingByModel.get_thetas">
+<span class="sig-name descname"><span class="pre">get_thetas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_thetas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_languages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recalculate_test_thetas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.rank_metric.RankingByModel.get_thetas" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает матрицы Тэта, посчитанные по данным из path_test.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_test</strong> (<em>str</em>) – папка с данными в формате f’test_{lang}_120k.txt“,                 для которых надо построить матрицы Тэта</p></li>
+<li><p><strong>path_thetas</strong> (<em>str</em>) – путь для сохранения / загрузки матниц Тэта</p></li>
+<li><p><strong>current_languages</strong> (<em>list of str</em>) – названия языков, используемых для подсчёта метрик</p></li>
+<li><p><strong>recalculate_test_thetas</strong> (<em>bool</em>) – признак необходимости вычислять матрицы Тэта для тестовых данных
+- True означает пересчитать Тэты
+- False означает загрузить существующие Тэты</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>словарь язык -&gt; матрица Тэта, посчитанная по данным соответствующего языка из path_test</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>theta_lang (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.utils.rank_metric.RankingByModel.metrics_to_df">
+<span class="sig-name descname"><span class="pre">metrics_to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_train_lang</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_languages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta_lang</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.rank_metric.RankingByModel.metrics_to_df" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает метрики качества.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_train_lang</strong> (<em>str</em>) – путь к папке с папками языков,                 в которых лежат центроиды, построенные по ТРЕНИРОВОЧНЫМ данным каждого языка</p></li>
+<li><p><strong>path_experiment_result</strong> (<em>str</em>) – путь для сохранения результатов</p></li>
+<li><p><strong>current_languages</strong> (<em>list of str</em>) – названия языков, используемых для подсчёта метрик</p></li>
+<li><p><strong>theta_lang</strong> (<em>dict</em>) – словарь язык -&gt; матрица Тэта, построенная по ТЕСТОВЫМ данным каждого языка</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>по названию метрики хранится pandas.DataFrame, где                 для каждой пары языков оригинал-перевод хранится метрика «Средний процент»
+frequency (dict): по названию метрики хранится pandas.DataFrame, где                 для каждой пары языков оригинал-перевод хранится метрика «Средняя частота»
+intersections (pandas.DataFrame): pandas.DataFrame, где                 для каждой пары языков оригинал-перевод хранится пересечение документов</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>percent (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ap.utils.rank_metric.quality_of_models">
+<span class="sig-prename descclassname"><span class="pre">ap.utils.rank_metric.</span></span><span class="sig-name descname"><span class="pre">quality_of_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_train_lang</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bcg_topic_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_to_calculate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_experiment_result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_subsamples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_rubrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_languages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recalculate_test_thetas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.rank_metric.quality_of_models" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Возвращает метрики качества тематической модели.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры</dt>
 <dd class="field-odd"><ul class="simple">
@@ -298,16 +262,13 @@
 например: bcg_topic_list = [„topic_0“]</p></li>
 <li><p><strong>metrics_to_calculate</strong> (<em>list of str</em><em> (</em><em>'analogy'</em><em>, </em><em>'eucl'</em><em>)</em>) – список названий мер близости,
 используемых для ранжирования</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – тип данных („test“ или „val“)</p></li>
 <li><p><strong>path_model</strong> (<em>str</em>) – путь до тематической модели</p></li>
 <li><p><strong>path_experiment_result</strong> (<em>str</em>) – путь до папки, куда сохраняются результаты модели</p></li>
-<li><p><strong>matrix_norm_metric</strong> (<em>callable</em>) – способ измерения нормы матрицы векторов
-например: matrix_norm_metric = np.linalg.norm</p></li>
 <li><p><strong>path_subsamples</strong> (<em>str</em>) – путь к файлу в формате json, содержащему подвыборки индексов документов,
 по которым будет производиться поиск</p></li>
 <li><p><strong>path_rubrics</strong> (<em>str</em>) – путь к json-файлу, где по doc_id содержится его рубрика</p></li>
 <li><p><strong>path_test</strong> (<em>str</em>) – путь к папке с txt-файлами, по которым будут считаться метрики</p></li>
-<li><p><strong>current_languages</strong> (<em>list of str</em>) – названия языков, используемых для подсчёта метрик</p></li>
+<li><p><strong>current_languages</strong> (<em>list</em>) – названия языков, используемых для подсчёта метрик</p></li>
 <li><p><strong>recalculate_test_thetas</strong> (<em>bool</em>) – признак необходимости вычислять матрицы Тэта для тестовых данных
 - True означает пересчитать Тэты
 - False означает загрузить существующие Тэты</p></li>
@@ -322,9 +283,10 @@
 </dl>
 </dd></dl>
 
-<span class="target" id="module-ap.utils.search_quality"></span><dl class="py function">
+<span class="target" id="module-ap.utils.search_quality"></span><p>Модуль для вычисления качества тематической модели.</p>
+<dl class="py function">
 <dt class="sig sig-object py" id="ap.utils.search_quality.calculate_search_quality">
-<span class="sig-prename descclassname"><span class="pre">ap.utils.search_quality.</span></span><span class="sig-name descname"><span class="pre">calculate_search_quality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_experiment</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.search_quality.calculate_search_quality" title="Ссылка на это определение">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">ap.utils.search_quality.</span></span><span class="sig-name descname"><span class="pre">calculate_search_quality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_experiment</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.search_quality.calculate_search_quality" title="Ссылка на это определение">¶</a></dt>
 <dd><dl class="simple">
 <dt>Вычисление качества модели по 6 метрикам:</dt><dd><ul class="simple">
 <li><p>Средняя частота УДК,</p></li>
@@ -350,10 +312,15 @@
 </dd>
 </dl>
 </li>
+<li><p>config_experiment[«bcg_topic_list»] (typing.Optional[typing.List[str]]): список фоновых тем,</p></li>
 <li><p>config_experiment[„metrics_to_calculate“] (str): название меры близости („analogy“ или „eucl“),</p></li>
 <li><p>config_experiment[„path_train_thetas“] (str): путь до центроид</p></li>
 <li><p>config_experiment[„recalculate_train_centroids“] (bool): признак необходимости вычислять центроиды</p></li>
 <li><p>config_experiment[„recalculate_test_thetas“] (bool): признак необходимости вычислять матрицы Тэта для                 тестовых данных</p></li>
+<li><p>config_experiment[«languages_for_metric_calculation»] (list): названия языков,                 используемых для подсчёта метрик</p></li>
+<li><p>config_experiment[„path_test“] (str): путь до тестовых данных</p></li>
+<li><p>config_experiment[„path_subsamples_list“] (list): список путей к json-файлам, содержащим                 подвыборки индексов документов, по которым будет производиться поиск</p></li>
+<li><p>config_experiment[„path_rubrics_list“] (list):  список путей к json-файлам с рубриками,                 где по doc_id содержится рубрика документа</p></li>
 </ul>
 </p>
 </dd>
@@ -368,41 +335,18 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ap.utils.search_quality.dump_train_centroids">
-<span class="sig-prename descclassname"><span class="pre">ap.utils.search_quality.</span></span><span class="sig-name descname"><span class="pre">dump_train_centroids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bcg_topic_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_train_centroids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.search_quality.dump_train_centroids" title="Ссылка на это определение">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">ap.utils.search_quality.</span></span><span class="sig-name descname"><span class="pre">dump_train_centroids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bcg_topic_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_languages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_train_centroids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.search_quality.dump_train_centroids" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Вычисляет центроиды, необходимые для преобразования текста из одного языка в другой.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model_path</strong> (<em>str</em>) – путь до тематичекой модели</p></li>
 <li><p><strong>bcg_topic_list</strong> (<em>list</em>) – список тем, которые не будут использоваться для построения</p></li>
+<li><p><strong>current_languages</strong> (<em>list</em>) – названия языков, используемых для подсчёта метрик</p></li>
 <li><p><strong>path_train_centroids</strong> (<em>str</em>) – путь для выгрузки центроид</p></li>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<span class="target" id="module-ap.utils.subsamples_creator"></span><dl class="py class">
-<dt class="sig sig-object py" id="ap.utils.subsamples_creator.MakeSubsamples">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.utils.subsamples_creator.</span></span><span class="sig-name descname"><span class="pre">MakeSubsamples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">languages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_save_subsamples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_rubrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsample_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.subsamples_creator.MakeSubsamples" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Класс для сохранения поисковых подвыборок.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Параметры</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>languages</strong> (<em>list</em>) – список называний языков, используемых в подвыборгках</p></li>
-<li><p><strong>path_to_save_subsamples</strong> (<em>str</em>) – путь для сохранения файла с подвыборками в формате jsonъ</p></li>
-<li><p><strong>path_to_data</strong> (<em>str</em>) – путь к данным (в формате txt), для которых создаются подвыборки</p></li>
-<li><p><strong>path_rubrics</strong> (<em>str</em>) – путь к json файлу с рубриками документов (doc_id -&gt; рубрика)</p></li>
-<li><p><strong>mode</strong> (<em>'test'</em><em> or </em><em>'wiki'</em>) – вид данных, для которых будут создаваться подвыборки</p></li>
-<li><p><strong>subsample_size</strong> (<em>int</em>) – размер подавборок, значение по умолчанию 1000.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="ap.utils.subsamples_creator.MakeSubsamples.get_subsamples">
-<span class="sig-name descname"><span class="pre">get_subsamples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.subsamples_creator.MakeSubsamples.get_subsamples" title="Ссылка на это определение">¶</a></dt>
-<dd><p>Функция, сохраняющая поисковые подвыборки индексов документов.</p>
-</dd></dl>
-
 </dd></dl>
 
 <span class="target" id="module-ap.utils.vowpal_wabbit"></span><p>Класс для работы с данными в формате Vowpal Wabbit.</p>
@@ -443,7 +387,76 @@
 
 </dd></dl>
 
-<span class="target" id="module-ap.utils.vowpal_wabbit_bpe"></span></section>
+<span class="target" id="module-ap.utils.vowpal_wabbit_bpe"></span><p>Модуль для работы с данными в формате Vowpal Wabbit.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ap.utils.vowpal_wabbit_bpe.VowpalWabbitBPE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ap.utils.vowpal_wabbit_bpe.</span></span><span class="sig-name descname"><span class="pre">VowpalWabbitBPE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bpe_models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_counters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.vowpal_wabbit_bpe.VowpalWabbitBPE" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Класс для сохранения VW файлов с BPE преобразованием.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.utils.vowpal_wabbit_bpe.VowpalWabbitBPE.convert_doc">
+<span class="sig-name descname"><span class="pre">convert_doc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Counter</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.vowpal_wabbit_bpe.VowpalWabbitBPE.convert_doc" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Конвертирует исходный документ в формат BOW.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>doc</strong> (<em>dict</em>) – словарь язык -&gt; текст документа.</p>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>словарь язык -&gt; BOW документа. Если use_counters==True, словарь в виде Counter.</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>res (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.utils.vowpal_wabbit_bpe.VowpalWabbitBPE.convert_to_bow">
+<span class="sig-name descname"><span class="pre">convert_to_bow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Counter</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ap.utils.vowpal_wabbit_bpe.VowpalWabbitBPE.convert_to_bow" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Конвертирует набор документов в BOW представление (см. VowpalWabbit.convet_doct).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – словарь айди документа -&gt; документ.</p>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>словарь айди документа -&gt; документ в виде BOW.</p>
+</dd>
+<dt class="field-odd">Тип результата</dt>
+<dd class="field-odd"><p>sessions_bow_messages (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.utils.vowpal_wabbit_bpe.VowpalWabbitBPE.save_bow">
+<span class="sig-name descname"><span class="pre">save_bow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sessions_bow_messages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Counter</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.vowpal_wabbit_bpe.VowpalWabbitBPE.save_bow" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Сохраняет BOW представление документов.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target_file</strong> (<em>str</em>) – путь к файлу.</p></li>
+<li><p><strong>sessions_bow_messages</strong> (<em>dict</em>) – doc_id -&gt; dict: modality -&gt; dict: token -&gt; count.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ap.utils.vowpal_wabbit_bpe.VowpalWabbitBPE.save_docs">
+<span class="sig-name descname"><span class="pre">save_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ap.utils.vowpal_wabbit_bpe.VowpalWabbitBPE.save_docs" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Конвертирует документы в BOW и сохраняет их.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target_file</strong> – путь к файлу.</p></li>
+<li><p><strong>doc</strong> – сырые документы.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 
 
             <div class="clearer"></div>

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n&ap/topic_model/v1/TopicModelBase.proto\x12\x11\x61p.topic_model.v1\"\x1f\n\x05\x44ocId\x12\n\n\x02Hi\x18\x01 \x01(\x06\x12\n\n\x02Lo\x18\x02 \x01(\x06\"\x1b\n\tEmbedding\x12\x0e\n\x06Vector\x18\x01 \x03(\x02\"&\n\x08Modality\x12\x0b\n\x03Key\x18\x01 \x01(\t\x12\r\n\x05Value\x18\x02 \x01(\t\"q\n\x08\x44ocument\x12$\n\x02Id\x18\x01 \x01(\x0b\x32\x18.ap.topic_model.v1.DocId\x12\x0e\n\x06Tokens\x18\x02 \x03(\t\x12/\n\nModalities\x18\x03 \x03(\x0b\x32\x1b.ap.topic_model.v1.Modality\">\n\x0c\x44ocumentPack\x12.\n\tDocuments\x18\x01 \x03(\x0b\x32\x1b.ap.topic_model.v1.Document\"7\n\x0eParallelDocIds\x12%\n\x03Ids\x18\x01 \x03(\x0b\x32\x18.ap.topic_model.v1.DocIdb\x06proto3'
+  serialized_pb=b'\n&ap/topic_model/v1/TopicModelBase.proto\x12\x11\x61p.topic_model.v1\"\x1f\n\x05\x44ocId\x12\n\n\x02Hi\x18\x01 \x01(\x06\x12\n\n\x02Lo\x18\x02 \x01(\x06\"\x1b\n\tEmbedding\x12\x0e\n\x06Vector\x18\x01 \x03(\x02\"&\n\x08Modality\x12\x0b\n\x03Key\x18\x01 \x01(\t\x12\r\n\x05Value\x18\x02 \x01(\t\"q\n\x08\x44ocument\x12$\n\x02Id\x18\x01 \x01(\x0b\x32\x18.ap.topic_model.v1.DocId\x12\x0e\n\x06Tokens\x18\x02 \x03(\t\x12/\n\nModalities\x18\x03 \x03(\x0b\x32\x1b.ap.topic_model.v1.Modality\">\n\x0c\x44ocumentPack\x12.\n\tDocuments\x18\x01 \x03(\x0b\x32\x1b.ap.topic_model.v1.Document\"7\n\x0eParallelDocIds\x12%\n\x03Ids\x18\x01 \x03(\x0b\x32\x18.ap.topic_model.v1.DocId\"_\n\x10TopicExplanation\x12\r\n\x05Topic\x18\x01 \x01(\t\x12\x10\n\x08NewTopic\x18\x02 \x01(\t\x12\x15\n\rRemovedTokens\x18\x03 \x03(\t\x12\x13\n\x0b\x41\x64\x64\x65\x64Tokens\x18\x04 \x03(\tb\x06proto3'
 )
 
 
@@ -244,6 +244,59 @@ _PARALLELDOCIDS = _descriptor.Descriptor(
   serialized_end=397,
 )
 
+
+_TOPICEXPLANATION = _descriptor.Descriptor(
+  name='TopicExplanation',
+  full_name='ap.topic_model.v1.TopicExplanation',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='Topic', full_name='ap.topic_model.v1.TopicExplanation.Topic', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='NewTopic', full_name='ap.topic_model.v1.TopicExplanation.NewTopic', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='RemovedTokens', full_name='ap.topic_model.v1.TopicExplanation.RemovedTokens', index=2,
+      number=3, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='AddedTokens', full_name='ap.topic_model.v1.TopicExplanation.AddedTokens', index=3,
+      number=4, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=399,
+  serialized_end=494,
+)
+
 _DOCUMENT.fields_by_name['Id'].message_type = _DOCID
 _DOCUMENT.fields_by_name['Modalities'].message_type = _MODALITY
 _DOCUMENTPACK.fields_by_name['Documents'].message_type = _DOCUMENT
@@ -254,6 +307,7 @@ DESCRIPTOR.message_types_by_name['Modality'] = _MODALITY
 DESCRIPTOR.message_types_by_name['Document'] = _DOCUMENT
 DESCRIPTOR.message_types_by_name['DocumentPack'] = _DOCUMENTPACK
 DESCRIPTOR.message_types_by_name['ParallelDocIds'] = _PARALLELDOCIDS
+DESCRIPTOR.message_types_by_name['TopicExplanation'] = _TOPICEXPLANATION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 DocId = _reflection.GeneratedProtocolMessageType('DocId', (_message.Message,), {
@@ -297,6 +351,13 @@ ParallelDocIds = _reflection.GeneratedProtocolMessageType('ParallelDocIds', (_me
   # @@protoc_insertion_point(class_scope:ap.topic_model.v1.ParallelDocIds)
   })
 _sym_db.RegisterMessage(ParallelDocIds)
+
+TopicExplanation = _reflection.GeneratedProtocolMessageType('TopicExplanation', (_message.Message,), {
+  'DESCRIPTOR' : _TOPICEXPLANATION,
+  '__module__' : 'ap.topic_model.v1.TopicModelBase_pb2'
+  # @@protoc_insertion_point(class_scope:ap.topic_model.v1.TopicExplanation)
+  })
+_sym_db.RegisterMessage(TopicExplanation)
 
 
 # @@protoc_insertion_point(module_scope)

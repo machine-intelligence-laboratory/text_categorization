@@ -20,6 +20,11 @@ class TopicModelInferenceServiceStub(object):
                 request_serializer=ap_dot_topic__model_dot_v1_dot_TopicModelInference__pb2.GetDocumentsEmbeddingRequest.SerializeToString,
                 response_deserializer=ap_dot_topic__model_dot_v1_dot_TopicModelInference__pb2.GetDocumentsEmbeddingResponse.FromString,
                 )
+        self.GetTopicExplanation = channel.unary_unary(
+                '/ap.topic_model.v1.TopicModelInferenceService/GetTopicExplanation',
+                request_serializer=ap_dot_topic__model_dot_v1_dot_TopicModelInference__pb2.GetTopicExplanationRequest.SerializeToString,
+                response_deserializer=ap_dot_topic__model_dot_v1_dot_TopicModelInference__pb2.GetTopicExplanationResponse.FromString,
+                )
 
 
 class TopicModelInferenceServiceServicer(object):
@@ -33,6 +38,12 @@ class TopicModelInferenceServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetTopicExplanation(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_TopicModelInferenceServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -40,6 +51,11 @@ def add_TopicModelInferenceServiceServicer_to_server(servicer, server):
                     servicer.GetDocumentsEmbedding,
                     request_deserializer=ap_dot_topic__model_dot_v1_dot_TopicModelInference__pb2.GetDocumentsEmbeddingRequest.FromString,
                     response_serializer=ap_dot_topic__model_dot_v1_dot_TopicModelInference__pb2.GetDocumentsEmbeddingResponse.SerializeToString,
+            ),
+            'GetTopicExplanation': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTopicExplanation,
+                    request_deserializer=ap_dot_topic__model_dot_v1_dot_TopicModelInference__pb2.GetTopicExplanationRequest.FromString,
+                    response_serializer=ap_dot_topic__model_dot_v1_dot_TopicModelInference__pb2.GetTopicExplanationResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -66,5 +82,22 @@ class TopicModelInferenceService(object):
         return grpc.experimental.unary_unary(request, target, '/ap.topic_model.v1.TopicModelInferenceService/GetDocumentsEmbedding',
             ap_dot_topic__model_dot_v1_dot_TopicModelInference__pb2.GetDocumentsEmbeddingRequest.SerializeToString,
             ap_dot_topic__model_dot_v1_dot_TopicModelInference__pb2.GetDocumentsEmbeddingResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetTopicExplanation(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/ap.topic_model.v1.TopicModelInferenceService/GetTopicExplanation',
+            ap_dot_topic__model_dot_v1_dot_TopicModelInference__pb2.GetTopicExplanationRequest.SerializeToString,
+            ap_dot_topic__model_dot_v1_dot_TopicModelInference__pb2.GetTopicExplanationResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

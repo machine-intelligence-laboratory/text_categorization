@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n+ap/topic_model/v1/TopicModelInference.proto\x12\x11\x61p.topic_model.v1\x1a&ap/topic_model/v1/TopicModelBase.proto\"M\n\x1cGetDocumentsEmbeddingRequest\x12-\n\x04Pack\x18\x01 \x01(\x0b\x32\x1f.ap.topic_model.v1.DocumentPack\"Q\n\x1dGetDocumentsEmbeddingResponse\x12\x30\n\nEmbeddings\x18\x01 \x03(\x0b\x32\x1c.ap.topic_model.v1.Embedding2\x9a\x01\n\x1aTopicModelInferenceService\x12|\n\x15GetDocumentsEmbedding\x12/.ap.topic_model.v1.GetDocumentsEmbeddingRequest\x1a\x30.ap.topic_model.v1.GetDocumentsEmbeddingResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n+ap/topic_model/v1/TopicModelInference.proto\x12\x11\x61p.topic_model.v1\x1a&ap/topic_model/v1/TopicModelBase.proto\"M\n\x1cGetDocumentsEmbeddingRequest\x12-\n\x04Pack\x18\x01 \x01(\x0b\x32\x1f.ap.topic_model.v1.DocumentPack\"Q\n\x1dGetDocumentsEmbeddingResponse\x12\x30\n\nEmbeddings\x18\x01 \x03(\x0b\x32\x1c.ap.topic_model.v1.Embedding\"F\n\x1aGetTopicExplanationRequest\x12(\n\x03\x44oc\x18\x01 \x01(\x0b\x32\x1b.ap.topic_model.v1.Document\"W\n\x1bGetTopicExplanationResponse\x12\x38\n\x0b\x45xplanation\x18\x01 \x01(\x0b\x32#.ap.topic_model.v1.TopicExplanation2\x92\x02\n\x1aTopicModelInferenceService\x12|\n\x15GetDocumentsEmbedding\x12/.ap.topic_model.v1.GetDocumentsEmbeddingRequest\x1a\x30.ap.topic_model.v1.GetDocumentsEmbeddingResponse\"\x00\x12v\n\x13GetTopicExplanation\x12-.ap.topic_model.v1.GetTopicExplanationRequest\x1a..ap.topic_model.v1.GetTopicExplanationResponse\"\x00\x62\x06proto3'
   ,
   dependencies=[ap_dot_topic__model_dot_v1_dot_TopicModelBase__pb2.DESCRIPTOR,])
 
@@ -90,10 +90,78 @@ _GETDOCUMENTSEMBEDDINGRESPONSE = _descriptor.Descriptor(
   serialized_end=266,
 )
 
+
+_GETTOPICEXPLANATIONREQUEST = _descriptor.Descriptor(
+  name='GetTopicExplanationRequest',
+  full_name='ap.topic_model.v1.GetTopicExplanationRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='Doc', full_name='ap.topic_model.v1.GetTopicExplanationRequest.Doc', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=268,
+  serialized_end=338,
+)
+
+
+_GETTOPICEXPLANATIONRESPONSE = _descriptor.Descriptor(
+  name='GetTopicExplanationResponse',
+  full_name='ap.topic_model.v1.GetTopicExplanationResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='Explanation', full_name='ap.topic_model.v1.GetTopicExplanationResponse.Explanation', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=340,
+  serialized_end=427,
+)
+
 _GETDOCUMENTSEMBEDDINGREQUEST.fields_by_name['Pack'].message_type = ap_dot_topic__model_dot_v1_dot_TopicModelBase__pb2._DOCUMENTPACK
 _GETDOCUMENTSEMBEDDINGRESPONSE.fields_by_name['Embeddings'].message_type = ap_dot_topic__model_dot_v1_dot_TopicModelBase__pb2._EMBEDDING
+_GETTOPICEXPLANATIONREQUEST.fields_by_name['Doc'].message_type = ap_dot_topic__model_dot_v1_dot_TopicModelBase__pb2._DOCUMENT
+_GETTOPICEXPLANATIONRESPONSE.fields_by_name['Explanation'].message_type = ap_dot_topic__model_dot_v1_dot_TopicModelBase__pb2._TOPICEXPLANATION
 DESCRIPTOR.message_types_by_name['GetDocumentsEmbeddingRequest'] = _GETDOCUMENTSEMBEDDINGREQUEST
 DESCRIPTOR.message_types_by_name['GetDocumentsEmbeddingResponse'] = _GETDOCUMENTSEMBEDDINGRESPONSE
+DESCRIPTOR.message_types_by_name['GetTopicExplanationRequest'] = _GETTOPICEXPLANATIONREQUEST
+DESCRIPTOR.message_types_by_name['GetTopicExplanationResponse'] = _GETTOPICEXPLANATIONRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 GetDocumentsEmbeddingRequest = _reflection.GeneratedProtocolMessageType('GetDocumentsEmbeddingRequest', (_message.Message,), {
@@ -110,6 +178,20 @@ GetDocumentsEmbeddingResponse = _reflection.GeneratedProtocolMessageType('GetDoc
   })
 _sym_db.RegisterMessage(GetDocumentsEmbeddingResponse)
 
+GetTopicExplanationRequest = _reflection.GeneratedProtocolMessageType('GetTopicExplanationRequest', (_message.Message,), {
+  'DESCRIPTOR' : _GETTOPICEXPLANATIONREQUEST,
+  '__module__' : 'ap.topic_model.v1.TopicModelInference_pb2'
+  # @@protoc_insertion_point(class_scope:ap.topic_model.v1.GetTopicExplanationRequest)
+  })
+_sym_db.RegisterMessage(GetTopicExplanationRequest)
+
+GetTopicExplanationResponse = _reflection.GeneratedProtocolMessageType('GetTopicExplanationResponse', (_message.Message,), {
+  'DESCRIPTOR' : _GETTOPICEXPLANATIONRESPONSE,
+  '__module__' : 'ap.topic_model.v1.TopicModelInference_pb2'
+  # @@protoc_insertion_point(class_scope:ap.topic_model.v1.GetTopicExplanationResponse)
+  })
+_sym_db.RegisterMessage(GetTopicExplanationResponse)
+
 
 
 _TOPICMODELINFERENCESERVICE = _descriptor.ServiceDescriptor(
@@ -119,8 +201,8 @@ _TOPICMODELINFERENCESERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=269,
-  serialized_end=423,
+  serialized_start=430,
+  serialized_end=704,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetDocumentsEmbedding',
@@ -129,6 +211,16 @@ _TOPICMODELINFERENCESERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_GETDOCUMENTSEMBEDDINGREQUEST,
     output_type=_GETDOCUMENTSEMBEDDINGRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='GetTopicExplanation',
+    full_name='ap.topic_model.v1.TopicModelInferenceService.GetTopicExplanation',
+    index=1,
+    containing_service=None,
+    input_type=_GETTOPICEXPLANATIONREQUEST,
+    output_type=_GETTOPICEXPLANATIONRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
