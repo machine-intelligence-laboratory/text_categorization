@@ -6,10 +6,9 @@ RUN pip install -r ./requirements.txt
 
 COPY ./protos ./protos
 COPY ./generate.sh ./generate.sh
-COPY ./train_conf.yaml ./train_conf.yaml
 RUN ./generate.sh
 
 COPY ap ./ap
 
 
-ENTRYPOINT python -m ap.inference.server --model=/model --bpe=/bpe --rubric=/rubrics
+ENTRYPOINT python -m ap.inference.server --model=/model
