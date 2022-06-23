@@ -6,7 +6,7 @@ RUN pip install -r ./requirements.txt
 
 COPY ./protos ./protos
 COPY ./generate.sh ./generate.sh
-RUN ./generate.sh
+RUN /bin/sh -c bash ./generate.sh
 
 COPY ap ./ap
 
