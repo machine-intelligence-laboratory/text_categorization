@@ -7,5 +7,5 @@ services:
     volumes:
       - ${CONFIG}/:/models
       - ${DATA_PATH}/:/data
-    entrypoint: python -m ap.train.server --config=/models --data=/data
+    entrypoint: python -m ap.train.server --config=/config --data=/data
 
