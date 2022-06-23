@@ -5,7 +5,7 @@ services:
     ports:
       - "50051:50051"
     volumes:
-      - ${CONFIG}/:/models
+      - ${CONFIG}/:/config
       - ${DATA_PATH}/:/data
     entrypoint: python -m ap.train.server --config=/config --data=/data
 
