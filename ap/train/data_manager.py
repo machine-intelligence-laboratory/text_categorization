@@ -48,7 +48,7 @@ class ModelDataManager:
         self.average_rubric_size = int(len(self.rubrics_train) / len(set(self.rubrics_train.values())))
 
         self.train_path = self.config["train_vw_path"]
-        self.new_background_path = self.config["new_background_path"]
+        self.new_background_path = self.config.get("new_background_path", None)
 
         path_experiment = Path(self.config["path_experiment"])
         path_experiment.mkdir(parents=True, exist_ok=True)
@@ -97,7 +97,7 @@ class ModelDataManager:
 
     def generate_background_batches(self):
         import artm
-        if not os.path.exists(self.new_background_path):
+        if self.new_background_path is None or not os.path.exists(self.new_background_path):
             return
         with tempfile.TemporaryDirectory(dir=self._data_dir) as temp_dir:
             batch_vectorizer = artm.BatchVectorizer(data_path=self.new_background_path, data_format='vowpal_wabbit',

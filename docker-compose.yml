@@ -6,3 +6,6 @@ services:
       - "50051:50051"
     volumes:
       - ${MODEL_PATH}/:/model
+      - ${BPE_PATH}/:/bpe
+      - ${RUBRIC_PATH}/:/rubrics
+    entrypoint: python -m ap.inference.server --model=/model --bpe=/bpe --rubric=/rubric

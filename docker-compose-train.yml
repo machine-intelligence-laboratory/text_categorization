@@ -7,5 +7,5 @@ services:
     volumes:
       - ${CONFIG}/:/config
       - ${DATA_PATH}/:/data
-    entrypoint: python -m ap.train.server --config=./ap/utils/experiment_config.yml --data=/data
+    entrypoint: python -m ap.train.server --config=./config --data=/data
 
