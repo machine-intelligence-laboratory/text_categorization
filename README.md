@@ -22,9 +22,9 @@ python -m pytest ./tests
 ```
 Для локального запуска сервиса получения векторных представлений, выполните команду
 ```bash
-python -m ap.inference.server --model={path_to_model}
+python -m ap.inference.server --model={path_to_model} --bpe={path_to_bpe_model} --rubric={path_to_rubric}
 ```
-где `path_to_model` - путь к каталогу с обученной моделью bigARTM.
+где `path_to_model` - путь к каталогу с обученной моделью bigARTM, `path_to_bpe_model` - путь к каталогу с обученными BPE-моделями, `path_to_rubric` - путь к каталогу json-файлами с рубриками документов.
 
 Для локального запуска сервиса обучения моделей запустите
 ```bash
