@@ -7,5 +7,5 @@ services:
     volumes:
       - ${MODEL_PATH}/:/model
       - ${BPE_PATH}/:/bpe
-      - ${RUBRIC_PATH}/:/rubrics
+      - ${RUBRIC_PATH}/:/rubric
     entrypoint: python -m ap.inference.server --model=/model --bpe=/bpe --rubric=/rubric
