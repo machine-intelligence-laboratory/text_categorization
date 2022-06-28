@@ -1,6 +1,6 @@
 import grpc
 
-from ap.topic_model.v1.TopicModelBase_pb2 import DocId, Document, DocumentPack
+from ap.topic_model.v1.TopicModelBase_pb2 import DocId, Document, DocumentPack, Modality
 from ap.topic_model.v1.TopicModelInference_pb2 import GetDocumentsEmbeddingRequest
 from ap.topic_model.v1.TopicModelInference_pb2_grpc import (
     TopicModelInferenceServiceStub,
@@ -21,7 +21,7 @@ if __name__ == "__main__":
                 "sobr",
                 "seguida",
             ],
-            Language="es",
+            Modalities=[Modality(Key="lang", Value='es')],
         ),
         Document(
             Id=DocId(Lo=0, Hi=1),
@@ -35,7 +35,7 @@ if __name__ == "__main__":
                 "coherente",
                 "ook",
             ],
-            Language="nl",
+            Modalities=[Modality(Key="lang", Value='nl')],
         ),
     ]
     resp = grpc_stub.GetDocumentsEmbedding(
