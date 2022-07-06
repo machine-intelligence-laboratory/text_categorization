@@ -1,225 +1,199 @@
-import datetime
+import concurrent
 import logging
-import os
-import tempfile
-import uuid
-import json
+import typing
 
 from concurrent import futures
-from collections import Counter
+from time import sleep
 
-import artm
 import click
 import grpc
-import pandas as pd
+import yaml
 
-from ap.topic_model.v1.TopicModelBase_pb2 import Embedding, TopicExplanation
-from ap.topic_model.v1.TopicModelInference_pb2 import (
-    GetDocumentsEmbeddingRequest,
-    GetDocumentsEmbeddingResponse, GetTopicExplanationRequest, GetTopicExplanationResponse,
+from ap.topic_model.v1.TopicModelTrain_pb2 import (
+    AddDocumentsToModelRequest,
+    AddDocumentsToModelResponse,
+    StartTrainTopicModelRequest,
+    StartTrainTopicModelResponse,
+    TrainTopicModelStatusRequest,
+    TrainTopicModelStatusResponse, UpdateModelConfigurationRequest, UpdateModelConfigurationResponse,
 )
-from ap.topic_model.v1.TopicModelInference_pb2_grpc import (
-    TopicModelInferenceServiceServicer,
-    add_TopicModelInferenceServiceServicer_to_server,
+from ap.topic_model.v1.TopicModelTrain_pb2_grpc import (
+    TopicModelTrainServiceServicer,
+    add_TopicModelTrainServiceServicer_to_server,
 )
+from ap.train.data_manager import ModelDataManager, NoTranslationException
+from ap.train.metrics import run_metrics_server, inc_metric
+from ap.train.trainer import ModelTrainer
 from ap.utils.bpe import load_bpe_models
-from ap.utils.general import id_to_str, get_modalities
-from ap.utils.prediction_visualization import augment_text
+from ap.utils.general import docs_from_pack, id_to_str
 from ap.utils.vowpal_wabbit_bpe import VowpalWabbitBPE
 
 
-class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
-    def __init__(self, artm_model, bpe_models, work_dir, rubric_dir):
+class TopicModelTrainServiceImpl(TopicModelTrainServiceServicer):
+    def __init__(
+            self,
+            train_conf: str,
+            data_dir: str
+    ):
         """
-        Создает инференс сервер.
+        Инициализирует сервер.
 
         Args:
-            artm_model (artm.ARTM): тематическая модель
-            bpe_models: загруженные BPE модели
-            work_dir: рабочая директория для сохранения временных файлов
-            rubric_dir: директория, где хранятся json-файлы с рубриками
+            train_conf (typing.Dict[str, typing.Any]): словарь с конфигурацией обучения
+            data_dir (str): путь к директории с данными
         """
-        self._artm_model =  artm_model
+        self._executor = concurrent.futures.ProcessPoolExecutor(max_workers=3)
+        self._training_future = None
 
+        with open(train_conf, "r") as file:
+            self._config = yaml.safe_load(file)
+
+        self._executor.submit(run_metrics_server, self._config)
+        sleep(10)
+
+        bpe_models = load_bpe_models(self._config["BPE_models"])
         self._vw = VowpalWabbitBPE(bpe_models)
-        self._work_dir = work_dir
-        self._rubric_dir = rubric_dir
 
-    def _get_lang(self, doc):
-        for modality in doc.Modalities:
-            if modality.Key == 'lang':
-                return modality.Value
+        self._data_manager = ModelDataManager(data_dir, train_conf)
+        self._trainer = ModelTrainer(self._data_manager)
 
-        raise Exception("No language")
-
-    def _create_batches(self, dock_pack, batches_dir):
-        with open(os.path.join(self._rubric_dir, 'udk_codes.json'), "r") as file:
-            udk_codes = json.loads(file.read())
-
-        with open(os.path.join(self._rubric_dir, 'rubrics_train_grnti.json'), "r") as file:
-            grnti_codes = json.load(file)
-
-        documents = []
-        vocab = set()
-
-        for doc in dock_pack.Documents:
-            lang = self._get_lang(doc)
-            modality = ["@" + lang]
-            doc_id = id_to_str(doc.Id)
-
-            doc_vw_dict = {lang: " ".join(doc.Tokens)}
-            if doc_id in udk_codes:
-                modality += ["@UDK"]
-                doc_vw_dict.update({"@UDK": udk_codes[doc_id]})
-            if doc_id in grnti_codes:
-                modality += ["@GRNTI"]
-                if grnti_codes[doc_id] != "нет":
-                    doc_vw_dict.update({"@GRNTI": grnti_codes[doc_id]})
-
-            vw_doc = self._vw.convert_doc(doc_vw_dict)
-
-            for modl in modality:
-                key = modl
-                vw_doc_key = modl if modl in ["@UDK", "@GRNTI"] else modl[1:]
-                documents.append((id_to_str(doc.Id), key, vw_doc[vw_doc_key]))
-                vocab.update(((key, token) for token in vw_doc[vw_doc_key].keys()))
-
-        batch = artm.messages.Batch()
-        batch.id = str(uuid.uuid4())
-        dictionary = {}
-        use_bag_of_words = True
-
-        for i, (modality, token) in enumerate(vocab):
-            batch.token.append(token)
-            batch.class_id.append(modality)
-            dictionary[(modality, token)] = i
-
-        for idx, modality, doc in documents:
-            item = batch.item.add()
-            item.title = idx
-
-            if use_bag_of_words:
-                local_dict = {}
-                for token in doc:
-                    if token not in local_dict:
-                        local_dict[token] = 0
-                    local_dict[token] += 1
-
-                for key, value in local_dict.items():
-                    item.token_id.append(dictionary[(modality, key)])
-                    item.token_weight.append(value)
-            else:
-                for token in doc:
-                    item.token_id.append(dictionary[(modality, token)])
-                    item.token_weight.append(1.0)
-
-        with open(os.path.join(batches_dir, "aaaaaa.batch"), "wb") as fout:
-            fout.write(batch.SerializeToString())
-
-    def _transform(self, docs):
-        with tempfile.TemporaryDirectory(dir=self._work_dir) as temp_dir:
-            batches_dir = os.path.join(temp_dir, "batches")
-            os.makedirs(batches_dir)
-            self._create_batches(docs, batches_dir)
-            batch_vectorizer = artm.BatchVectorizer(
-                data_format="batches", data_path=batches_dir,
-            )
-
-            return self._artm_model.transform(batch_vectorizer)
-
-    def GetDocumentsEmbedding(self, request: GetDocumentsEmbeddingRequest, context):
+    def AddDocumentsToModel(
+            self, request: AddDocumentsToModelRequest, context
+    ) -> AddDocumentsToModelResponse:
         """
-        Возвращает ембеддинги документов.
+        Добавляет документы в модель.
 
         Args:
-            request (GetDocumentsEmbeddingRequest): реквест
-            context: контекст, не используется
-
-        Returns:
-            (GetDocumentsEmbeddingResponse): Ответ
-        """
-        logging.info(
-            "Got request to calculate embeddings for %d documents",
-            len(request.Pack.Documents),
-        )
-        processing_start = datetime.datetime.now()
-        embeddings = self._transform(request.Pack)  # docs_from_pack(request.Pack))
-
-        logging.info(
-            "Embeddings calculated, spent %.2f seconds",
-            (datetime.datetime.now() - processing_start).total_seconds(),
-        )
-
-        emb_doc = []
-        for doc in request.Pack.Documents:
-            emb = embeddings[f"{doc.Id.Hi}_{doc.Id.Lo}"]
-            if isinstance(emb, pd.DataFrame):
-                emb_doc += [Embedding(Vector=embeddings[f"{doc.Id.Hi}_{doc.Id.Lo}"].iloc[:, 0].tolist())]
-            else:
-                emb_doc += [Embedding(Vector=embeddings[f"{doc.Id.Hi}_{doc.Id.Lo}"].tolist())]
-
-        return GetDocumentsEmbeddingResponse(
-            Embeddings=emb_doc
-        )
-
-    def GetTopicExplanation(self, request: GetTopicExplanationRequest, context) -> GetTopicExplanationResponse:
-        """
-        Объяснение тематической модели
-        Args:
-            request: grpc запрос, содержащий документ
+            request (AddDocumentsToModelRequest): запрос с документами
             context: не используется
 
         Returns:
-            Объяснение тематической модели
+            (AddDocumentsToModelResponse): Ответ
         """
-        with tempfile.TemporaryDirectory(dir=self._work_dir) as temp_dir:
-            doc_vw = {id_to_str(request.Doc.Id): get_modalities(request.Doc)}
-            vw_file = os.path.join(temp_dir, 'vw.txt')
-            print('doc_vw', doc_vw)
-            # self._vw.save_docs(vw_file, doc_vw)
-            with open(vw_file, 'w') as file:
-                to_write = []
-                for doc_id, mod_dict in doc_vw.items():
-                    line = f'{doc_id}'
-                    for mod, content in mod_dict.items():
-                        line += f' |@{mod} ' + \
-                                ' '.join([f'{token}:{count}' for token, count in Counter(content.split()).items()])
-                    line += '\n'
-                    to_write.append(line)
-                file.writelines(to_write)
-            interpretation = augment_text(self._artm_model, vw_file, os.path.join(temp_dir, 'target'))
-            return GetTopicExplanationResponse(Explanation=TopicExplanation(
-                                               Topic=interpretation[id_to_str(request.Doc.Id)]['topic_from'],
-                                               NewTopic=interpretation[id_to_str(request.Doc.Id)]['topic_to'],
-                                               RemovedTokens=interpretation[id_to_str(request.Doc.Id)]['Removed'],
-                                               AddedTokens=interpretation[id_to_str(request.Doc.Id)]['Added']))
+        try:
+            logging.info("AddDocumentsToModel")
+
+            docs = docs_from_pack(request.Collection)
+            grouped_docs = {}
+            for parallel_docs in request.ParallelDocuments:
+                base_id = id_to_str(parallel_docs.Ids[0])
+                grouped_docs[base_id] = docs[base_id]
+                for i in range(1, len(parallel_docs.Ids)):
+                    grouped_docs[base_id].update(docs[id_to_str(parallel_docs.Ids[i])])
+
+            self._data_manager.write_new_docs(self._vw, grouped_docs)
+
+            inc_metric('added_docs', len(grouped_docs))
+            self._data_manager.update_ds_metrics()
+        except NoTranslationException:
+            return AddDocumentsToModelResponse(
+                Status=AddDocumentsToModelResponse.AddDocumentsStatus.NO_TRANSLATION
+            )
+        except Exception as exception:
+            logging.error(exception)
+            return AddDocumentsToModelResponse(
+                Status=AddDocumentsToModelResponse.AddDocumentsStatus.EXCEPTION
+            )
+        return AddDocumentsToModelResponse(
+            Status=AddDocumentsToModelResponse.AddDocumentsStatus.OK
+        )
+
+    def StartTrainTopicModel(
+            self, request: StartTrainTopicModelRequest, context
+    ) -> StartTrainTopicModelResponse:
+        """
+        Запускает обучение.
+
+        Args:
+            request (StartTrainTopicModelRequest): запрос с типом обучения.
+            context: не используется.
+
+        Returns:
+            (StartTrainTopicModelResponse): Статус запуска.
+        """
+        logging.info("StartTrainTopicModel")
+
+        if self._training_future is not None and self._training_future.running():
+            return StartTrainTopicModelResponse(
+                Status=StartTrainTopicModelResponse.StartTrainTopicModelStatus.ALREADY_STARTED
+            )
+
+        self._training_future = self._executor.submit(
+            self._trainer.train_model, request.Type
+        )
+
+        return StartTrainTopicModelResponse(
+            Status=StartTrainTopicModelResponse.StartTrainTopicModelStatus.OK
+        )
+
+    def TrainTopicModelStatus(
+            self, request: TrainTopicModelStatusRequest, context
+    ) -> TrainTopicModelStatusResponse:
+        """
+        Возвращает статус текущей сессии обучения.
+
+        Args:
+            request (TrainTopicModelStatusRequest): пустой запрос
+            context: контекст, не используется
+
+        Returns
+            (TrainTopicModelStatusResponse): Статус
+        """
+        if self._training_future is None or (
+                self._training_future.done() and self._training_future.exception() is None
+        ):
+            return TrainTopicModelStatusResponse(
+                Status=TrainTopicModelStatusResponse.TrainTopicModelStatus.COMPLETE
+            )
+        elif not self._training_future.done():
+            return TrainTopicModelStatusResponse(
+                Status=TrainTopicModelStatusResponse.TrainTopicModelStatus.RUNNING
+            )
+        elif (
+                self._training_future.cancelled()
+                or self._training_future.exception() is not None
+        ):
+            logging.error(str(self._training_future.exception()))
+            return TrainTopicModelStatusResponse(
+                Status=TrainTopicModelStatusResponse.TrainTopicModelStatus.ABORTED
+            )
+
+    def UpdateModelConfiguration(self, request: UpdateModelConfigurationRequest,
+                                 context) -> UpdateModelConfigurationResponse:
+        """
+        Обновляет конфигурацию обучения
+
+        Args:
+            request: запрос, содержащий конфигурацию
+            context: не используется
+
+        Returns:
+            Статус - всегда ОК или исключение
+        """
+        self._data_manager.update_config(request.Configuration)
+        return UpdateModelConfigurationResponse(
+            Status=UpdateModelConfigurationResponse.UpdateModelConfigurationStatus.OK)
 
 
 @click.command()
 @click.option(
-    "--model", help="A path to a bigARTM model",
+    "--config", help="A path to experiment yaml config",
 )
 @click.option(
-    "--bpe", help="A path to a directory with BPE models",
+    "--data", help="A path to data directories",
 )
-@click.option(
-    "--rubric", help="A path to a directory with Rubric jsons",
-)
-def serve(model, bpe, rubric):
+def serve(config, data):
     """
-    Запуск инференс сервера.
+    Запускает сервер.
 
     Args:
-        model (str): путь к модели
-        bpe (str): путь к обученным BPE моделям
-        rubric (str): путь к директории с json-файлами рубрик
+        config (str): путь к yaml-конфигу для запуска обучения
+        data (str): путь к директории с данными
     """
     logging.basicConfig(level=logging.DEBUG)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    add_TopicModelInferenceServiceServicer_to_server(
-        TopicModelInferenceServiceImpl(
-            artm.load_artm_model(model), load_bpe_models(bpe), os.getcwd(), rubric
-        ),
+    add_TopicModelTrainServiceServicer_to_server(
+        TopicModelTrainServiceImpl(config, data),
         server,
     )
     server.add_insecure_port("[::]:50051")
