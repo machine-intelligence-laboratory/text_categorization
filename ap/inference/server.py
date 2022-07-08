@@ -80,9 +80,10 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
             vw_doc = self._vw.convert_doc(doc_vw_dict)
 
             for modl in modality:
-                key = modl if modl in ["@UDK", "@GRNTI"] else modl[1:]
-                documents.append((id_to_str(doc.Id), key, vw_doc[key]))
-                vocab.update(((key, token) for token in vw_doc[key].keys()))
+                key = modl
+                vw_doc_key = modl if modl in ["@UDK", "@GRNTI"] else modl[1:]
+                documents.append((id_to_str(doc.Id), key, vw_doc[vw_doc_key]))
+                vocab.update(((key, token) for token in vw_doc[vw_doc_key].keys()))
 
         batch = artm.messages.Batch()
         batch.id = str(uuid.uuid4())
