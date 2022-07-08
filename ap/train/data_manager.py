@@ -48,6 +48,8 @@ class ModelDataManager:
         self.average_rubric_size = int(len(self.rubrics_train) / len(set(self.rubrics_train.values())))
 
         self.train_path = self.config["train_vw_path"]
+        with open(self.train_path, 'a') as file:
+            pass
         self.new_background_path = self.config.get("new_background_path", None)
 
         path_experiment = Path(self.config["path_experiment"])
