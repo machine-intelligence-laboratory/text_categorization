@@ -1,5 +1,5 @@
 path_experiment: './best_model'
-path_wiki_train_batches: './data/wiki_100/batches_train'
+# path_wiki_train_batches: './data/wiki_100/batches_train'
 path_modality_distribution_wiki: './data/wiki_100/modality_distribution.yml'
 train_vw_path: './data/train_with_combined_grnti_69_rubric.txt'
 dictionary_path: './data/dictionary_train_BPE_wiki_100_120k_11k.txt'

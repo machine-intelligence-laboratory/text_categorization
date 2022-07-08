@@ -60,7 +60,7 @@ class ModelDataManager:
         self._path_balanced_train = path_train_data.joinpath('train_balanced.txt')
         self._balancing_modality = self.config.get("balancing_modality", 'GRNTI')
         self._path_batches_wiki = self.config.get("path_wiki_train_batches", None)
-        if self._path_batches_wiki:
+        if self._path_batches_wiki is not None:
             Path(self._path_batches_wiki).mkdir(exist_ok=True)
             self.wiki_batches = list(Path(self._path_batches_wiki).iterdir())
             self.wiki_balancing_type = self.config.get('wiki_balancing_type', False)
@@ -217,7 +217,7 @@ class ModelDataManager:
 
             logging.info('Calling artm 2nd time')
 
-            if self._path_batches_wiki:
+            if self._path_batches_wiki is not None:
                 if self.wiki_balancing_type in ('avr_rubric_size', 'wiki_unisize'):
                     wiki_batch_subsample = np.random.choice(
                         list(Path(self._path_batches_wiki).iterdir()), self.wiki_batches_per_epoch)
@@ -289,7 +289,7 @@ class ModelDataManager:
 
         # add wiki part of train data
         path_modality_distribution_wiki = self.config.get("path_modality_distribution_wiki", None)
-        if self._path_batches_wiki and path_modality_distribution_wiki:
+        if self._path_batches_wiki is not None and path_modality_distribution_wiki is not None:
             with open(path_modality_distribution_wiki) as file:
                 modality_distribution_wiki = yaml.load(file)
             logging.info("Training data includes Wikipedia articles.")
