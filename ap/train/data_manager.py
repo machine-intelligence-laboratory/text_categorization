@@ -16,7 +16,7 @@ import numpy as np
 import yaml
 
 from ap.train.metrics import set_metric
-from ap.utils.general import recursively_unlink, batch_names
+from ap.utils.general import batch_names, id_to_str, recursively_unlink
 
 
 class NoTranslationException(Exception):
@@ -43,9 +43,12 @@ class ModelDataManager:
 
         self._data_dir = data_dir
 
-        with open(self.config['balancing_rubrics_train']) as file:
+        self.balancing_rubrics_train = self.config['balancing_rubrics_train']
+        if not Path(self.balancing_rubrics_train).exists():
+            with open(self.balancing_rubrics_train, 'w') as outfile:
+                json.dump({}, outfile)
+        with open(self.balancing_rubrics_train) as file:
             self.rubrics_train: typing.Dict[str, str] = json.load(file)
-        self.average_rubric_size = int(len(self.rubrics_train) / len(set(self.rubrics_train.values())))
 
         self.train_path = self.config["train_vw_path"]
         with open(self.train_path, 'a') as file:
@@ -77,16 +80,8 @@ class ModelDataManager:
                                 **self.config["LANGUAGES_TRAIN"]}
         self.class_ids = all_modalities_train
 
-        num_rubric = len(set(self.rubrics_train.values()))
         logging.info('Balanced learning is used: at each epoch ' +
                      'rubric-balanced documents are sampled from the training data.')
-        logging.info(f'Each epoch uses {self.average_rubric_size} documents ' +
-                     f'for each of {num_rubric} rubrics.')
-
-        set_metric('average_rubric_size', self.average_rubric_size)
-        set_metric('num_rubric', num_rubric)
-
-        self.update_ds_metrics()
 
     def update_ds_metrics(self):
         """
@@ -157,11 +152,11 @@ class ModelDataManager:
         """
         with open(self._path_balanced_train, 'w') as file:
             for rubric in set(self.rubrics_train.values()):
-                doc_ids_rubric = np.random.choice(self._docs_of_rubrics[rubric], self.average_rubric_size)
+                doc_ids_rubric = np.random.choice(self._docs_of_rubrics[rubric], self.average_rubric_size, replace=False)
 
                 doc_ids_count = Counter(doc_ids_rubric)
                 for doc_id, count in doc_ids_count.items():
-                    if count > 1:
+                    if count > 0:
                         new_line_dict = {}
                         for line_lang in self.train_docs[doc_id].split(' |@')[1:]:
                             lang = line_lang.split()[0]
@@ -269,6 +264,23 @@ class ModelDataManager:
 
         if len(background) > 0:
             vw.save_docs(self.new_background_path, background)
+
+        new_docs_balancing_modality = {}
+        for idx, doc in docs.items():
+            if self._balancing_modality in doc.keys():
+                new_docs_balancing_modality[idx] = doc[self._balancing_modality]
+        with open(self.config['balancing_rubrics_train'], 'w') as outfile:
+            self.rubrics_train.update(new_docs_balancing_modality)
+            json.dump(self.rubrics_train, outfile)
+        self.average_rubric_size = int(len(self.rubrics_train) / len(set(self.rubrics_train.values())))
+
+        num_rubric = len(set(self.rubrics_train.values()))
+        set_metric('average_rubric_size', self.average_rubric_size)
+        set_metric('num_rubric', num_rubric)
+
+        self.update_ds_metrics()
+
+        self.load_train_data()
 
     def get_modality_distribution(self) -> typing.Dict[str, int]:
         """

@@ -24,34 +24,99 @@ if __name__ == "__main__":
     docs = [
         Document(
             Id=DocId(Lo=0, Hi=0),
-            Tokens=[
-                "документ",
-                "слово",
-                "научный",
-                "ответ",
-                "еще",
-                "что-то",
-            ],
-            Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'),
-                        Modality(Key="GRNTI", Value='11806946'), ],
+            Tokens=["документ", "слово", "научный", "ответ", "еще", "что-то"],
+            Modalities=[Modality(Key="lang", Value='ru'),
+                        Modality(Key="UDK", Value='6'),
+                        Modality(Key="GRNTI", Value='64')],
         ),
         Document(
             Id=DocId(Lo=0, Hi=1),
-            Tokens=[
-                "другой",
-                "документ",
-                "русский",
-                "500",
-                "язык",
-                "наука",
-                "ок"
-            ],
-            Modalities=[Modality(Key="lang", Value='ru'), Modality(Key="UDK", Value='6'),
-                        Modality(Key="GRNTI", Value='11806946'), ],
+            Tokens=["document", "word", "scientific", "answer", "more", "something"],
+            Modalities=[Modality(Key="lang", Value='en'),
+                        Modality(Key="UDK", Value='6'),
+                        Modality(Key="GRNTI", Value='64')],
+        ),
+        Document(
+            Id=DocId(Lo=0, Hi=2),
+            Tokens=["documento", "parola", "scientifica", "Rispondere", "Di più", "qualche cosa"],
+            Modalities=[Modality(Key="lang", Value='it'),
+                        Modality(Key="UDK", Value='6'),
+                        Modality(Key="GRNTI", Value='64')],
+        ),
+
+        Document(
+            Id=DocId(Lo=1, Hi=0),
+            Tokens=["другой", "документ", "русский", "500", "язык", "наука", "ок"],
+            Modalities=[Modality(Key="lang", Value='ru'),
+                        Modality(Key="UDK", Value='6'),
+                        Modality(Key="GRNTI", Value='64'), ],
+        ),
+        Document(
+            Id=DocId(Lo=1, Hi=1),
+            Tokens=["another", "document", "Russian", "500", "language", "science", "ok"],
+            Modalities=[Modality(Key="lang", Value='en'),
+                        Modality(Key="UDK", Value='6'),
+                        Modality(Key="GRNTI", Value='64'), ],
+        ),
+        Document(
+            Id=DocId(Lo=1, Hi=2),
+            Tokens=["un altro", "documento", "russo", "500", "lingua", "scienza", "ok"],
+            Modalities=[Modality(Key="lang", Value='it'),
+                        Modality(Key="UDK", Value='6'),
+                        Modality(Key="GRNTI", Value='64'), ],
+        ),
+
+        Document(
+            Id=DocId(Lo=2, Hi=0),
+            Tokens=["сегодня", "хорошая", "погода"],
+            Modalities=[Modality(Key="lang", Value='ru'),
+                        Modality(Key="UDK", Value='6'), Modality(Key="GRNTI", Value='64')],
+        ),
+        Document(
+            Id=DocId(Lo=2, Hi=1),
+            Tokens=["today", "good", "weather"],
+            Modalities=[Modality(Key="lang", Value='en'),
+                        Modality(Key="UDK", Value='6'), Modality(Key="GRNTI", Value='64')],
+        ),
+        Document(
+            Id=DocId(Lo=2, Hi=2),
+            Tokens=["oggi", "buono", "tempo"],
+            Modalities=[Modality(Key="lang", Value='it'),
+                        Modality(Key="UDK", Value='6'), Modality(Key="GRNTI", Value='64')],
+        ),
+
+        Document(
+            Id=DocId(Lo=3, Hi=0),
+            Tokens=["раз", "два", "три"],
+            Modalities=[Modality(Key="lang", Value='ru'),
+                        Modality(Key="UDK", Value='6'), Modality(Key="GRNTI", Value='61')],
+        ),
+        Document(
+            Id=DocId(Lo=3, Hi=1),
+            Tokens=["one", "two", "three"],
+            Modalities=[Modality(Key="lang", Value='en'),
+                        Modality(Key="UDK", Value='6'), Modality(Key="GRNTI", Value='61')],
+        ),
+
+        Document(
+            Id=DocId(Lo=4, Hi=0),
+            Tokens=["кружка", "ложка", "миска", "нож"],
+            Modalities=[Modality(Key="lang", Value='ru'),
+                        Modality(Key="UDK", Value='6'), Modality(Key="GRNTI", Value='61')],
+        ),
+        Document(
+            Id=DocId(Lo=4, Hi=1),
+            Tokens=["mug", "spoon", "bowl", "knife"],
+            Modalities=[Modality(Key="lang", Value='en'),
+                        Modality(Key="UDK", Value='6'), Modality(Key="GRNTI", Value='61')],
         ),
     ]
     parallel_docs = [
-        ParallelDocIds(Ids=[DocId(Lo=0, Hi=1), DocId(Lo=0, Hi=0)])
+        ParallelDocIds(Ids=[DocId(Lo=0, Hi=0), DocId(Lo=0, Hi=1), DocId(Lo=0, Hi=2)]),
+        ParallelDocIds(Ids=[DocId(Lo=1, Hi=0), DocId(Lo=1, Hi=1), DocId(Lo=1, Hi=2)]),
+        ParallelDocIds(Ids=[DocId(Lo=2, Hi=0), DocId(Lo=2, Hi=1), DocId(Lo=2, Hi=2)]),
+        ParallelDocIds(Ids=[DocId(Lo=3, Hi=0), DocId(Lo=3, Hi=1)]),
+        ParallelDocIds(Ids=[DocId(Lo=4, Hi=0), DocId(Lo=4, Hi=1)]),
     ]
     resp = grpc_stub.AddDocumentsToModel(
         AddDocumentsToModelRequest(
