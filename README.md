@@ -38,7 +38,7 @@ python -m ap.train.server --config={path_to_config} --data={path_to_data}
 docker-compose -f docker-compose.yml build && docker-compose -f docker-compose.yml up
 ```
 Путь к каталогу с обученной моделью должен быть задан в переменной окружения с названием `MODEL_PATH`.
-​
+
 Для запуска сервиса обучения моделей запустите
 ```bash
 docker-compose -f docker-compose-train.yml build && docker-compose -f docker-compose-train.yml up
@@ -57,22 +57,14 @@ data
 │   └── bpe_model_zh_120k.model
 ├── dictionary_train_BPE_wiki_100_120k_11k.txt
 ├── rubrics_train_grnti.json
-├── train_with_combined_grnti_69_rubric.txt
-├── udk_codes.json
-└── wiki_100
-    ├── batches_train
-    └── modality_distribution.yml
+└── udk_codes.json
 ```
 
 * `BPE_models` - папка с обученными BPE моделями.
     * Модели должны называться в формате `bpe_model_{lang}_120k.model`
 * `dictionary_train_BPE_wiki_100_120k_11k.txt` - словарь тематической модели
 * `rubrics_train_grnti.json` - файл с ГРНТИ рубриками документов
-* `train_with_combined_grnti_69_rubric.txt` - файл с данными для обучения в Vowpal Wabbit формате
 * `udk_codes.json` - файл с УДК рубриками документов
-* `wiki_100` - папка с данными Wikipedia
-    * `batches_train` - папка батчами, предварительно построенными по данным Wikipedia
-    * `modality_distribution.yml` - данные о распределении документов Wikipedia по языкам
 
 
 # Подготовка образа виртуальной машины для запуска сервисов
