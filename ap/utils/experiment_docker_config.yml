@@ -1,15 +1,12 @@
 path_experiment: './best_model'
-# path_wiki_train_batches: './data/wiki_100/batches_train'
-path_modality_distribution_wiki: './data/wiki_100/modality_distribution.yml'
-train_vw_path: './data/train_with_combined_grnti_69_rubric.txt'
+train_vw_path: './data/train.txt'
 dictionary_path: './data/dictionary_train_BPE_wiki_100_120k_11k.txt'
 BPE_models: './data/BPE_models'
 
 # rubrics
+balancing_modality: 'GRNTI'
 # Путь json файлу, в котором dict. key (str) - id документа, value (str) - номер рубрики
 balancing_rubrics_train: './data/rubrics_train_grnti.json'
-# wiki_balancing_type: avr_rubric_size, wiki_unisize, False
-wiki_balancing_type: 'avr_rubric_size'
 seed: 1
 
 # metrics parameters
@@ -22,8 +19,6 @@ artm_model_params:
   tau_DecorrelatorPhi: 0.05
   tau_SmoothTheta: 0.025
   tau_SparseTheta: -0.1
-
-balancing_modality: 'GRNTI'
 
 MODALITIES_TRAIN:
   'GRNTI': 1
