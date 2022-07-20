@@ -1,6 +1,9 @@
 path_experiment: './best_model'
 train_vw_path: './data/train.txt'
 dictionary_path: './data/dictionary_train_BPE_wiki_100_120k_11k.txt'
+path_wiki_train_batches: './data/batches_train'
+path_modality_distribution_wiki: './data/modality_distribution.yml'
+new_background_path: './data/new_background.txt'
 BPE_models: './data/BPE_models'
 
 # rubrics

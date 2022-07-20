@@ -66,6 +66,8 @@ class ModelDataManager:
         self._balancing_modality = self.config.get("balancing_modality", 'GRNTI')
         self._path_batches_wiki = self.config.get("path_wiki_train_batches", None)
         if self._path_batches_wiki is not None:
+            if Path(self._path_batches_wiki).exists():
+                recursively_unlink(Path(self._path_batches_wiki))
             Path(self._path_batches_wiki).mkdir(exist_ok=True)
             self.wiki_batches = list(Path(self._path_batches_wiki).iterdir())
             self.wiki_balancing_type = self.config.get('wiki_balancing_type', False)
@@ -234,6 +236,7 @@ class ModelDataManager:
                     data_path=str(self._path_to_batches)
                 )
                 logging.info('Built batches without wiki')
+
             return batch_vectorizer
         except Exception as e:
             logging.exception(e)
@@ -304,9 +307,15 @@ class ModelDataManager:
         # add wiki part of train data
         path_modality_distribution_wiki = self.config.get("path_modality_distribution_wiki", None)
         if self._path_batches_wiki is not None and path_modality_distribution_wiki is not None:
-            with open(path_modality_distribution_wiki) as file:
-                modality_distribution_wiki = yaml.load(file)
-            logging.info("Training data includes Wikipedia articles.")
+            if os.path.exists(path_modality_distribution_wiki):
+                logging.info("Training data includes Wikipedia articles.")
+                with open(path_modality_distribution_wiki) as file:
+                    modality_distribution_wiki = yaml.load(file)
+            else:
+                modality_distribution_wiki = {}
+                with open(path_modality_distribution_wiki, 'w') as outfile:
+                    json.dump({}, outfile)
+
         else:
             modality_distribution_wiki = {}
             logging.info("Training data DOES NOT includes Wikipedia articles.")
