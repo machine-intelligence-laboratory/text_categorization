@@ -51,7 +51,7 @@ class ModelDataManager:
             self.rubrics_train: typing.Dict[str, str] = json.load(file)
 
         self.train_path = self.config["train_vw_path"]
-        with open(self.train_path, 'a') as file:
+        with open(self.train_path, 'a') as _:
             pass
         self.new_background_path = self.config.get("new_background_path", None)
 
