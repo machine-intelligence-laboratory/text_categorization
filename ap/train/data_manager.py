@@ -49,6 +49,7 @@ class ModelDataManager:
                 json.dump({}, outfile)
         with open(self.balancing_rubrics_train) as file:
             self.rubrics_train: typing.Dict[str, str] = json.load(file)
+            print('rubrics_train', self.rubrics_train)
 
         self.train_path = self.config["train_vw_path"]
         with open(self.train_path, 'a') as file:
@@ -135,10 +136,14 @@ class ModelDataManager:
 
         self.train_docs = {line.split()[0]: line for line in train_vw}
 
+        print('self.rubrics_train', self.rubrics_train)
         docs_of_rubrics = {rubric: [] for rubric in set(self.rubrics_train.values())}
         for doc_id, rubric in self.rubrics_train.items():
+            print('doc_id, rubric', doc_id, rubric)
+            print('if doc_id in self.train_docs', doc_id in self.train_docs)
             if doc_id in self.train_docs:
                 docs_of_rubrics[rubric].append(doc_id)
+        print('docs_of_rubrics', docs_of_rubrics)
 
         self._docs_of_rubrics: typing.Dict[str, list] = docs_of_rubrics
 
@@ -154,6 +159,9 @@ class ModelDataManager:
         """
         with open(self._path_balanced_train, 'w') as file:
             for rubric in set(self.rubrics_train.values()):
+                print('rubric', rubric)
+                print('self.rubrics_train.values()', self.rubrics_train.values())
+                print('self._docs_of_rubrics[rubric]', self._docs_of_rubrics[rubric])
                 doc_ids_rubric = np.random.choice(self._docs_of_rubrics[rubric], self.average_rubric_size, replace=False)
 
                 doc_ids_count = Counter(doc_ids_rubric)

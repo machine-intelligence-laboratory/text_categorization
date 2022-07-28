@@ -1,7 +1,6 @@
 import json
 import re
 
-
 import pandas as pd
 
 from pathlib import Path
@@ -39,6 +38,7 @@ def test_quality_of_models():
     )
     assert 'average_frequency_analogy' in quality_model
     assert 'average_percent_analogy' in quality_model
+
 
 def test_rank():
     with open('tests/data/test_config.yml') as file:
