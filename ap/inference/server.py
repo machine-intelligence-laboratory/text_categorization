@@ -2,7 +2,6 @@ import datetime
 import logging
 import os
 import tempfile
-import uuid
 import json
 
 from concurrent import futures
@@ -53,17 +52,14 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
 
         raise Exception("No language")
 
-    def _create_batches(self, dock_pack, batches_dir):
+    def _transform(self, docs):
         with open(os.path.join(self._rubric_dir, 'udk_codes.json'), "r") as file:
             udk_codes = json.loads(file.read())
 
         with open(os.path.join(self._rubric_dir, 'rubrics_train_grnti.json'), "r") as file:
             grnti_codes = json.load(file)
-
-        documents = []
-        vocab = set()
-
-        for doc in dock_pack.Documents:
+        to_write = ''
+        for doc in docs.Documents:
             lang = self._get_lang(doc)
             modality = ["@" + lang]
             doc_id = id_to_str(doc.Id)
@@ -71,62 +67,23 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
             doc_vw_dict = {lang: " ".join(doc.Tokens)}
             if doc_id in udk_codes:
                 modality += ["@UDK"]
-                doc_vw_dict.update({"@UDK": udk_codes[doc_id]})
+                doc_vw_dict.update({"UDK": udk_codes[doc_id]})
             if doc_id in grnti_codes:
                 modality += ["@GRNTI"]
                 if grnti_codes[doc_id] != "нет":
-                    doc_vw_dict.update({"@GRNTI": grnti_codes[doc_id]})
+                    doc_vw_dict.update({"GRNTI": grnti_codes[doc_id]})
 
             vw_doc = self._vw.convert_doc(doc_vw_dict)
-
-            for modl in modality:
-                key = modl
-                vw_doc_key = modl if modl in ["@UDK", "@GRNTI"] else modl[1:]
-                documents.append((id_to_str(doc.Id), key, vw_doc[vw_doc_key]))
-                vocab.update(((key, token) for token in vw_doc[vw_doc_key].keys()))
-
-        batch = artm.messages.Batch()
-        batch.id = str(uuid.uuid4())
-        dictionary = {}
-        use_bag_of_words = True
-
-        for i, (modality, token) in enumerate(vocab):
-            batch.token.append(token)
-            batch.class_id.append(modality)
-            dictionary[(modality, token)] = i
-
-        for idx, modality, doc in documents:
-            item = batch.item.add()
-            item.title = idx
-
-            if use_bag_of_words:
-                local_dict = {}
-                for token in doc:
-                    if token not in local_dict:
-                        local_dict[token] = 0
-                    local_dict[token] += 1
-
-                for key, value in local_dict.items():
-                    item.token_id.append(dictionary[(modality, key)])
-                    item.token_weight.append(value)
-            else:
-                for token in doc:
-                    item.token_id.append(dictionary[(modality, token)])
-                    item.token_weight.append(1.0)
-
-        with open(os.path.join(batches_dir, "aaaaaa.batch"), "wb") as fout:
-            fout.write(batch.SerializeToString())
-
-    def _transform(self, docs):
-        with tempfile.TemporaryDirectory(dir=self._work_dir) as temp_dir:
-            batches_dir = os.path.join(temp_dir, "batches")
-            os.makedirs(batches_dir)
-            self._create_batches(docs, batches_dir)
-            batch_vectorizer = artm.BatchVectorizer(
-                data_format="batches", data_path=batches_dir,
-            )
-
-            return self._artm_model.transform(batch_vectorizer)
+            to_write += f'{doc_id} '
+            to_write += ' '.join([f'|@{lang} ' + ' '.join([':'.join([str(token), str(counter)])
+                                for token, counter in token_with_counter.items()])
+                                for lang, token_with_counter in vw_doc.items()]) + '\n'
+        with open('./inference_data.txt', 'w') as file:
+            file.write(to_write)
+        batch_vectorizer = artm.BatchVectorizer(data_path='./inference_data.txt',
+                                                data_format='vowpal_wabbit',
+                                                target_folder='tmp_batches')
+        return self._artm_model.transform(batch_vectorizer)
 
     def GetDocumentsEmbedding(self, request: GetDocumentsEmbeddingRequest, context):
         """
@@ -177,7 +134,6 @@ class TopicModelInferenceServiceImpl(TopicModelInferenceServiceServicer):
             doc_vw = {id_to_str(request.Doc.Id): get_modalities(request.Doc)}
             vw_file = os.path.join(temp_dir, 'vw.txt')
             print('doc_vw', doc_vw)
-            # self._vw.save_docs(vw_file, doc_vw)
             with open(vw_file, 'w') as file:
                 to_write = []
                 for doc_id, mod_dict in doc_vw.items():
